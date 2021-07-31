@@ -1,0 +1,62 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "C/C++",
+			"command": "C:\\msys64\\mingw64\\bin\\g++.exe",
+			"args": [
+				"-g3",
+				"*.cpp",
+				"World/*.cpp",
+				"COntrol/*.cpp",
+				"World/Map/*.cpp",
+				"World/Sector/*.cpp",
+				"UI/Graphics/*.cpp",
+				"utils/*.cpp",
+				"../lodepng/*.cpp",
+				"-I",
+				"../SFML/include",
+				"-L",
+				"../SFML/lib",
+				"-lsfml-main",
+				"-lsfml-graphics",
+				"-lsfml-system",
+				"-lsfml-window",
+				"-pipe",
+				"-std=c++2a",
+				"-o",
+				"main.exe"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": {
+				"kind": "build"
+			}
+		},
+		{
+			"type": "shell",
+			"label": "C/C++: g++.exe build active file",
+			"command": "C:\\msys64\\mingw64\\bin\\g++.exe",
+			"args": [
+				"${file}",
+				"-c",
+				"-g3",
+				"-I",
+				"../SFML/include",
+				"-std=c++2a",
+			],
+			"options": {
+				"cwd": "C:\\msys64\\mingw64\\bin"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		}
+	]
+}
