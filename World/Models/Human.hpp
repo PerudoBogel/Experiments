@@ -8,7 +8,7 @@ public:
 		m_damage = 1;
 		m_range = 10;
 		m_health = 10;
-		m_speed = 20.0f;
+		m_speed = 20;
 	}
 	~Human()
 	{

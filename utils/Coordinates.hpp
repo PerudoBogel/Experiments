@@ -3,14 +3,14 @@
 
 struct Coordinates
 {
-	int x, y;
+	float x, y;
 
 	Coordinates() :
 			x(0), y(0)
 	{
 	}
 
-	Coordinates(int nx, int ny) :
+	Coordinates(decltype(x) nx, decltype(x) ny) :
 			x(nx), y(ny)
 	{
 	}

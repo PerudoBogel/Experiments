@@ -28,7 +28,7 @@ public:
 		std::shared_ptr<Map> map = pWorld->getMap();
 		int retVal = DONE;
 
-		Box modelBox(pModel->getSize(), pModel->getPosition() + coordinates);
+		Box modelBox(pModel->getSize(), *pModel->m_position + coordinates);
 
 		if (modelBox.Xmax >= map->m_size.w * ISector::m_Size.w
 				|| modelBox.Ymax >= map->m_size.h * ISector::m_Size.h)
@@ -49,7 +49,7 @@ public:
 			if (testModel.get() == pModel.get())
 				continue;
 
-			Box testModelBox(testModel->getSize(), testModel->getPosition());
+			Box testModelBox(testModel->getSize(), *testModel->m_position);
 			if (modelBox.isCollision(testModelBox))
 			{
 				retVal = CANNOT_MOVE;

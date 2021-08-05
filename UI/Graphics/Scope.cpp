@@ -3,7 +3,7 @@
 
 namespace
 {
-inline void updateCooridinate(int &coord, int scSize, int limit)
+inline void updateCooridinate(decltype(Coordinates::x) &coord, int scSize, decltype(Coordinates::x) limit)
 {
     if (coord + static_cast<int>(scSize) / 2 >= limit)
         coord = limit - scSize / 2 - 1;
@@ -13,7 +13,7 @@ inline void updateCooridinate(int &coord, int scSize, int limit)
 } // namespace
 
 Scope::Scope() :
-		m_traceModel(false)
+		m_traceActive(false)
 {
 }
 
@@ -22,10 +22,10 @@ void Scope::setWorld(std::shared_ptr<World> world)
     m_pWorld = world;
 }
 
-void Scope::trace(std::shared_ptr<IModel> pModel)
+void Scope::trace(std::shared_ptr<Coordinates> pTraceOject)
 {
-	m_tracedModel = pModel;
-	m_traceModel = true;
+	m_tracedObject = pTraceOject;
+	m_traceActive = true;
 }
 
 void Scope::setCoordinates(Coordinates position)
@@ -63,11 +63,10 @@ void Scope::setSize(Size size)
 
 void Scope::update()
 {
-	if(m_traceModel){
-		m_position = m_tracedModel->getPosition();
+	if(m_traceActive){
 
-	    updateCooridinate(m_position.x, m_size.w, m_pWorld->getMap()->m_size.w);
-	    updateCooridinate(m_position.y, m_size.h, m_pWorld->getMap()->m_size.h);
+	    updateCooridinate(m_tracedObject->x, m_size.w, m_pWorld->getMap()->m_size.w);
+	    updateCooridinate(m_tracedObject->y, m_size.h, m_pWorld->getMap()->m_size.h);
 	}
 
 	m_map = m_pWorld->getMapInBox(Box(m_size, m_position));

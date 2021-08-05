@@ -3,12 +3,12 @@
 #include <memory>
 #include <mutex>
 
-#include "IModel.hpp"
 #include "Coordinates.hpp"
 #include "Size.hpp"
 #include "Box.hpp"
 #include "SectorGenerator.hpp"
 #include "Map.hpp"
+#include "IModel.hpp"
 
 class World
 {

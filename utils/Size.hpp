@@ -2,13 +2,13 @@
 
 struct Size
 {
-	int w, h;
+	float w, h;
 	Size() :
 			w(0), h(0)
 	{
 	}
 
-	Size(int nw, int nh) :
+	Size(decltype(w) nw, decltype(h) nh) :
 			w(nw), h(nh)
 	{
 	}

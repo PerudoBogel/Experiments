@@ -32,7 +32,7 @@ void AIController::Run()
 	}
 	else
 	{
-		Coordinates difference = m_posts[m_nextPost] - m_controller.m_model->getPosition();
+		Coordinates difference = m_posts[m_nextPost] - *m_controller.m_model->m_position;
 
 		if (difference.x > 0)
 			move.x++;
@@ -43,7 +43,7 @@ void AIController::Run()
 		if (difference.y < 0)
 			move.y--;
 
-		if (m_controller.m_model->getPosition() == m_posts[m_nextPost])
+		if (*m_controller.m_model->m_position == m_posts[m_nextPost])
 			m_nextPost++;
 
 		if (m_nextPost >= m_posts.size())

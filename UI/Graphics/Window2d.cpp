@@ -41,16 +41,16 @@ inline void makeHealthBar(int heigth, int width, int percentage,
 }; // namespace
 
 Window2d::texture Window2d::m_textures[] = {
-    [ISector::TYPE_GRASS] = {sf::Sprite(), sf::Texture(), "C:/SW/Project/UI/Graphics/Sector/Grass.png"},
-    [ISector::TYPE_DIRT] = {sf::Sprite(), sf::Texture(), "C:/SW/Project/UI/Graphics/Sector/Dirt.png"},
-    [ISector::TYPE_ROCK] = {sf::Sprite(), sf::Texture(), "C:/SW/Project/UI/Graphics/Sector/Rock.png"}};
+    [ISector::TYPE_GRASS] = {sf::Sprite(), sf::Texture(), "UI/Graphics/Sector/Grass.png"},
+    [ISector::TYPE_DIRT] = {sf::Sprite(), sf::Texture(), "UI/Graphics/Sector/Dirt.png"},
+    [ISector::TYPE_ROCK] = {sf::Sprite(), sf::Texture(), "UI/Graphics/Sector/Rock.png"}};
 
 Window2d::texture Window2d::m_models[] = {
-    [IModel::TYPE_DOG] = {sf::Sprite(), sf::Texture(), "C:/SW/Project/UI/Graphics/Models/Dog.png"},
-    [IModel::TYPE_HUMAN] = {sf::Sprite(), sf::Texture(), "C:/SW/Project/UI/Graphics/Models/Human.png"},
-    [IModel::TYPE_CAT] = {sf::Sprite(), sf::Texture(), "C:/SW/Project/UI/Graphics/Models/Cat.png"}};
+    [IModel::TYPE_DOG] = {sf::Sprite(), sf::Texture(), "UI/Graphics/Models/Dog.png"},
+    [IModel::TYPE_HUMAN] = {sf::Sprite(), sf::Texture(), "UI/Graphics/Models/Human.png"},
+    [IModel::TYPE_CAT] = {sf::Sprite(), sf::Texture(), "UI/Graphics/Models/Cat.png"}};
 
-Window2d::texture Window2d::m_void = {sf::Sprite(), sf::Texture(), "C:/SW/Project/UI/Graphics/Sector/Void.png"};
+Window2d::texture Window2d::m_void = {sf::Sprite(), sf::Texture(), "UI/Graphics/Sector/Void.png"};
 
 Window2d::Window2d(std::shared_ptr<Scope> scope, unsigned int xSize, unsigned int ySize) : m_pScope(scope),
                                                                                            m_PW(xSize),
@@ -156,8 +156,8 @@ bool Window2d::update()
         CharacterT = &m_models[pCharacter->getType()].m_texture;
 
         //set absolute position;
-        x = pCharacter->getPosition().x;
-        y = pCharacter->getPosition().y;
+        x = pCharacter->m_position->x;
+        y = pCharacter->m_position->y;
         // set relative position
         x -= scopeXOrigin;
         y -= scopeYOrigin;

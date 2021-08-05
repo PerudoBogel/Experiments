@@ -1,8 +1,9 @@
 #pragma once
 
-#include "../../utils/Size.hpp"
-#include "../../utils/Coordinates.hpp"
-#include "../Models/Fraction.hpp"
+#include <memory>
+#include "Size.hpp"
+#include "Coordinates.hpp"
+#include "Fraction.hpp"
 
 class IModel
 {
@@ -34,25 +35,20 @@ public:
 			m_enemyFractions(),
 			m_memberFractions(),
 			m_allyFractions(),
-			m_speed(15.0f),
-			m_size(15,15)
+			m_speed(20),
+			m_size(15,15),
+			m_position(std::make_shared<Coordinates>(Coordinates(0,0)))
 	{
 	}
     virtual ~IModel(){};
 
     virtual int getType() = 0;
     
-    void setCoordinates(Coordinates position)
-    {
-        m_position = position;
-    }
-
     virtual int move(Coordinates step){
-        m_position += step;
+        *m_position += step;
         return 1;
     }
 
-    inline Coordinates getPosition()const{return m_position;}
     inline Size getSize()const{return m_size;}
 
     int m_moveStrength;
@@ -66,9 +62,9 @@ public:
 	Fraction m_enemyFractions,
 	m_memberFractions,
 	m_allyFractions;
-	float m_speed;
+	decltype(Coordinates::x) m_speed;
+    std::shared_ptr<Coordinates> m_position;
 
 protected:
-    Coordinates m_position;
     Size m_size;
 };

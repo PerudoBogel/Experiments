@@ -7,12 +7,29 @@
                 "UNICODE",
                 "_UNICODE"
             ],
-            "compilerPath": "C:\\msys64\\mingw64\\bin\\gcc.exe",
+            "compilerPath": "C:/Program Files/mingw-w64/x86_64-8.1.0-posix-seh-rt_v6-rev0/mingw64/bin/g++.exe",
             "cStandard": "c11",
             "intelliSenseMode": "gcc-x64",
             "cppStandard": "c++20",
             "includePath": [
-                "../SFML/include"
+                "lib/SFML/include",
+                "lib/lodepng",
+                "lib/SDL-1.2.15/include",
+				"World",
+				"World/Map",
+				"World/Map/Sector",
+				"World/Models",
+				"Control",
+				"Control/Actions",
+				"Control/Reactions",
+				"AI",
+				"UI",
+				"UI/Graphics",
+				"UI/Controller",
+				"Menu",
+				"UI/Graphics",
+				"UI/Controller",
+                "utils"
             ]
         }
     ],

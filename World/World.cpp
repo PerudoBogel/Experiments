@@ -1,15 +1,16 @@
 #include "World.hpp"
 #include <iostream>
+#include <algorithm>
 
 std::vector<std::shared_ptr<IModel>> World::getModelsInBox(Box box)
 {
 	std::vector<std::shared_ptr<IModel>> outBuffer;
 
 	for (auto model : *m_models.get())
-		if (model->getPosition().x >= box.Xmin
-				&& model->getPosition().x <= box.Xmax
-				&& model->getPosition().y >= box.Ymin
-				&& model->getPosition().y <= box.Ymax)
+		if (model->m_position->x >= box.Xmin
+				&& model->m_position->x <= box.Xmax
+				&& model->m_position->y >= box.Ymin
+				&& model->m_position->y <= box.Ymax)
 			outBuffer.push_back(model);
 
 	return outBuffer;
@@ -17,7 +18,7 @@ std::vector<std::shared_ptr<IModel>> World::getModelsInBox(Box box)
 
 void World::setModel(std::shared_ptr<IModel> pModel)
 {
-	if (std::find(m_models.get()->begin(), m_models.get()->end(), pModel) == m_models->end())
+	if (std::find((*m_models).begin(), (*m_models).end(), pModel) == (*m_models).end())
 		m_models->push_back(pModel);
 }
 

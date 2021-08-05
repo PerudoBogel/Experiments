@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include "TemplateReader.hpp"
-#include "../../../lodepng/lodepng.h"
+#include "lodepng.h"
 
 std::vector<unsigned char> TemplateReader::m_tmpBuffer;
 
