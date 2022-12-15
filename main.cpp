@@ -11,18 +11,22 @@
 #include "Cat.hpp"
 #include "AI.hpp"
 #include "World.hpp"
+#include "Scope.hpp"
+#include "ScopeDisplay.hpp"
+
+using namespace std;
 
 int main(int argc, char **argv)
 {
-	auto humanModel = std::make_shared<Human>();
-	auto cat0 = std::make_shared<Cat>();
-	auto cat1 = std::make_shared<Cat>();
-	auto cat2 = std::make_shared<Cat>();
-	auto dogModel = std::make_shared<Dog>();
-	auto dog1Model = std::make_shared<Dog>();
-	auto dog2Model = std::make_shared<Dog>();
-	auto dog3Model = std::make_shared<Dog>();
-	*humanModel->m_position = Coordinates(24, 24);
+	auto humanModel = make_shared<Human>();
+	auto cat0 = make_shared<Cat>();
+	auto cat1 = make_shared<Cat>();
+	auto cat2 = make_shared<Cat>();
+	auto dogModel = make_shared<Dog>();
+	auto dog1Model = make_shared<Dog>();
+	auto dog2Model = make_shared<Dog>();
+	auto dog3Model = make_shared<Dog>();
+	*humanModel->m_position = Coordinates(121 * ISector::m_Size.w/2+23, 81 * ISector::m_Size.h/2+23);
 	*cat0->m_position = Coordinates(143*5, 80*5);
 	*cat1->m_position = Coordinates(150*5, 81*5);
 	*cat2->m_position = Coordinates(153*5, 75*5);
@@ -38,14 +42,14 @@ int main(int argc, char **argv)
 	dog1Model->m_control= IModel::CONTROL_AI;
 	//dog2Model->m_control= IModel::CONTROL_AI;
 
-	std::unique_ptr<TemplateReader> templateGen = std::make_unique<
-			TemplateReader>("World/Map/templates/road.png");
+	unique_ptr<TemplateReader> templateGen = make_unique<
+			TemplateReader>("GameResources/Maps/road.png");
 
-	std::vector<ISector*> mapSectors = SectorGenerator::generateMap(templateGen->getSize(),templateGen->getTemplate());
+	vector<ISector*> mapSectors = SectorGenerator::generateMap(templateGen->getSize(),templateGen->getTemplate());
 
-	std::shared_ptr<Map> map = std::make_shared<Map>(templateGen->getSize(),mapSectors);
+	shared_ptr<Map> map = make_shared<Map>(templateGen->getSize(),mapSectors);
 
-	std::shared_ptr<World> world = std::make_shared<World>();
+	shared_ptr<World> world = make_shared<World>();
 	world->setMap(map);
 	world->setModel(dog3Model);
 	world->setModel(humanModel);
@@ -56,32 +60,33 @@ int main(int argc, char **argv)
 	world->setModel(dog1Model);
 	world->setModel(dog2Model);
 
-	std::shared_ptr<Scope> scope = std::make_unique<Scope>();
-	scope->setWorld(world);
+	shared_ptr<Scope> scope = make_unique<Scope>(world, humanModel->m_position);
 	scope->setSize(Size(121 * ISector::m_Size.w, 81 * ISector::m_Size.h));
-	//scope->trace(world->getPlayer());
-	scope->trace(dog1Model->m_position);
 
-	std::unique_ptr<AI> ai = std::make_unique<AI>(world);
+	unique_ptr<AI> ai = make_unique<AI>(world);
 
 	auto pController = ai->getController(dog1Model);
-	pController->AddPost(Coordinates(120, 60));
-	pController->AddPost(Coordinates(130, 80));
+	pController->AddPost(Coordinates(200, 200));
+	pController->AddPost(Coordinates(600, 600));
 
-	std::unique_ptr<UserControl> controller = std::make_unique<UserControl>(
+	unique_ptr<UserControl> controller = make_unique<UserControl>(
 			Controller(world, world->getPlayer()));
 
-	std::unique_ptr<Window2d> window = std::make_unique<Window2d>(scope,
-			scope->getSize().w, scope->getSize().h);
-	window->makeWindow();
+	unique_ptr<Window2d> window = make_unique<Window2d>(scope->getSize());
+	
+	unique_ptr<ScopeDisplay> scopeDisplay = make_unique<ScopeDisplay>(scope);
 
 	int command;
 	do
 	{
 		command = controller->run();
+		scope->update();
 		ai->Run();
+		//window->clear();
+		window->addElements(scopeDisplay->getElements());
+		window->lock();
 		window->update();
-		Sleep(1000 / 15);
+		Sleep(1000.0 / 120.0);
 
 	} while (command != UserControl::QUIT);
 }

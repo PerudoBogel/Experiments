@@ -3,27 +3,22 @@
 
 struct Coordinates
 {
-	float x, y;
+	float x, y, phi;
 
-	Coordinates() :
-			x(0), y(0)
-	{
-	}
+	Coordinates(): x(0), y(0), phi(0){}
 
-	Coordinates(decltype(x) nx, decltype(x) ny) :
-			x(nx), y(ny)
-	{
-	}
+	Coordinates(decltype(x) nx, decltype(y) ny, decltype(phi) nphi = 0): x(nx), y(ny),phi(nphi){}
 
 	inline bool operator==(const Coordinates &coords)
 	{
-		return (x == coords.x) && (y == coords.y);
+		return (x == coords.x) && (y == coords.y) && (phi == coords.phi);
 	}
 
 	inline Coordinates& operator+=(Coordinates &coords)
 	{
 		this->x += coords.x;
 		this->y += coords.y;
+		this->phi += coords.phi;
 		return *this;
 	}
 
@@ -31,62 +26,46 @@ struct Coordinates
 	{
 		this->x -= coords.x;
 		this->y -= coords.y;
+		this->phi -= coords.phi;
 		return *this;
 	}
 
 	inline Coordinates& operator*=(float &value)
 	{
-		int tmpx = static_cast<int>(this->x * value);
-		int tmpy = static_cast<int>(this->y * value);
-
-		if (tmpx == 0)
-		{
-			if (this->x > 0)
-				this->x = 1;
-			else if (this->x < 0)
-				this->x = -1;
-		}
-		else
-			this->x = tmpx;
-
-		if (tmpy == 0)
-		{
-			if (this->y > 0)
-				this->y = 1;
-			else if (this->y < 0)
-				this->y = -1;
-		}
-		else
-			this->y = tmpy;
+		x *= value;
+		y *= value;
 
 		return *this;
 	}
 
 	inline bool operator!=(const Coordinates &coords)
 	{
-		return (x != coords.x) || (y != coords.y);
+		return (x != coords.x) || (y != coords.y) || (phi != coords.phi);
 	}
 
-	friend Coordinates operator+(Coordinates lCoords, const Coordinates &pCoords)
+	inline Coordinates operator+(const Coordinates &pCoords)
 	{
-		lCoords.x += pCoords.x;
-		lCoords.y += pCoords.y;
+		auto tmpX = x + pCoords.x;
+		auto tmpY = y + pCoords.y;
+		auto tmpPhi = phi + pCoords.phi;
 
-		return lCoords;
+		return Coordinates(tmpX, tmpY, tmpPhi);
 	}
 
-	friend Coordinates operator-(Coordinates lCoords, const Coordinates &pCoords)
+	inline Coordinates operator-(const Coordinates &pCoords)
 	{
-		lCoords.x -= pCoords.x;
-		lCoords.y -= pCoords.y;
+		auto tmpX = x - pCoords.x;
+		auto tmpY = y - pCoords.y;
+		auto tmpPhi = phi - pCoords.phi;
 
-		return lCoords;
+		return Coordinates(tmpX, tmpY, tmpPhi);
 	}
 
 	inline Coordinates& operator=(const Coordinates &coords)
 	{
 		this->x = coords.x;
 		this->y = coords.y;
+		this->phi = coords.phi;
 		return *this;
 	}
 

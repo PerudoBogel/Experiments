@@ -12,6 +12,7 @@
 #include "Box.hpp"
 #include "ISector.hpp"
 #include <vector>
+#include <iostream>
 
 class Map
 {
@@ -36,11 +37,17 @@ public:
 
 	ISector* getSector(Coordinates coordinates)
 	{
-		Coordinates recalculated(coordinates.x/ ISector::m_Size.w, coordinates.y / ISector::m_Size.h);
-		if (coordinates.x >= m_size.w || coordinates.y >= m_size.h || coordinates.x < 0 || coordinates.y < 0)
+		int x_index = (int)coordinates.x / ISector::m_Size.w;
+		int y_index = (int)coordinates.y / ISector::m_Size.h;
+		int w_index = m_size.w / ISector::m_Size.w;
+		int sectorIndex = x_index + y_index * w_index;
+
+		if (coordinates.x >= m_size.w || coordinates.y >= m_size.h ||
+			coordinates.x < 0 || coordinates.y < 0 ||
+			sectorIndex > m_map.size())
 			return nullptr;
 		else
-	        return m_map[recalculated.x  + (m_size.w / ISector::m_Size.w  * recalculated.y)];
+			return m_map[sectorIndex];
 	}
 
 	const Size m_size;

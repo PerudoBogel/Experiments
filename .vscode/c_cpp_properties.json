@@ -24,11 +24,11 @@
 				"Control/Reactions",
 				"AI",
 				"UI",
-				"UI/Graphics",
-				"UI/Controller",
+				"UI/DisplayDriver",
+				"UI/ControllerDriver",
+				"UI/HUD",
+				"UI/World",
 				"Menu",
-				"UI/Graphics",
-				"UI/Controller",
                 "utils"
             ]
         }

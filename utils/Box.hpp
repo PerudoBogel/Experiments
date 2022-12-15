@@ -11,8 +11,8 @@ struct Box
 					position.y + size.h / 2)
 	{
 	}
-	const int Xmin, Xmax;
-	const int Ymin, Ymax;
+	const float Xmin, Xmax;
+	const float Ymin, Ymax;
 
 	inline bool isCollision(const Box &box) const
 	{

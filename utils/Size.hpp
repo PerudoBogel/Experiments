@@ -24,4 +24,12 @@ struct Size
 		this->h = size.h;
 		return *this;
 	}
+
+	friend Size operator+(Size lSize, const Size &pSize)
+	{
+		lSize.w += pSize.w;
+		lSize.h += pSize.h;
+
+		return lSize;
+	}
 };

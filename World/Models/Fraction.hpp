@@ -8,7 +8,7 @@
 #ifndef WORLD_MODELS_FRACTION_HPP_
 #define WORLD_MODELS_FRACTION_HPP_
 
-#include <BitFlag.hpp>
+#include <BitMask.hpp>
 
 class Fraction
 {
@@ -20,28 +20,44 @@ public:
 		FRACTION_HUMANS
 	};
 
-	Fraction() :
-			m_fractionFlags(0)
+	Fraction(){}
+	Fraction(const Fraction &fraction):m_fractionFlags(fraction.m_fractionFlags){}
+
+	inline void addFraction(Type fractionType)
 	{
+		m_fractionFlags.set(fractionType);
 	}
 
-	inline void addFraction(Type fraction)
+	inline void removeFraction(Type fractionType)
 	{
-		BitFlag::setFlag(m_fractionFlags, static_cast<int>(fraction));
-	}
-
-	inline void removeFraction(Type fraction)
-	{
-		BitFlag::resetFlag(m_fractionFlags, static_cast<int>(fraction));
+		m_fractionFlags.clear(fractionType);
 	}
 
 	inline bool operator==(Fraction &fraction)
 	{
-		return fraction.m_fractionFlags & m_fractionFlags;
+		return m_fractionFlags == fraction.m_fractionFlags;
+	}
+	
+	inline bool operator!=(Fraction &fraction)
+	{
+		return m_fractionFlags != fraction.m_fractionFlags;
+	}
+		
+	inline Fraction operator+(Fraction &fraction)
+	{
+		return Fraction(m_fractionFlags + fraction.m_fractionFlags);
+	}
+
+	inline Fraction operator-(Fraction &fraction)
+	{
+		return Fraction(m_fractionFlags - fraction.m_fractionFlags);
 	}
 
 private:
-	unsigned long long int m_fractionFlags;
+
+	Fraction(const BitMask<uint64_t,Type> &fractionMap):m_fractionFlags(fractionMap){}
+	BitMask<uint64_t,Type> m_fractionFlags;
+
 };
 
 #endif /* WORLD_MODELS_FRACTION_HPP_ */

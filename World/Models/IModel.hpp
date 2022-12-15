@@ -35,7 +35,7 @@ public:
 			m_enemyFractions(),
 			m_memberFractions(),
 			m_allyFractions(),
-			m_speed(20),
+			m_speed(1),
 			m_size(15,15),
 			m_position(std::make_shared<Coordinates>(Coordinates(0,0)))
 	{
