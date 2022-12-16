@@ -6,15 +6,17 @@ public:
 	{
 		m_moveStrength = 2;
 		m_damage = 1;
-		m_range = 10;
+		m_attack = 1000;
+		m_range = 25;
 		m_health = 10;
-		m_maxHealth = m_health * 2;
+		m_maxHealth = m_health;
 		m_speed = 2.5;
+		m_memberFractions.addFraction(Fraction::Type::FRACTION_HUMANS);
 	}
 	~Human()
 	{
 	}
 
-    int getType()override{return TYPE_HUMAN;}
+    int getType()override{return MODEL_TYPE_HUMAN;}
 
 };

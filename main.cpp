@@ -26,14 +26,14 @@ int main(int argc, char **argv)
 	auto dog1Model = make_shared<Dog>();
 	auto dog2Model = make_shared<Dog>();
 	auto dog3Model = make_shared<Dog>();
-	*humanModel->m_position = Coordinates(121 * ISector::m_Size.w/2+23, 81 * ISector::m_Size.h/2+23);
-	*cat0->m_position = Coordinates(143*5, 80*5);
-	*cat1->m_position = Coordinates(150*5, 81*5);
-	*cat2->m_position = Coordinates(153*5, 75*5);
-	*dogModel->m_position = Coordinates(30*5, 30*5);
-	*dog1Model->m_position = Coordinates(120*5, 60*5);
-	*dog2Model->m_position = Coordinates(30*5, 33*5);
-	*dog3Model->m_position = Coordinates(8, 8);
+	humanModel->m_position = Coordinates(121 * ISector::m_Size.w/2+23, 81 * ISector::m_Size.h/2+23);
+	cat0->m_position = Coordinates(143*5, 80*5);
+	cat1->m_position = Coordinates(150*5, 81*5);
+	cat2->m_position = Coordinates(153*5, 75*5);
+	dogModel->m_position = Coordinates(30*5, 30*5);
+	dog1Model->m_position = Coordinates(120*5, 60*5);
+	dog2Model->m_position = Coordinates(30*5, 33*5);
+	dog3Model->m_position = Coordinates(8, 8);
 	humanModel->m_control= IModel::CONTROL_PLAYER;
 	/*cat0->m_control= IModel::CONTROL_AI;
 	cat1->m_control= IModel::CONTROL_AI;
@@ -71,6 +71,8 @@ int main(int argc, char **argv)
 
 	unique_ptr<UserControl> controller = make_unique<UserControl>(
 			Controller(world, world->getPlayer()));
+	
+	controller->addOffset(&scope->getOffset());
 
 	unique_ptr<Window2d> window = make_unique<Window2d>(scope->getSize());
 	
@@ -83,7 +85,7 @@ int main(int argc, char **argv)
 		scope->update();
 		ai->Run();
 		//window->clear();
-		window->addElements(scopeDisplay->getElements());
+		window->addSprites(scopeDisplay->getSprites());
 		window->lock();
 		window->update();
 		Sleep(1000.0 / 120.0);

@@ -35,6 +35,16 @@ public:
 		return BitMask(m_mask & (!bitMask.m_mask));
 	}
 	
+	inline bool operator|(const BitMask &bitMask) const
+	{
+		return (m_mask | bitMask.m_mask);
+	}
+	
+	inline bool operator&(const BitMask &bitMask) const
+	{
+		return (m_mask & bitMask.m_mask);
+	}
+
 	inline bool operator==(const BitMask &bitMask) const
 	{
 		return (m_mask == bitMask.m_mask);

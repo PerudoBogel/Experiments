@@ -14,23 +14,23 @@ struct Coordinates
 		return (x == coords.x) && (y == coords.y) && (phi == coords.phi);
 	}
 
-	inline Coordinates& operator+=(Coordinates &coords)
+	inline Coordinates& operator+=(const Coordinates &coords)
 	{
-		this->x += coords.x;
-		this->y += coords.y;
-		this->phi += coords.phi;
+		x += coords.x;
+		y += coords.y;
+		phi += coords.phi;
 		return *this;
 	}
 
-	inline Coordinates& operator-=(Coordinates &coords)
+	inline Coordinates& operator-=(const Coordinates &coords)
 	{
-		this->x -= coords.x;
-		this->y -= coords.y;
-		this->phi -= coords.phi;
+		x -= coords.x;
+		y -= coords.y;
+		phi -= coords.phi;
 		return *this;
 	}
 
-	inline Coordinates& operator*=(float &value)
+	inline Coordinates& operator*=(const float &value)
 	{
 		x *= value;
 		y *= value;
@@ -63,14 +63,14 @@ struct Coordinates
 
 	inline Coordinates& operator=(const Coordinates &coords)
 	{
-		this->x = coords.x;
-		this->y = coords.y;
-		this->phi = coords.phi;
+		x = coords.x;
+		y = coords.y;
+		phi = coords.phi;
 		return *this;
 	}
 
-	inline int distance(const Coordinates &coords)
+	inline float distance(const Coordinates &coords)
 	{
-		return static_cast<int>(sqrt(pow(coords.x, 2) + pow(coords.y, 2)));
+		return sqrt(pow(x - coords.x, 2) + pow(y - coords.y, 2));
 	}
 };

@@ -24,6 +24,7 @@ public:
 	};
 	UserControl(Controller&& pController);
 	int run();
+	void addOffset(const Coordinates *pOffset){m_pOffset = pOffset;}
 private:
 	struct Move
 	{
@@ -37,7 +38,7 @@ private:
     MultiButton m_multibutton;
     MouseActions m_mouseActions;
 
-
+	const Coordinates *m_pOffset;
 	Controller m_controller;
 };
 

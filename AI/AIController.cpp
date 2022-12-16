@@ -33,7 +33,7 @@ void AIController::Run()
 	else
 	{
 		Coordinates post = m_posts[m_nextPost];
-		Coordinates difference = post - *m_controller.m_model->m_position;
+		Coordinates difference = post - m_controller.m_model->m_position;
 		Box postBox({100,100},post);
 
 		if (difference.x > 0)
@@ -45,7 +45,7 @@ void AIController::Run()
 		if (difference.y < 0)
 			move.y--;
 
-		if (postBox.Contains(*m_controller.m_model->m_position))
+		if (postBox.Contains(m_controller.m_model->m_position))
 			m_nextPost++;
 
 		if (m_nextPost >= m_posts.size())

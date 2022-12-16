@@ -19,7 +19,7 @@ public:
 
     ScopeDisplay() = delete;
     ScopeDisplay(shared_ptr<Scope> scope);
-    vector<Window2d::Element>& getElements();
+    vector<sf::Sprite>& getSprites();
 
 private:
 
@@ -35,7 +35,7 @@ private:
     static Texture m_void;
 
     shared_ptr<Scope> m_pScope;
-    vector<Window2d::Element> m_elements;
+    vector<sf::Sprite> m_sprites;
     vector<HealthBarData> m_healthBarData;
 
     static bool loadTexture(Texture &texture);

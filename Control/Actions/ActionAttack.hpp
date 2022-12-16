@@ -109,7 +109,7 @@ public:
 
 		for (auto pModel : *pWorld->getModels().get())
 		{
-			if (Box(pModel->getSize(), *pModel->m_position).Contains(target))
+			if (Box(pModel->getSize(), pModel->m_position).Contains(target))
 			{
 				targetFound = true;
 				pTargetModel = pModel;
@@ -125,7 +125,7 @@ public:
 			int ADRatio = 1000 * attacker->m_attack / pTargetModel->m_defence;
 			int Probability = getAttackProbability(ADRatio);
 
-			if (attacker->m_position->distance(*pTargetModel->m_position)
+			if (attacker->m_position.distance(pTargetModel->m_position)
 					> attacker->m_range)
 			{
 				retVal = TARGET_TOO_FAR;
@@ -150,7 +150,6 @@ public:
 				retVal = MISSED;
 			}
 		}
-
 		return retVal;
 	}
 private:

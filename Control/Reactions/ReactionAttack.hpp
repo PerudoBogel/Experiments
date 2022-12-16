@@ -23,7 +23,7 @@ public:
 	{
 		int retVal;
 
-		if (attacker->m_allyFractions == target->m_memberFractions)
+		if (attacker->m_allyFractions & target->m_memberFractions)
 		{
 			retVal = CANNOT_ATTACK;
 		}

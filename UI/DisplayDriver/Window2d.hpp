@@ -14,15 +14,8 @@ public:
     Window2d(Size size);
     ~Window2d();
 
-    struct Element
-    {
-        sf::Sprite sprite;
-        void* pObj;
-        sf::Sprite (*pCallback)(void*);
-    };
-
     void clear();
-    void addElements(vector<Element>& elements);
+    void addSprites(vector<sf::Sprite>& sprites);
     void lock();
 
     bool update();

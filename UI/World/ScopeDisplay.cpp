@@ -47,9 +47,9 @@ ScopeDisplay::Texture ScopeDisplay::m_textures[] = {
     [ISector::TYPE_ROCK] = {sf::Sprite(), sf::Texture(), "GameResources/Sector/Rock.png"}};
 
 ScopeDisplay::Texture ScopeDisplay::m_models[] = {
-    [IModel::TYPE_DOG] = {sf::Sprite(), sf::Texture(), "GameResources/Models/Dog.png"},
-    [IModel::TYPE_HUMAN] = {sf::Sprite(), sf::Texture(), "GameResources/Models/Human.png"},
-    [IModel::TYPE_CAT] = {sf::Sprite(), sf::Texture(), "GameResources/Models/Cat.png"}};
+    [MODEL_TYPE_DOG] = {sf::Sprite(), sf::Texture(), "GameResources/Models/Dog.png"},
+    [MODEL_TYPE_HUMAN] = {sf::Sprite(), sf::Texture(), "GameResources/Models/Human.png"},
+    [MODEL_TYPE_CAT] = {sf::Sprite(), sf::Texture(), "GameResources/Models/Cat.png"}};
 
 ScopeDisplay::Texture ScopeDisplay::m_void = {sf::Sprite(), sf::Texture(), "GameResources/Sector/Void.png"};
 
@@ -91,7 +91,6 @@ bool ScopeDisplay::loadTextures()
 bool ScopeDisplay::draw_map()
 {
     sf::Sprite *Sector;
-    Window2d::Element element;
 
     int scopeStartX = m_pScope->getPosition().x - m_pScope->getSize().w / 2;
     int scopeStartY = m_pScope->getPosition().y - m_pScope->getSize().h / 2;
@@ -105,9 +104,6 @@ bool ScopeDisplay::draw_map()
     int mapWidth = m_pScope->getSize().w / ISector::m_Size.w;
 
     int scopeWidth = (int)(scopeEndXAbsoluteRound-scopeStartXAbsoluteRound)/ISector::m_Size.w;
-
-    element.pCallback = nullptr;
-    element.pObj = nullptr;
 
     if(mapWidth == scopeWidth)
     {
@@ -134,9 +130,7 @@ bool ScopeDisplay::draw_map()
 
             Sector->setPosition(scope_x,scope_y);
 
-            element.sprite = *Sector;
-
-            m_elements.push_back(element);
+            m_sprites.push_back(*Sector);
         }
 
     return true;
@@ -147,12 +141,10 @@ bool ScopeDisplay::draw_entities()
     decltype(Coordinates::x) scopeXOrigin = (m_pScope->getPosition().x - m_pScope->getSize().w / 2);
     decltype(Coordinates::x) scopeYOrigin = (m_pScope->getPosition().y - m_pScope->getSize().h / 2);
         
-    sf::Sprite *Character,HealthBar;
-    sf::Texture *CharacterT,HealthBarT;
-    sf::Image HealthBarI;
+    sf::Sprite *Character;
+    sf::Texture *CharacterT;
     
     HealthBarData healthBarData;
-    Window2d::Element element;
     decltype(Coordinates::x) x,y;
 
     for(auto pCharacter : m_pScope->getCharacters())
@@ -161,8 +153,8 @@ bool ScopeDisplay::draw_entities()
         CharacterT = &m_models[pCharacter->getType()].texture;
 
         //set absolute position;
-        x = pCharacter->m_position->x;
-        y = pCharacter->m_position->y;
+        x = pCharacter->m_position.x;
+        y = pCharacter->m_position.y;
         // set relative position
         x -= scopeXOrigin;
         y -= scopeYOrigin;
@@ -177,21 +169,19 @@ bool ScopeDisplay::draw_entities()
         healthBarData.size = Size(CharacterT->getSize().x, CharacterT->getSize().y / 5);
 
         m_healthBarData.push_back(healthBarData);
-        element.pCallback = makeHealthBar;
-        element.pObj = &m_healthBarData.back();
-        element.sprite = *Character;
-        m_elements.push_back(element);
+        m_sprites.push_back(*Character);
+        m_sprites.push_back(makeHealthBar(&m_healthBarData.back()));
     }
     return true;
 }
 
-vector<Window2d::Element>& ScopeDisplay::getElements()
+vector<sf::Sprite>& ScopeDisplay::getSprites()
 {
-    m_elements.clear();
+    m_sprites.clear();
     m_healthBarData.clear();
 
     draw_map();
     draw_entities();
 
-    return m_elements;
+    return m_sprites;
 }

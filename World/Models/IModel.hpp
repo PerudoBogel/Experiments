@@ -4,18 +4,11 @@
 #include "Size.hpp"
 #include "Coordinates.hpp"
 #include "Fraction.hpp"
+#include "ModelTypes.hpp"
 
 class IModel
 {
 public:
-    enum
-    {
-        TYPE_DOG,
-        TYPE_HUMAN,
-        TYPE_CAT,
-        TYPE_COUNT
-    };
-
 	enum
 	{
 		CONTROL_PLAYER,
@@ -37,7 +30,7 @@ public:
 			m_allyFractions(),
 			m_speed(1),
 			m_size(15,15),
-			m_position(std::make_shared<Coordinates>(Coordinates(0,0)))
+			m_position(0,0)
 	{
 	}
     virtual ~IModel(){};
@@ -45,7 +38,7 @@ public:
     virtual int getType() = 0;
     
     virtual int move(Coordinates step){
-        *m_position += step;
+        m_position += step;
         return 1;
     }
 
@@ -63,7 +56,7 @@ public:
 	m_memberFractions,
 	m_allyFractions;
 	decltype(Coordinates::x) m_speed;
-    std::shared_ptr<Coordinates> m_position;
+    Coordinates m_position;
 
 protected:
     Size m_size;

@@ -81,16 +81,12 @@ void Window2d::clear()
     m_frameReady = false;
 }
 
-void Window2d::addElements(vector<Element>& elements)
+void Window2d::addSprites(vector<sf::Sprite>& sprites)
 {
     auto pDrawBuffer = &m_display;
-    for_each(elements.begin(), elements.end(), [pDrawBuffer](Element element)
+    for_each(sprites.begin(), sprites.end(), [pDrawBuffer](sf::Sprite sprite)
     {
-        pDrawBuffer->draw(element.sprite);
-        if(element.pCallback)
-        {
-            pDrawBuffer->draw(element.pCallback(element.pObj));
-        }
+        pDrawBuffer->draw(sprite);
     });
 }
 

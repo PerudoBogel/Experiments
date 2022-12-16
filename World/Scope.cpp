@@ -18,10 +18,10 @@ Scope::Scope() :
 {
 }
 
-Scope::Scope(std::shared_ptr<World> world, std::shared_ptr<Coordinates> pModel) :
+Scope::Scope(std::shared_ptr<World> world, Coordinates& traceOject) :
 		m_traceActive(true),
         m_pWorld(world),
-        m_pTracedObject(pModel)
+        m_pTracedObject(&traceOject)
 {
 }
 
@@ -30,19 +30,20 @@ void Scope::setWorld(std::shared_ptr<World> world)
     m_pWorld = world;
 }
 
-void Scope::trace(std::shared_ptr<Coordinates> pTraceOject)
+void Scope::trace(Coordinates& traceOject)
 {
-	m_pTracedObject = pTraceOject;
+	m_pTracedObject = &traceOject;
 	m_traceActive = true;
 }
 
-void Scope::setCoordinates(Coordinates position)
+void Scope::setPosition(Coordinates position)
 {
     std::lock_guard<std::mutex> lockGuard(m_mutex);
 
     m_position = position;
     updateCooridinate(m_position.x, m_size.w, m_pWorld->getMap()->m_size.w);
     updateCooridinate(m_position.y, m_size.h, m_pWorld->getMap()->m_size.h);
+    m_offset = m_position - Coordinates(m_size.w/2,m_size.h/2);
 
     update();
 }
@@ -54,6 +55,7 @@ void Scope::move(Coordinates step)
     m_position += step;
     updateCooridinate(m_position.x, m_size.w, m_pWorld->getMap()->m_size.w);
     updateCooridinate(m_position.y, m_size.h, m_pWorld->getMap()->m_size.h);
+    m_offset = m_position - Coordinates(m_size.w/2,m_size.h/2);
 
     update();
 }
@@ -65,6 +67,7 @@ void Scope::setSize(Size size)
     m_size = size;
     updateCooridinate(m_position.x, m_size.w, m_pWorld->getMap()->m_size.w);
     updateCooridinate(m_position.y, m_size.h, m_pWorld->getMap()->m_size.h);
+    m_offset = m_position - Coordinates(m_size.w/2,m_size.h/2);
 
     update();
 }
@@ -76,6 +79,7 @@ void Scope::update()
         m_position = *m_pTracedObject;
 	    updateCooridinate(m_position.x, m_size.w, m_pWorld->getMap()->m_size.w);
 	    updateCooridinate(m_position.y, m_size.h, m_pWorld->getMap()->m_size.h);
+    m_offset = m_position - Coordinates(m_size.w/2,m_size.h/2);
 	}
 
 	m_map = m_pWorld->getMapInBox(Box(m_size, m_position));

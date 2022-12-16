@@ -27,14 +27,14 @@ public:
 	static int Execute(std::shared_ptr<World> pWorld, std::shared_ptr<IModel> pModel, Coordinates coordinates)
 	{
 		int retVal = DONE;
-		Box previousModelBox(pModel->getSize(), *pModel->m_position);
-		Box modelBox(pModel->getSize(), *pModel->m_position + coordinates);
+		Box previousModelBox(pModel->getSize(), pModel->m_position);
+		Box modelBox(pModel->getSize(), pModel->m_position + coordinates);
 		for (auto testModel : *pWorld->getModels().get())
 		{
 			if (testModel.get() == pModel.get())
 				continue;
 
-			Box actorSearchBox(testModel->getSize(), *testModel->m_position);
+			Box actorSearchBox(testModel->getSize(), testModel->m_position);
 			if (modelBox.isCollision(actorSearchBox))
 			{
 				Coordinates push = Box::ColissionDir(previousModelBox,

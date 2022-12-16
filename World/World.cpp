@@ -7,10 +7,10 @@ std::vector<std::shared_ptr<IModel>> World::getModelsInBox(Box box)
 	std::vector<std::shared_ptr<IModel>> outBuffer;
 
 	for (auto model : *m_models.get())
-		if (model->m_position->x >= box.Xmin
-				&& model->m_position->x <= box.Xmax
-				&& model->m_position->y >= box.Ymin
-				&& model->m_position->y <= box.Ymax)
+		if (model->m_position.x >= box.Xmin
+				&& model->m_position.x <= box.Xmax
+				&& model->m_position.y >= box.Ymin
+				&& model->m_position.y <= box.Ymax)
 			outBuffer.push_back(model);
 
 	return outBuffer;

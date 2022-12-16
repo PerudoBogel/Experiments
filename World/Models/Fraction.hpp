@@ -33,6 +33,16 @@ public:
 		m_fractionFlags.clear(fractionType);
 	}
 
+	inline bool operator|(Fraction &fraction)
+	{
+		return m_fractionFlags | fraction.m_fractionFlags;
+	}
+
+	inline bool operator&(Fraction &fraction)
+	{
+		return m_fractionFlags & fraction.m_fractionFlags;
+	}
+
 	inline bool operator==(Fraction &fraction)
 	{
 		return m_fractionFlags == fraction.m_fractionFlags;

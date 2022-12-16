@@ -8,6 +8,7 @@
 #include "UserControl.hpp"
 #include <iostream>
 #include <windowsx.h>
+#include "Debug.hpp"
 
 UserControl::UserControl(Controller &&pController) :
 		m_input(0), m_controller(pController)
@@ -65,7 +66,14 @@ int UserControl::run()
 		std::cout << "x " << GET_X_LPARAM(m_message.lParam)
 				<< " y " << GET_Y_LPARAM(m_message.lParam) << std::endl;
 
-		m_controller.attack(Coordinates(GET_X_LPARAM(m_message.lParam), GET_Y_LPARAM(m_message.lParam)));
+		Coordinates target(GET_X_LPARAM(m_message.lParam), GET_Y_LPARAM(m_message.lParam));
+		if(m_pOffset)
+			target += *m_pOffset;
+
+		DEBUG_DUMP_VAR(target.x);
+		DEBUG_DUMP_VAR(target.y);
+
+		m_controller.attack(target);
 	}
 
 	return retVal;
