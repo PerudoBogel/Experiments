@@ -9,6 +9,7 @@
 #include "ActionAttack.hpp"
 #include "ActionMoveAndPush.hpp"
 #include "ActionMove.hpp"
+#include "Debug.hpp"
 
 Controller::Controller(std::shared_ptr<World> pWorld,
 		std::shared_ptr<IModel> pModel) :
@@ -46,13 +47,26 @@ int Controller::move(Coordinates step)
 	return retVal;
 }
 
-int Controller::attack(Coordinates target)
+int Controller::attack(IModel *target)
 {
-	int retVal;
+	int retVal = DONE;
 
-	if (ActionAttack::Execute(m_pWorld, m_model, target) != ActionAttack::DONE)
+	AttackModel attacker(*m_model.get()), defender(*target);
+
+	if (ActionAttack::Execute(attacker, defender) != ActionAttack::DONE)
 	{
 		retVal = CANNOT_ATTACK;
 	}
 	return retVal;
+}
+
+int Controller::die()
+{
+	delete this;
+	return 1;
+}
+
+int Controller::shoot(Coordinates direction)
+{
+	return 1;
 }

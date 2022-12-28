@@ -4,7 +4,7 @@
 #include "Map.hpp"
 #include "SectorGenerator.hpp"
 #include "Window2d.hpp"
-#include "UserControl.hpp"
+#include "PlayerModelController.hpp"
 #include "TemplateReader.hpp"
 #include "Dog.hpp"
 #include "Human.hpp"
@@ -35,12 +35,12 @@ int main(int argc, char **argv)
 	dog2Model->m_position = Coordinates(30*5, 33*5);
 	dog3Model->m_position = Coordinates(8, 8);
 	humanModel->m_control= IModel::CONTROL_PLAYER;
-	/*cat0->m_control= IModel::CONTROL_AI;
-	cat1->m_control= IModel::CONTROL_AI;
-	cat2->m_control= IModel::CONTROL_AI;
-	dogModel->m_control= IModel::CONTROL_AI;*/
+	// cat0->m_control= IModel::CONTROL_AI;
+	// cat1->m_control= IModel::CONTROL_AI;
+	// cat2->m_control= IModel::CONTROL_AI;
+	// dogModel->m_control= IModel::CONTROL_AI;
 	dog1Model->m_control= IModel::CONTROL_AI;
-	//dog2Model->m_control= IModel::CONTROL_AI;
+	// dog2Model->m_control= IModel::CONTROL_AI;
 
 	unique_ptr<TemplateReader> templateGen = make_unique<
 			TemplateReader>("GameResources/Maps/road.png");
@@ -66,11 +66,11 @@ int main(int argc, char **argv)
 	unique_ptr<AI> ai = make_unique<AI>(world);
 
 	auto pController = ai->getController(dog1Model);
-	pController->AddPost(Coordinates(200, 200));
+	pController->AddPost(Coordinates(1000, 1000));
 	pController->AddPost(Coordinates(600, 600));
 
-	unique_ptr<UserControl> controller = make_unique<UserControl>(
-			Controller(world, world->getPlayer()));
+	unique_ptr<PlayerModelController> controller = make_unique<PlayerModelController>(
+			Controller(world, world->getPlayer()), *scope.get());
 	
 	controller->addOffset(&scope->getOffset());
 
@@ -79,9 +79,8 @@ int main(int argc, char **argv)
 	unique_ptr<ScopeDisplay> scopeDisplay = make_unique<ScopeDisplay>(scope);
 
 	int command;
-	do
+	while (controller->run())
 	{
-		command = controller->run();
 		scope->update();
 		ai->Run();
 		//window->clear();
@@ -90,5 +89,5 @@ int main(int argc, char **argv)
 		window->update();
 		Sleep(1000.0 / 120.0);
 
-	} while (command != UserControl::QUIT);
+	}
 }

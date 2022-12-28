@@ -14,7 +14,8 @@ class MouseActions{
 
 public:
 	MouseActions() :
-			m_rightDown(false)
+			m_rightDown(false),
+			m_leftDown(false)
 	{
 	}
 
@@ -22,11 +23,26 @@ public:
 	{
 		bool retVal = false;
 		if (m_message.message == WM_RBUTTONDOWN)
+		{
 			m_rightDown = true;
-
-		if (m_message.message == WM_RBUTTONUP && m_rightDown)
+		}else if (m_message.message == WM_RBUTTONUP && m_rightDown)
 		{
 			m_rightDown = false;
+			retVal = true;
+		}
+
+		return retVal;
+	}
+	
+	bool isLeftClickDone(const MSG &m_message)
+	{
+		bool retVal = false;
+		if (m_message.message == WM_LBUTTONDOWN)
+		{
+			m_leftDown = true;
+		}else if (m_message.message == WM_LBUTTONUP && m_leftDown)
+		{
+			m_leftDown = false;
 			retVal = true;
 		}
 
@@ -36,6 +52,7 @@ public:
 private:
 
 	bool m_rightDown;
+	bool m_leftDown;
 
 };
 

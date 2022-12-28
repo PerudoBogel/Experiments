@@ -9,37 +9,64 @@
 #define UI_CONTROLLER_USERCONTROL_HPP_
 
 #include <windows.h>
-#include <memory>
-#include "Coordinates.hpp"
-#include "IModel.hpp"
+#include <map>
 #include "MultiButton.hpp"
 #include "MouseActions.hpp"
-#include "Controller.hpp"
+#include "Coordinates.hpp"
+
+using namespace std;
 
 class UserControl{
 public:
-	enum{
-		DONE,
-		QUIT
+
+	enum class KeyAction{
+		KEY_UP,
+		KEY_DOWN,
+		KEY_LEFT,
+		KEY_RIGHT
 	};
-	UserControl(Controller&& pController);
-	int run();
-	void addOffset(const Coordinates *pOffset){m_pOffset = pOffset;}
+
+	enum class MouseAction{
+		MOUSE_CLICK_RIGHT,
+		MOUSE_CLICK_LEFT
+	};
+
+	enum class WindowAction{
+		KEY_QUIT
+	};
+
+	using Callback = void (*)(void* pObj);
+
+	static const map<KeyAction,int> m_keyActionLookup;
+	static const map<WindowAction,int> m_windowActionLookup;
+	
+	UserControl();
+	void run();
+	void registerKeyAction(KeyAction action, Callback callback, void* pObj);
+	void registerMouseAction(MouseAction action, Callback callback, void* pObj);
+	void registerWindowAction(WindowAction action, Callback callback, void* pObj);
+	Coordinates getMouseCoordinates();
+
 private:
-	struct Move
-	{
-		WPARAM m_symbol;
-		Coordinates move;
+	class CallbackExe{
+	public:
+		CallbackExe(){}
+		CallbackExe(Callback callback ,void* pObj):m_callback(callback),m_pObj(pObj){}
+		void operator()(){m_callback(m_pObj);};
+		
+	private:
+		Callback m_callback;
+		void* m_pObj;
 	};
-	char m_input;
-	static Move m_moves[];
 
     MSG m_message;
     MultiButton m_multibutton;
     MouseActions m_mouseActions;
+	Coordinates m_coordinates;
 
-	const Coordinates *m_pOffset;
-	Controller m_controller;
+	map<int,CallbackExe> m_registeredKeyActions;
+	map<int,CallbackExe> m_registeredWindowActions;
+	map<MouseAction,CallbackExe> m_registeredMouseActions;
 };
 
 

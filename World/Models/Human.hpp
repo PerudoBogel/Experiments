@@ -10,7 +10,7 @@ public:
 		m_range = 25;
 		m_health = 10;
 		m_maxHealth = m_health;
-		m_speed = 2.5;
+		m_speed = 2;
 		m_memberFractions.addFraction(Fraction::Type::FRACTION_HUMANS);
 	}
 	~Human()

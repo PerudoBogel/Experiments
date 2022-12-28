@@ -22,7 +22,9 @@ public:
 	};
 	Controller(std::shared_ptr<World> pWorld, std::shared_ptr<IModel> pModel);
 	int move(Coordinates step);
-	int attack(Coordinates target);
+	int attack(IModel *target);
+	int die();
+	int shoot(Coordinates direction);
 	std::shared_ptr<IModel> m_model;
 private:
 	std::shared_ptr<World> m_pWorld;

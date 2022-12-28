@@ -61,6 +61,15 @@ struct Coordinates
 		return Coordinates(tmpX, tmpY, tmpPhi);
 	}
 
+	inline Coordinates operator*(const float &multiply)
+	{
+		auto tmpX = x * multiply;
+		auto tmpY = y * multiply;
+		auto tmpPhi = phi * multiply;
+
+		return Coordinates(tmpX, tmpY, tmpPhi);
+	}
+
 	inline Coordinates& operator=(const Coordinates &coords)
 	{
 		x = coords.x;

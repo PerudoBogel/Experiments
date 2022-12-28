@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+
 #include "Size.hpp"
 #include "Coordinates.hpp"
 #include "Fraction.hpp"

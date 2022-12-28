@@ -19,15 +19,14 @@
 				"World/Map",
 				"World/Map/Sector",
 				"World/Models",
+				"World/Projectiles",
 				"Control",
 				"Control/Actions",
-				"Control/Reactions",
 				"AI",
 				"UI",
 				"UI/DisplayDriver",
 				"UI/ControllerDriver",
-				"UI/HUD",
-				"UI/World",
+				"UI/GameInterface",
 				"Menu",
                 "utils"
             ]

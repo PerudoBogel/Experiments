@@ -27,8 +27,8 @@ void AIController::Run()
 	Coordinates move;
 	if (m_posts.empty())
 	{
-		move.x = Random::get(3) - 1;
-		move.y = Random::get(3) - 1;
+		move.x = Random::get(m_controller.m_model->m_speed * 2) - m_controller.m_model->m_speed;
+		move.y = Random::get(m_controller.m_model->m_speed * 2) - m_controller.m_model->m_speed;
 	}
 	else
 	{
@@ -37,13 +37,13 @@ void AIController::Run()
 		Box postBox({100,100},post);
 
 		if (difference.x > 0)
-			move.x++;
+			move.x = m_controller.m_model->m_speed > difference.x? m_controller.m_model->m_speed : difference.x;
 		if (difference.y > 0)
-			move.y++;
+			move.y = m_controller.m_model->m_speed > difference.y? m_controller.m_model->m_speed : difference.y;
 		if (difference.x < 0)
-			move.x--;
+			move.x = m_controller.m_model->m_speed < difference.x? m_controller.m_model->m_speed : difference.x;
 		if (difference.y < 0)
-			move.y--;
+			move.y = m_controller.m_model->m_speed < difference.y? m_controller.m_model->m_speed : difference.y;
 
 		if (postBox.Contains(m_controller.m_model->m_position))
 			m_nextPost++;
