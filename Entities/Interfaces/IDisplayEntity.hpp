@@ -7,9 +7,11 @@
 class IDisplayEntity: public IEntityBase
 {
 public:
-    int *m_type         = nullptr; 
-    int *m_pHealth      = nullptr;
-    int *m_pMaxHealth   = nullptr;
+    int *m_pType                = nullptr; 
+    int *m_pHealth              = nullptr;
+    int *m_pMaxHealth           = nullptr;
+    Coordinates *m_pPosition    = nullptr;
+    Size *m_pSize               = nullptr;
 
     int m_frameNo;
     int m_frameCount;

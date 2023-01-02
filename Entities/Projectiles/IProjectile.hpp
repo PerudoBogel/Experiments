@@ -3,7 +3,7 @@
 #include "Size.hpp"
 #include "Coordinates.hpp"
 #include "Fraction.hpp"
-#include "ProjectileTypes.hpp"
+#include "EntityTypes.hpp"
 #include "IEntity.hpp"
 
 #include <memory>

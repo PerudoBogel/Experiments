@@ -19,13 +19,13 @@ using namespace std;
 class AIController {
 public:
 	AIController() = delete;
-	AIController(weak_ptr<Controller> pController);
+	AIController(unique_ptr<Controller>&& pController);
 
 	void AddPost(Coordinates &&position);
 
 	void Run();
 
-    weak_ptr<Controller> m_pController;
+    unique_ptr<Controller> m_pController;
 private:
 
     size_t m_nextPost;

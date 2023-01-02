@@ -26,14 +26,14 @@ int main(int argc, char **argv)
 	auto dog1Model = make_shared<Dog>();
 	auto dog2Model = make_shared<Dog>();
 	auto dog3Model = make_shared<Dog>();
-	humanModel->m_position = Coordinates(121 * ISector::m_Size.w/2+23, 81 * ISector::m_Size.h/2+23);
-	cat0->m_position = Coordinates(143*5, 80*5);
-	cat1->m_position = Coordinates(150*5, 81*5);
-	cat2->m_position = Coordinates(153*5, 75*5);
-	dogModel->m_position = Coordinates(30*5, 30*5);
-	dog1Model->m_position = Coordinates(120*5, 60*5);
-	dog2Model->m_position = Coordinates(30*5, 33*5);
-	dog3Model->m_position = Coordinates(8, 8);
+	humanModel->m_position = make_shared<Coordinates>(121 * ISector::m_Size.w/2+23, 81 * ISector::m_Size.h/2+23);
+	cat0->m_position = make_shared<Coordinates>(143*5, 80*5);
+	cat1->m_position = make_shared<Coordinates>(150*5, 81*5);
+	cat2->m_position = make_shared<Coordinates>(153*5, 75*5);
+	dogModel->m_position = make_shared<Coordinates>(30*5, 30*5);
+	dog1Model->m_position = make_shared<Coordinates>(120*5, 60*5);
+	dog2Model->m_position = make_shared<Coordinates>(30*5, 33*5);
+	dog3Model->m_position = make_shared<Coordinates>(8, 8);
 	humanModel->m_control= IModel::CONTROL_PLAYER;
 	// cat0->m_control= IModel::CONTROL_AI;
 	// cat1->m_control= IModel::CONTROL_AI;
@@ -51,16 +51,16 @@ int main(int argc, char **argv)
 
 	shared_ptr<World> world = make_shared<World>();
 	world->setMap(map);
-	world->setModel(dog3Model);
-	world->setModel(humanModel);
-	world->setModel(cat1);
-	world->setModel(cat2);
-	world->setModel(cat0);
-	world->setModel(dogModel);
-	world->setModel(dog1Model);
-	world->setModel(dog2Model);
+	world->setEntity(dog3Model);
+	world->setEntity(humanModel);
+	world->setEntity(cat1);
+	world->setEntity(cat2);
+	world->setEntity(cat0);
+	world->setEntity(dogModel);
+	world->setEntity(dog1Model);
+	world->setEntity(dog2Model);
 
-	shared_ptr<Scope> scope = make_unique<Scope>(world, make_shared<humanModel->m_position>);
+	shared_ptr<Scope> scope = make_shared<Scope>(world, humanModel->m_position);
 	scope->setSize(Size(121 * ISector::m_Size.w, 81 * ISector::m_Size.h));
 
 	unique_ptr<AI> ai = make_unique<AI>(world);
@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 	pController->AddPost(Coordinates(600, 600));
 
 	unique_ptr<PlayerModelController> controller = make_unique<PlayerModelController>(
-			Controller(world, world->getPlayer()), *scope.get());
+			make_unique<Controller>(world, humanModel), scope);
 	
 	controller->addOffset(&scope->getOffset());
 
@@ -88,6 +88,7 @@ int main(int argc, char **argv)
 		window->lock();
 		window->update();
 		Sleep(1000.0 / 120.0);
-
 	}
+
+	cout<<"closing"<<endl;
 }

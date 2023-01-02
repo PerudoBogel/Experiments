@@ -1,5 +1,9 @@
+#pragma once
+
 #include "Scope.hpp"
 #include "Window2d.hpp"
+
+#include <map>
 
 using namespace std;
 
@@ -30,9 +34,8 @@ private:
         string fileName;
     };
 
-    static Texture m_textures[];
-    static Texture m_models[];
-    static Texture m_projectiles[];
+    static map<int, Texture> m_landTextures;
+    static map<int ,Texture> m_entityTextures;
     static Texture m_void;
 
     shared_ptr<Scope> m_pScope;

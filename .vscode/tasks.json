@@ -58,7 +58,7 @@
 				"-I",
                 "utils",
 				"-L",
-				"lib/SFML/lib",
+				"lib/bin",
 				"-lsfml-main",
 				"-lsfml-graphics",
 				"-lsfml-system",

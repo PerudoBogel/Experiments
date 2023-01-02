@@ -1,9 +1,11 @@
 #pragma once
 
-enum
-{
+enum {
+    PROJECTILE_TYPE_ARROW,
+
     MODEL_TYPE_DOG,
     MODEL_TYPE_HUMAN,
     MODEL_TYPE_CAT,
-    MODEL_TYPE_COUNT
+
+    ENTITY_TYPE_COUNT
 };

@@ -1,4 +1,6 @@
 #include "ScopeDisplay.hpp"
+#include "EntityTypes.hpp"
+
 #include <iostream>
 #include <math.h>
 #include <Debug.hpp>
@@ -41,20 +43,21 @@ namespace
 
 }; // namespace
 
-ScopeDisplay::Texture ScopeDisplay::m_textures[] = {
-    [ISector::TYPE_GRASS] = {sf::Sprite(), sf::Texture(), "GameResources/Sector/Grass.png"},
-    [ISector::TYPE_DIRT] = {sf::Sprite(), sf::Texture(), "GameResources/Sector/Dirt.png"},
-    [ISector::TYPE_ROCK] = {sf::Sprite(), sf::Texture(), "GameResources/Sector/Rock.png"}};
-
-ScopeDisplay::Texture ScopeDisplay::m_models[] = {
-    [MODEL_TYPE_DOG] = {sf::Sprite(), sf::Texture(), "GameResources/Models/Dog.png"},
-    [MODEL_TYPE_HUMAN] = {sf::Sprite(), sf::Texture(), "GameResources/Models/Human.png"},
-    [MODEL_TYPE_CAT] = {sf::Sprite(), sf::Texture(), "GameResources/Models/Cat.png"}};
-    
-ScopeDisplay::Texture ScopeDisplay::m_projectiles[] = 
+map<int, ScopeDisplay::Texture> ScopeDisplay::m_landTextures = 
 {
-    [PROJECTILE_TYPE_ARROW] = {sf::Sprite(), sf::Texture(), "GameResources/Projectiles/Arrow.png"}
+    {ISector::TYPE_GRASS,   {sf::Sprite(), sf::Texture(), "GameResources/Sector/Grass.png"  }},
+    {ISector::TYPE_DIRT,    {sf::Sprite(), sf::Texture(), "GameResources/Sector/Dirt.png"   }},
+    {ISector::TYPE_ROCK,    {sf::Sprite(), sf::Texture(), "GameResources/Sector/Rock.png"   }}
 };
+
+map<int, ScopeDisplay::Texture> ScopeDisplay::m_entityTextures = 
+{
+    {PROJECTILE_TYPE_ARROW,     {sf::Sprite(), sf::Texture(), "GameResources/Projectiles/Arrow.png" }},
+    {MODEL_TYPE_DOG,            {sf::Sprite(), sf::Texture(), "GameResources/Models/Dog.png"        }},
+    {MODEL_TYPE_HUMAN,          {sf::Sprite(), sf::Texture(), "GameResources/Models/Human.png"      }},
+    {MODEL_TYPE_CAT,            {sf::Sprite(), sf::Texture(), "GameResources/Models/Cat.png"        }}
+};
+    
 
 ScopeDisplay::Texture ScopeDisplay::m_void = {sf::Sprite(), sf::Texture(), "GameResources/Sector/Void.png"};
 
@@ -79,16 +82,12 @@ bool ScopeDisplay::loadTexture(Texture &texture)
 
 bool ScopeDisplay::loadTextures()
 {
-    for (size_t i = 0; i < sizeof(m_projectiles) / sizeof(m_projectiles[0]); i++)
-        if (!loadTexture(m_projectiles[i]))
-            return false;
-            
-    for (size_t i = 0; i < sizeof(m_models) / sizeof(m_models[0]); i++)
-        if (!loadTexture(m_models[i]))
+    for (size_t i = 0; i < sizeof(m_entityTextures) / sizeof(m_entityTextures[0]); i++)
+        if (!loadTexture(m_entityTextures[i]))
             return false;
 
-    for (size_t i = 0; i < sizeof(m_textures) / sizeof(m_textures[0]); i++)
-        if (!loadTexture(m_textures[i]))
+    for (size_t i = 0; i < sizeof(m_landTextures) / sizeof(m_landTextures[0]); i++)
+        if (!loadTexture(m_landTextures[i]))
             return false;
 
     if (!loadTexture(m_void))
@@ -99,8 +98,6 @@ bool ScopeDisplay::loadTextures()
 
 bool ScopeDisplay::draw_map()
 {
-    sf::Sprite *Sector;
-
     int scopeStartX = m_pScope->getPosition().x - m_pScope->getSize().w / 2;
     int scopeStartY = m_pScope->getPosition().y - m_pScope->getSize().h / 2;
 
@@ -109,10 +106,11 @@ bool ScopeDisplay::draw_map()
     int scopeEndXAbsoluteRound = ((m_pScope->getPosition().x + m_pScope->getSize().w / 2) / ISector::m_Size.w) * ISector::m_Size.w;
     int scopeEndYAbsoluteRound = ((m_pScope->getPosition().y + m_pScope->getSize().h / 2) / ISector::m_Size.h) * ISector::m_Size.h;
 
-    int mapSize = m_pScope->getMap().size();
+    auto lockedMap = m_pScope->getMap().lock();
+    int mapSize = lockedMap->size();
     int mapWidth = m_pScope->getSize().w / ISector::m_Size.w;
 
-    int scopeWidth = (int)(scopeEndXAbsoluteRound-scopeStartXAbsoluteRound)/ISector::m_Size.w;
+    int scopeWidth = (int)(scopeEndXAbsoluteRound - scopeStartXAbsoluteRound) / ISector::m_Size.w;
 
     if(mapWidth == scopeWidth)
     {
@@ -124,82 +122,62 @@ bool ScopeDisplay::draw_map()
         {
             int sectorIndex = mapX  + mapY * mapWidth;
 
+            m_sprites.push_back(sf::Sprite());
+
             if (sectorIndex >= mapSize || sectorIndex < 0)
 
-                Sector = &m_void.sprite;
+                m_sprites.back() = m_void.sprite;
 
-            else if (!m_pScope->getMap()[sectorIndex])
+            else if (!lockedMap->at(sectorIndex))
 
-                Sector = &m_void.sprite;
+                m_sprites.back()  = m_void.sprite;
 
             else
 
-                Sector =
-                    &m_textures[m_pScope->getMap()[sectorIndex]->getType()].sprite;
+                m_sprites.back()  = m_landTextures[lockedMap->at(sectorIndex)->getType()].sprite;
 
-            Sector->setPosition(scope_x,scope_y);
-
-            m_sprites.push_back(*Sector);
+            m_sprites.back().setPosition(scope_x,scope_y);
         }
 
     return true;
 }
 
 bool ScopeDisplay::draw_entities()
-{
-    decltype(Coordinates::x) scopeXOrigin = (m_pScope->getPosition().x - m_pScope->getSize().w / 2);
-    decltype(Coordinates::x) scopeYOrigin = (m_pScope->getPosition().y - m_pScope->getSize().h / 2);
-        
-    sf::Sprite *Character;
-    sf::Texture *CharacterT;
-    
+{        
     HealthBarData healthBarData;
-    decltype(Coordinates::x) x,y;
+    Coordinates position;
 
-    for(auto pCharacter : m_pScope->getCharacters())
+    for(auto pEntity : *m_pScope->getEntities().lock().get())
 	{
-        Character = &m_models[pCharacter->getType()].sprite;
-        CharacterT = &m_models[pCharacter->getType()].texture;
+        auto displayEntity = pEntity.lock()->getIDisplay().lock();
+       
+        m_sprites.push_back(m_entityTextures[*displayEntity->m_pType].sprite);
 
         //set absolute position;
-        x = pCharacter->m_position.x;
-        y = pCharacter->m_position.y;
+        position = *displayEntity->m_pPosition;
         // set relative position
-        x -= scopeXOrigin;
-        y -= scopeYOrigin;
+        position -= m_pScope->getOffset();
         //align texture
-        x -= pCharacter->m_size.w;
-        y -= pCharacter->m_size.h;
-
-		Character->setPosition(x, y);
+        position -= Coordinates(displayEntity->m_pSize->w, displayEntity->m_pSize->h);
         
-        healthBarData.position = Coordinates(x,y);
-        healthBarData.percentage = (pCharacter->m_health * 100) / pCharacter->m_maxHealth;
-        healthBarData.size = Size(CharacterT->getSize().x, CharacterT->getSize().y / 5);
+		m_sprites.back().setPosition(position.x, position.y);
+        m_sprites.back().setRotation(position.phi);
 
-        m_healthBarData.push_back(healthBarData);
-        m_sprites.push_back(*Character);
-        m_sprites.push_back(makeHealthBar(&m_healthBarData.back()));
-    }
-
-    for(auto pWeakProjectile : m_pScope->getProjectiles())
-	{
-        auto pProjectile = pWeakProjectile.lock();
-        auto *pProjectileSprite = &m_projectiles[pProjectile->getType()].sprite;
-
-        //set absolute position;
-        x = pProjectile->m_position.x;
-        y = pProjectile->m_position.y;
-        // set relative position
-        x -= scopeXOrigin;
-        y -= scopeYOrigin;
-        //align texture
-        x -= pProjectile->m_size.w;
-        y -= pProjectile->m_size.h;
-        
-		pProjectileSprite->setPosition(x, y);
-        pProjectileSprite->setRotation(pProjectile->m_position.phi);
-        m_sprites.push_back(*pProjectileSprite);
+        if(!displayEntity->m_pMaxHealth || !displayEntity->m_pHealth)
+        {
+            //no health bar needed
+        }
+        else if(displayEntity->m_pMaxHealth != displayEntity->m_pHealth)
+        {
+            sf::Texture &CharacterT = m_entityTextures[*displayEntity->m_pType].texture;
+    
+            healthBarData.position = Coordinates(position.x,position.y);
+            healthBarData.percentage = (*displayEntity->m_pHealth * 100) / *displayEntity->m_pMaxHealth;
+            healthBarData.size = Size(CharacterT.getSize().x, CharacterT.getSize().y / 5);
+            
+            m_healthBarData.push_back(healthBarData);
+            m_sprites.push_back(makeHealthBar(&m_healthBarData.back()));
+        }
     }
     
     return true;

@@ -1,5 +1,6 @@
 #include "Scope.hpp"
-#include "algorithm"
+
+#include <algorithm>
 #include <iostream>
 
 namespace
@@ -15,8 +16,8 @@ inline void updateCooridinate(decltype(Coordinates::x) &coord, int scSize, declt
 
 void Scope::UpdateCoordinates()
 {
-    updateCooridinate(m_position.x, m_size.w, m_pWorld.lock()->getMap()->m_size.w);
-    updateCooridinate(m_position.y, m_size.h, m_pWorld.lock()->getMap()->m_size.h);
+    updateCooridinate(m_position.x, m_size.w, m_pWorld.lock()->getMap().lock()->m_size.w);
+    updateCooridinate(m_position.y, m_size.h, m_pWorld.lock()->getMap().lock()->m_size.h);
     m_offset = m_position - Coordinates(m_size.w/2,m_size.h/2);
 }
 
@@ -70,5 +71,5 @@ void Scope::update()
 	}
 
 	m_map = m_pWorld.lock()->getMapInBox(Box(m_size, m_position)).lock();
-	m_entities = m_pWorld.lock()->getEntitiesInBox(Box(m_size,m_position)).lock();
+	m_entities = m_pWorld.lock()->getEntitiesInBox(Box(m_size,m_position));
 }

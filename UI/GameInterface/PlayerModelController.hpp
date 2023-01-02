@@ -11,7 +11,8 @@ using namespace std;
 class PlayerModelController
 {
 public:
-    PlayerModelController(weak_ptr<Controller> controller, weak_ptr<Scope> scope);
+    PlayerModelController() = delete;
+    PlayerModelController(unique_ptr<Controller>&& controller, weak_ptr<Scope> scope);
 	void addOffset(const Coordinates *pOffset){m_pOffset = pOffset;}
 
     bool run();
@@ -26,7 +27,7 @@ public:
 
 private:
 
-    weak_ptr<Controller> m_pController;
+    unique_ptr<Controller> m_pController;
     weak_ptr<Scope> m_pScope;
     const Coordinates *m_pOffset;
     UserControl m_control;

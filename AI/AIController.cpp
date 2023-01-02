@@ -12,8 +12,8 @@
 #include "AIController.hpp"
 #include "Random.hpp"
 
-AIController::AIController(weak_ptr<Controller> pController) :
-		m_pController(pController),
+AIController::AIController(unique_ptr<Controller>&& pController) :
+		m_pController(move(pController)),
 		m_nextPost(0)
 {
 }
@@ -24,15 +24,8 @@ void AIController::AddPost(Coordinates &&position)
 }
 
 void AIController::Run()
-{
-	auto lockedController = m_pController.lock();
-	if(!lockedController)
-	{
-		delete this;
-		return;
-	}
-	
-	auto lockedWorldEntity = lockedController->m_pEntity->getIWorld().lock();
+{	
+	auto lockedWorldEntity = m_pController->m_pEntity->getIWorld().lock();
 	if (lockedWorldEntity)
 	{
 		Coordinates move;
@@ -60,7 +53,7 @@ void AIController::Run()
 				m_nextPost = 0;
 		}
 
-		lockedController->move(move);
+		m_pController->move(move);
 	}
 }
 

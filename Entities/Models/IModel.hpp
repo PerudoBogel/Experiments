@@ -3,10 +3,12 @@
 #include "Size.hpp"
 #include "Coordinates.hpp"
 #include "Fraction.hpp"
-#include "ModelTypes.hpp"
+#include "EntityTypes.hpp"
 #include "IEntity.hpp"
 
 #include <memory>
+
+using namespace std;
 
 class IModel: public IEntity
 {
@@ -32,7 +34,7 @@ public:
 			m_speed(1),
 			m_moveStrength(0),
 			m_size(15,15),
-			m_position(0,0)
+			m_position(make_shared<Coordinates>(0,0))
 	{
 	}
     virtual ~IModel(){};
@@ -54,6 +56,6 @@ public:
 
 	decltype(Coordinates::x) m_speed;
     int m_moveStrength;
-    Coordinates m_position;
+    shared_ptr<Coordinates> m_position;
     Size m_size;
 };
