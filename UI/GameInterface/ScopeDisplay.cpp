@@ -50,6 +50,11 @@ ScopeDisplay::Texture ScopeDisplay::m_models[] = {
     [MODEL_TYPE_DOG] = {sf::Sprite(), sf::Texture(), "GameResources/Models/Dog.png"},
     [MODEL_TYPE_HUMAN] = {sf::Sprite(), sf::Texture(), "GameResources/Models/Human.png"},
     [MODEL_TYPE_CAT] = {sf::Sprite(), sf::Texture(), "GameResources/Models/Cat.png"}};
+    
+ScopeDisplay::Texture ScopeDisplay::m_projectiles[] = 
+{
+    [PROJECTILE_TYPE_ARROW] = {sf::Sprite(), sf::Texture(), "GameResources/Projectiles/Arrow.png"}
+};
 
 ScopeDisplay::Texture ScopeDisplay::m_void = {sf::Sprite(), sf::Texture(), "GameResources/Sector/Void.png"};
 
@@ -74,6 +79,10 @@ bool ScopeDisplay::loadTexture(Texture &texture)
 
 bool ScopeDisplay::loadTextures()
 {
+    for (size_t i = 0; i < sizeof(m_projectiles) / sizeof(m_projectiles[0]); i++)
+        if (!loadTexture(m_projectiles[i]))
+            return false;
+            
     for (size_t i = 0; i < sizeof(m_models) / sizeof(m_models[0]); i++)
         if (!loadTexture(m_models[i]))
             return false;
@@ -159,8 +168,8 @@ bool ScopeDisplay::draw_entities()
         x -= scopeXOrigin;
         y -= scopeYOrigin;
         //align texture
-        x -= ISector::m_Size.w;
-        y -= ISector::m_Size.h;
+        x -= pCharacter->m_size.w;
+        y -= pCharacter->m_size.h;
 
 		Character->setPosition(x, y);
         
@@ -172,6 +181,27 @@ bool ScopeDisplay::draw_entities()
         m_sprites.push_back(*Character);
         m_sprites.push_back(makeHealthBar(&m_healthBarData.back()));
     }
+
+    for(auto pWeakProjectile : m_pScope->getProjectiles())
+	{
+        auto pProjectile = pWeakProjectile.lock();
+        auto *pProjectileSprite = &m_projectiles[pProjectile->getType()].sprite;
+
+        //set absolute position;
+        x = pProjectile->m_position.x;
+        y = pProjectile->m_position.y;
+        // set relative position
+        x -= scopeXOrigin;
+        y -= scopeYOrigin;
+        //align texture
+        x -= pProjectile->m_size.w;
+        y -= pProjectile->m_size.h;
+        
+		pProjectileSprite->setPosition(x, y);
+        pProjectileSprite->setRotation(pProjectile->m_position.phi);
+        m_sprites.push_back(*pProjectileSprite);
+    }
+    
     return true;
 }
 

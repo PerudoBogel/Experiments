@@ -60,7 +60,7 @@ int main(int argc, char **argv)
 	world->setModel(dog1Model);
 	world->setModel(dog2Model);
 
-	shared_ptr<Scope> scope = make_unique<Scope>(world, humanModel->m_position);
+	shared_ptr<Scope> scope = make_unique<Scope>(world, make_shared<humanModel->m_position>);
 	scope->setSize(Size(121 * ISector::m_Size.w, 81 * ISector::m_Size.h));
 
 	unique_ptr<AI> ai = make_unique<AI>(world);

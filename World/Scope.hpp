@@ -1,5 +1,4 @@
 #pragma once
-#include <IModel.hpp>
 #include <vector>
 #include <mutex>
 
@@ -7,39 +6,42 @@
 #include "ISector.hpp"
 #include "World.hpp"
 
+using namespace std;
+
 class Scope
 {
 public:
-    Scope();
-    Scope(std::shared_ptr<World> world, Coordinates& pModel);
+    Scope() = delete;
+    Scope(weak_ptr<World> world, weak_ptr<Coordinates> pTracedCoordinates);
 
-    void setWorld(std::shared_ptr<World> world);
+    void setWorld(weak_ptr<World> world);
     void update();
     void setPosition(Coordinates position);
     void move(Coordinates step);
     void setSize(Size size);
 
-    void trace(Coordinates& traceOject);
-	void stopTrace(){ m_traceActive = false;}
+    void trace(weak_ptr<Coordinates> pTracedCoordinates){m_pTracedCoordinates = pTracedCoordinates;}
+	void stopTrace(){ m_pTracedCoordinates.reset();}
 
-    inline std::mutex &getMutex() { return m_mutex; }
+    inline mutex &getMutex() { return m_mutex; }
 
     inline const Coordinates &getPosition() { return m_position;}
     inline const Coordinates &getOffset() { return m_offset;}
 
     inline const Size &getSize() const { return m_size; }
 
-    inline const std::vector<ISector*> &getMap() const { return m_map; }
-    inline const std::vector<std::shared_ptr<IModel>> &getCharacters() const { return m_models; }
+    inline const weak_ptr<vector<unique_ptr<ISector>>> getMap() const { return m_map; }
+    inline const weak_ptr<vector<weak_ptr<IEntity>>> getEntities() const { return m_entities; }
 
 private:
     Coordinates m_position;
     Coordinates m_offset;
-    std::mutex m_mutex;
+    mutex m_mutex;
     Size m_size;
-    std::vector<ISector*> m_map;
-    std::vector<std::shared_ptr<IModel>> m_models;
-    std::shared_ptr<World> m_pWorld;
-    Coordinates* m_pTracedObject;
-    bool m_traceActive;
+    shared_ptr<vector<unique_ptr<ISector>>> m_map;
+    shared_ptr<vector<weak_ptr<IEntity>>> m_entities;
+    weak_ptr<World> m_pWorld;
+    weak_ptr<Coordinates> m_pTracedCoordinates;
+
+    void UpdateCoordinates();
 };

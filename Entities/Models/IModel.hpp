@@ -1,13 +1,14 @@
 #pragma once
 
-#include <memory>
-
 #include "Size.hpp"
 #include "Coordinates.hpp"
 #include "Fraction.hpp"
 #include "ModelTypes.hpp"
+#include "IEntity.hpp"
 
-class IModel
+#include <memory>
+
+class IModel: public IEntity
 {
 public:
 	enum
@@ -18,7 +19,6 @@ public:
 	};
 
 	IModel() :
-			m_moveStrength(0),
 			m_control(CONTROL_NONE),
 			m_health(1),
 			m_maxHealth(1),
@@ -30,6 +30,7 @@ public:
 			m_memberFractions(),
 			m_allyFractions(),
 			m_speed(1),
+			m_moveStrength(0),
 			m_size(15,15),
 			m_position(0,0)
 	{
@@ -38,17 +39,11 @@ public:
 
     virtual int getType() = 0;
     
-    virtual int move(Coordinates step){
-        m_position += step;
-        return 1;
-    }
-
-    inline Size getSize()const{return m_size;}
-
-    int m_moveStrength;
     int m_control;
+
     int m_health;
     int m_maxHealth;
+
     int m_damage;
     int m_attack;
     int m_defence;
@@ -56,9 +51,9 @@ public:
 	Fraction m_enemyFractions,
 	m_memberFractions,
 	m_allyFractions;
-	decltype(Coordinates::x) m_speed;
-    Coordinates m_position;
 
-protected:
+	decltype(Coordinates::x) m_speed;
+    int m_moveStrength;
+    Coordinates m_position;
     Size m_size;
 };

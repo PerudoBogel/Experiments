@@ -9,14 +9,14 @@
 #define CONTROL_ACTIONS_ACTIONATTACK_HPP_
 
 #include "World.hpp"
-#include "IModel.hpp"
 #include "Random.hpp"
+#include "Box.hpp"
+#include "IAttackEntity.hpp"
+#include "Debug.hpp"
+
 #include <vector>
 #include <memory>
 #include <array>
-#include "Box.hpp"
-#include "AttackModel.hpp"
-#include "Debug.hpp"
 
 using namespace std;
 
@@ -96,24 +96,24 @@ namespace
 class ActionAttack
 {
 public:
-	enum
+	enum Status
 	{
 		DONE, TARGET_TOO_FAR, MISSED, CANNOT_ATTACK, NO_TARGET
 	};
 
-	static int Execute(AttackModel &attacker, AttackModel &target)
+	static int Execute(shared_ptr<IAttackEntity> attacker, shared_ptr<IAttackEntity> &target)
 	{
 		int retVal = DONE;
-		int ADRatio = 1000 * (*attacker.m_pAttack) / (*target.m_pDefence);
+		int ADRatio = 1000 * (*attacker->m_pAttack) / (*target->m_pDefence);
 		int Probability = attackChanceLookUp.getAttackProbability(ADRatio);
 		
 		if (attacker == target)
 		{
 			retVal = NO_TARGET;
-		}else if((attacker.m_pPosition != nullptr) && (target.m_pPosition != nullptr))
+		}else if((attacker->m_pPosition != nullptr) && (target->m_pPosition != nullptr))
 		{
-			if (attacker.m_pPosition->distance(*target.m_pPosition)
-					> *attacker.m_pRange)
+			if (attacker->m_pPosition->distance(*target->m_pPosition)
+					> *attacker->m_pRange)
 			{
 				retVal = TARGET_TOO_FAR;
 			}
@@ -125,9 +125,9 @@ public:
 		}else if (Random::get(1000) > Probability )
 		{
 			retVal = MISSED;
-		}else if((attacker.m_pAllyFractions != nullptr) && (target.m_pMemberFractions != nullptr))
+		}else if((attacker->m_pAllyFractions != nullptr) && (target->m_pMemberFractions != nullptr))
 		{
-			if (*attacker.m_pAllyFractions & *target.m_pMemberFractions)
+			if (*attacker->m_pAllyFractions & *target->m_pMemberFractions)
 			{
 				retVal = CANNOT_ATTACK;
 			}
@@ -135,8 +135,9 @@ public:
 		
 		if(retVal == DONE)
 		{
-			*target.m_pHealth -= *attacker.m_pDamage;
-			retVal = DONE;
+			DEBUG_DUMP_VAR(*target->m_pHealth);
+			DEBUG_DUMP_VAR(*attacker->m_pDamage);
+			*target->m_pHealth -= *attacker->m_pDamage;
 		}
 
 		return retVal;

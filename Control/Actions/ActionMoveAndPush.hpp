@@ -8,55 +8,60 @@
 #ifndef ACTIONS_ACTIONMOVEANDPUSH_HPP_
 #define ACTIONS_ACTIONMOVEANDPUSH_HPP_
 
-#include "IModel.hpp"
+#include "IWorldEntity.hpp"
 #include "Coordinates.hpp"
 #include "Box.hpp"
 #include "ReactionPush.hpp"
 #include "ActionMove.hpp"
+
 #include <memory>
 #include <vector>
 
 class ActionMoveAndPush
 {
 public:
-	enum
+	enum Status
 	{
 		DONE, COULDNOT_PUSH, COULDNOT_MOVE
 	};
 
-	static int Execute(std::shared_ptr<World> pWorld, std::shared_ptr<IModel> pModel, Coordinates coordinates)
+	static Status Execute(std::shared_ptr<World> pWorld, std::shared_ptr<IWorldEntity> pWorldEntity, Coordinates coordinates)
 	{
-		int retVal = DONE;
-		Box previousModelBox(pModel->getSize(), pModel->m_position);
-		Box modelBox(pModel->getSize(), pModel->m_position + coordinates);
-		for (auto testModel : *pWorld->getModels().get())
+		Status rVal = DONE;
+		Box currentPlace(*pWorldEntity->m_pSize, *pWorldEntity->m_pPosition);
+		Box newPlace(*pWorldEntity->m_pSize, *pWorldEntity->m_pPosition + coordinates);
+
+		for (auto testModel : *pWorld->getEntitiesInBox(newPlace).get())
 		{
-			if (testModel.get() == pModel.get())
+			auto lockedTestEntity = testModel.lock();
+			if(!lockedTestEntity)
 				continue;
 
-			Box actorSearchBox(testModel->getSize(), testModel->m_position);
-			if (modelBox.isCollision(actorSearchBox))
+			auto lockedTestWorldEntity = lockedTestEntity->getIWorld().lock();
+			if(!lockedTestWorldEntity)
+				continue;
+
+			if (lockedTestWorldEntity.get() == pWorldEntity.get())
+				continue;
+
+			Box actorSearchBox(*lockedTestWorldEntity->m_pSize, *lockedTestWorldEntity->m_pPosition);
+			Coordinates push = Box::ColissionDir(currentPlace, actorSearchBox);
+			if (Coordinates(0, 0) != push)
 			{
-				Coordinates push = Box::ColissionDir(previousModelBox,
-						actorSearchBox);
-				if (Coordinates(0, 0) != push)
+				if (ReactionPush::DONE != ReactionPush::Execute(pWorld, pWorldEntity, lockedTestWorldEntity, push))
 				{
-					if (ReactionPush::Execute(pWorld, pModel, testModel, push) != ReactionPush::DONE)
-					{
-						retVal = COULDNOT_PUSH;
-						break;
-					}
+					rVal = COULDNOT_PUSH;
+					break;
 				}
 			}
 		}
-		if (retVal == DONE)
+		if (rVal == Status::DONE)
 		{
-			retVal = ActionMove::Execute(pWorld, pModel, coordinates);
-			if (retVal != ActionMove::DONE)
-				retVal = COULDNOT_MOVE;
+			if (ActionMove::DONE != ActionMove::Execute(pWorld, pWorldEntity, coordinates))
+				rVal = COULDNOT_MOVE;
 		}
 
-		return retVal;
+		return rVal;
 	}
 private:
 	ActionMoveAndPush() = delete;

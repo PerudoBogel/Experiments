@@ -5,59 +5,78 @@
  *      Author: Jurek
  */
 #include "Controller.hpp"
-#include <math.h>
 #include "ActionAttack.hpp"
 #include "ActionMoveAndPush.hpp"
 #include "ActionMove.hpp"
 #include "Debug.hpp"
+#include "Arrow.hpp"
 
-Controller::Controller(std::shared_ptr<World> pWorld,
-		std::shared_ptr<IModel> pModel) :
-		m_model(pModel), m_pWorld(pWorld)
+#include <assert.h>
+#include <math.h>
+
+Controller::Controller(weak_ptr<World> pWorld,
+		shared_ptr<IEntity> pEntity) :
+		m_pEntity(pEntity), m_pWorld(pWorld)
 {
 }
 
 int Controller::move(Coordinates step)
 {
-	int retVal = DONE;
+	auto lockedWorld = m_pWorld.lock();
+	assert(lockedWorld);
 
-	float vectorLength = sqrt(pow(step.x, 2) + pow(step.y, 2));
-	float scaler = m_model->m_speed / vectorLength;
+	int rVal = DONE;
 
-	step *= scaler;
+	auto lockedWorldEntity = m_pEntity->getIWorld().lock();
 
-	if (step != Coordinates(0, 0))
+	if(lockedWorldEntity)
 	{
-		if (ActionMoveAndPush::Execute(m_pWorld, m_model, step)
-				== ActionMoveAndPush::DONE)
+		float vectorLength = sqrt(pow(step.x, 2) + pow(step.y, 2));
+		float scaler = *lockedWorldEntity->m_pSpeed / vectorLength;
+		step *= scaler;
+
+		if (step != Coordinates(0, 0))
 		{
+			if (ActionMoveAndPush::Execute(lockedWorld, lockedWorldEntity, step)
+					== ActionMoveAndPush::DONE)
+			{
+			}
+			else if (ActionMoveAndPush::Execute(lockedWorld, lockedWorldEntity,
+					Coordinates(step.x, 0)) == ActionMoveAndPush::DONE)
+			{
+			}
+			else if (ActionMoveAndPush::Execute(lockedWorld, lockedWorldEntity,
+					Coordinates(0, step.y)) == ActionMoveAndPush::DONE)
+			{
+			}
+			else
+			{
+				rVal = CANNOT_MOVE;
+			}
 		}
-		else if (ActionMoveAndPush::Execute(m_pWorld, m_model,
-				Coordinates(step.x, 0)) == ActionMoveAndPush::DONE)
-		{
-		}
-		else if (ActionMoveAndPush::Execute(m_pWorld, m_model,
-				Coordinates(0, step.y)) == ActionMoveAndPush::DONE)
-		{
-		}
-		else
-			retVal = CANNOT_MOVE;
+	}else{
+		rVal = CANNOT_MOVE;
 	}
 
-	return retVal;
+	return rVal;
 }
 
-int Controller::attack(IModel *target)
+int Controller::attack(shared_ptr<IEntity> pTarget)
 {
-	int retVal = DONE;
+	int rVal = DONE;
 
-	AttackModel attacker(*m_model.get()), defender(*target);
 
-	if (ActionAttack::Execute(attacker, defender) != ActionAttack::DONE)
+	auto attacker = m_pEntity->getIAttack().lock();
+	auto defender = pTarget->getIAttack().lock();
+
+	if(attacker && defender)
 	{
-		retVal = CANNOT_ATTACK;
+		if (ActionAttack::Execute(attacker, defender) != ActionAttack::DONE)
+		{
+			rVal = CANNOT_ATTACK;
+		}
 	}
-	return retVal;
+	return rVal;
 }
 
 int Controller::die()
@@ -66,7 +85,19 @@ int Controller::die()
 	return 1;
 }
 
-int Controller::shoot(Coordinates direction)
+int Controller::shoot(float direction)
 {
+	auto lockedWorld = m_pWorld.lock();
+	assert(lockedWorld);
+
+	auto lockedWorldEntity = m_pEntity->getIWorld().lock();
+	assert(lockedWorldEntity);
+
+    auto arrow = make_shared<Arrow>();
+    arrow->m_position = *lockedWorldEntity->m_pPosition;
+	arrow->m_position.phi = direction;
+
+	lockedWorld->setEntity(static_cast<shared_ptr<IEntity>>(arrow));
+
 	return 1;
 }

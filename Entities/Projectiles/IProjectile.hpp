@@ -1,23 +1,23 @@
 #pragma once
 
-#include <memory>
 #include "Size.hpp"
 #include "Coordinates.hpp"
 #include "Fraction.hpp"
 #include "ProjectileTypes.hpp"
+#include "IEntity.hpp"
 
-class IProjectile
+#include <memory>
+
+class IProjectile: public IEntity
 {
 public:
 	enum
 	{
-		CONTROL_PLAYER,
-		CONTROL_AI,
-		CONTROL_NONE
+		TRAJECTORY_LINEAR
 	};
 
 	IProjectile() :
-			m_trajectory(CONTROL_NONE),
+			m_trajectory(TRAJECTORY_LINEAR),
 			m_health(1),
 			m_maxHealth(1),
 			m_damage(1),
@@ -33,13 +33,6 @@ public:
 
     virtual int getType() = 0;
     
-    virtual int move(Coordinates step){
-        m_position += step;
-        return 1;
-    }
-
-    inline Size getSize()const{return m_size;}
-
     int m_trajectory;
     int m_health;
     int m_maxHealth;
@@ -49,7 +42,7 @@ public:
     int m_range;
 	decltype(Coordinates::x) m_speed;
     Coordinates m_position;
+    Size m_size;
 
 protected:
-    Size m_size;
 };

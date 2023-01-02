@@ -32,6 +32,7 @@ private:
 
     static Texture m_textures[];
     static Texture m_models[];
+    static Texture m_projectiles[];
     static Texture m_void;
 
     shared_ptr<Scope> m_pScope;

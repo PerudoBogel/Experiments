@@ -2,32 +2,25 @@
 #include <iostream>
 #include <algorithm>
 
-std::vector<std::shared_ptr<IModel>> World::getModelsInBox(Box box)
+shared_ptr<vector<weak_ptr<IEntity>>> World::getEntitiesInBox(Box box)
 {
-	std::vector<std::shared_ptr<IModel>> outBuffer;
+	auto rVector = shared_ptr<vector<weak_ptr<IEntity>>>();
 
-	for (auto model : *m_models.get())
-		if (model->m_position.x >= box.Xmin
-				&& model->m_position.x <= box.Xmax
-				&& model->m_position.y >= box.Ymin
-				&& model->m_position.y <= box.Ymax)
-			outBuffer.push_back(model);
+	for (auto pEntity : *m_entities.get())
+	{
+		auto pWorldEntity = pEntity->getIWorld().lock();
+		Box projectileBox(*pWorldEntity->m_pSize, *pWorldEntity->m_pPosition);
 
-	return outBuffer;
+		if (box.isCollision(projectileBox))
+		{
+			rVector->push_back(pEntity);
+		}
+	}
+	return rVector;
 }
 
-void World::setModel(std::shared_ptr<IModel> pModel)
+void World::setEntity(std::shared_ptr<IEntity> pEntity)
 {
-	if (std::find((*m_models).begin(), (*m_models).end(), pModel) == (*m_models).end())
-		m_models->push_back(pModel);
-}
-
-std::shared_ptr<IModel> World::getPlayer()
-{
-	std::shared_ptr<IModel> player;
-	for (auto model : *m_models.get())
-		if (model->m_control == IModel::CONTROL_PLAYER)
-			player = model;
-
-	return player;
+	if (std::find((*m_entities).begin(), (*m_entities).end(), pEntity) == (*m_entities).end())
+		m_entities->push_back(pEntity);
 }

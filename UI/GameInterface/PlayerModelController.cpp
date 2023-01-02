@@ -1,9 +1,16 @@
 #include "PlayerModelController.hpp"
 #include "Debug.hpp"
 
-PlayerModelController::PlayerModelController(Controller controller, Scope &scope):
-    m_controller(controller),
-    m_scope(scope),
+#include <assert.h>
+#include <cmath>
+
+using namespace std;
+
+const float PI = 3.141592653589793238462643383279502884;
+
+PlayerModelController::PlayerModelController(weak_ptr<Controller> controller, weak_ptr<Scope> scope):
+    m_pController(controller),
+    m_pScope(scope),
     m_isRunning(true)
 {
 	m_control.registerKeyAction(UserControl::KeyAction::KEY_UP,(UserControl::Callback)&PlayerModelController::actionUpKey,this);
@@ -19,13 +26,20 @@ PlayerModelController::PlayerModelController(Controller controller, Scope &scope
 
 bool PlayerModelController::run()
 {
+    auto lockedController = m_pController.lock();
+    assert(lockedController);
+    auto lockedEntity = lockedController->m_pEntity.lock();
+    assert(lockedEntity);
+    auto lockedWorldEntity = lockedEntity->getIWorld().lock();
+    assert(lockedWorldEntity);
+
     m_movement = Coordinates(0,0);
     m_control.run();
-		
+
     if (m_movement != Coordinates(0, 0))
     {
-        m_movement *= m_controller.m_model->m_speed;
-		m_controller.move(m_movement);
+        m_movement *= *lockedWorldEntity->m_pSpeed;
+		lockedController->move(m_movement);
     }
     return m_isRunning;
 }
@@ -33,21 +47,54 @@ bool PlayerModelController::run()
 void PlayerModelController::actionRightClick(void* pObj)
 {
     PlayerModelController *pThis = static_cast<PlayerModelController*>(pObj);
+
+    auto lockedController = pThis->m_pController.lock();
+    assert(lockedController);
+    auto lockedEntity = lockedController->m_pEntity.lock();
+    assert(lockedEntity);
+    auto lockedWorldEntity = lockedEntity->getIWorld().lock();
+    assert(lockedWorldEntity);
+
+    auto lockedScope = pThis->m_pScope.lock();
+    assert(lockedScope);
+
 	Coordinates direction = pThis->m_control.getMouseCoordinates();
-	direction -= pThis->m_controller.m_model->m_position;
+    direction += lockedScope->getOffset();
+	direction -= *lockedWorldEntity->m_pPosition;
+
+    auto rotation = atan(direction.y/ direction.x) / (2 * PI) * 360;
+
+    if(direction.x < 0)
+    {
+        rotation += 180;
+    }
+
+    lockedController->shoot(rotation);
 }
 void PlayerModelController::actionLeftClick(void* pObj)
 {
     PlayerModelController *pThis = static_cast<PlayerModelController*>(pObj);
+
+    auto lockedController = pThis->m_pController.lock();
+    assert(lockedController);
+    auto lockedEntity = lockedController->m_pEntity.lock();
+    assert(lockedEntity);
+    auto lockedWorldEntity = lockedEntity->getIWorld().lock();
+    assert(lockedWorldEntity);
+
+    auto lockedScope = pThis->m_pScope.lock();
+    assert(lockedScope);
+
     Coordinates target = pThis->m_control.getMouseCoordinates();
 	if(pThis->m_pOffset)
 		target += *pThis->m_pOffset;
 	
-	for (auto pModel : pThis->m_scope.getCharacters())
+	for (auto pEntity : *lockedScope->getEntities().lock().get())
 	{
-		if (Box(pModel->getSize(), pModel->m_position).Contains(target))
+        auto lockedEntity = pEntity.lock();
+		if (Box(*lockedWorldEntity->m_pSize, *lockedWorldEntity->m_pPosition).Contains(target) && lockedEntity)
 		{
-	        pThis->m_controller.attack(pModel.get());
+	        lockedController->attack(lockedEntity.get());
 			break;
 		}
 	}

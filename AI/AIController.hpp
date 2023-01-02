@@ -8,21 +8,24 @@
 #ifndef UI_CONTROLLER_AICONTROLLER_HPP_
 #define UI_CONTROLLER_AICONTROLLER_HPP_
 
-#include <memory>
-#include <vector>
 #include "Coordinates.hpp"
 #include "Controller.hpp"
+
+#include <memory>
+#include <vector>
+
+using namespace std;
 
 class AIController {
 public:
 	AIController() = delete;
-	AIController(Controller controller);
+	AIController(weak_ptr<Controller> pController);
 
 	void AddPost(Coordinates &&position);
 
 	void Run();
 
-    Controller m_controller;
+    weak_ptr<Controller> m_pController;
 private:
 
     size_t m_nextPost;

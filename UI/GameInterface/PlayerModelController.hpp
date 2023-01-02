@@ -4,10 +4,14 @@
 #include "Scope.hpp"
 #include "UserControl.hpp"
 
+#include <memory>
+
+using namespace std;
+
 class PlayerModelController
 {
 public:
-    PlayerModelController(Controller controller, Scope &scope);
+    PlayerModelController(weak_ptr<Controller> controller, weak_ptr<Scope> scope);
 	void addOffset(const Coordinates *pOffset){m_pOffset = pOffset;}
 
     bool run();
@@ -22,8 +26,8 @@ public:
 
 private:
 
-    Controller m_controller;
-    Scope &m_scope;
+    weak_ptr<Controller> m_pController;
+    weak_ptr<Scope> m_pScope;
     const Coordinates *m_pOffset;
     UserControl m_control;
 

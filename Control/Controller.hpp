@@ -8,10 +8,12 @@
 #ifndef UI_CONTROLLER_CONTROLLER_HPP_
 #define UI_CONTROLLER_CONTROLLER_HPP_
 
-#include "IModel.hpp"
+#include "IEntity.hpp"
 #include "World.hpp"
 #include "Coordinates.hpp"
 #include <memory>
+
+using namespace std;
 
 class Controller{
 public:
@@ -20,14 +22,17 @@ public:
 		CANNOT_MOVE,
 		CANNOT_ATTACK
 	};
-	Controller(std::shared_ptr<World> pWorld, std::shared_ptr<IModel> pModel);
+
+	Controller(weak_ptr<World> pWorld, shared_ptr<IEntity> pEntity);
+	
 	int move(Coordinates step);
-	int attack(IModel *target);
+	int attack(shared_ptr<IEntity> pTarget);
 	int die();
-	int shoot(Coordinates direction);
-	std::shared_ptr<IModel> m_model;
+	int shoot(float direction);
+
+	shared_ptr<IEntity> m_pEntity;
 private:
-	std::shared_ptr<World> m_pWorld;
+	weak_ptr<World> m_pWorld;
 };
 
 #endif /* UI_CONTROLLER_CONTROLLER_HPP_ */
