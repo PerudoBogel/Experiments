@@ -25,11 +25,11 @@ public:
 		DONE, COULDNOT_PUSH, COULDNOT_MOVE
 	};
 
-	static Status Execute(std::shared_ptr<World> pWorld, std::shared_ptr<IWorldEntity> pWorldEntity, Coordinates coordinates)
+	static Status Execute(std::shared_ptr<World> pWorld, std::shared_ptr<IMoveEntity> pMoveEntity, Coordinates coordinates)
 	{
 		Status rVal = DONE;
-		Box currentPlace(*pWorldEntity->m_pSize, *pWorldEntity->m_pPosition);
-		Box newPlace(*pWorldEntity->m_pSize, *pWorldEntity->m_pPosition + coordinates);
+		Box currentPlace(*pMoveEntity->m_pSize, *pMoveEntity->m_pPosition);
+		Box newPlace(*pMoveEntity->m_pSize, *pMoveEntity->m_pPosition + coordinates);
 
 		for (auto testModel : *pWorld->getEntitiesInBox(newPlace).get())
 		{
@@ -37,18 +37,21 @@ public:
 			if(!lockedTestEntity)
 				continue;
 
-			auto lockedTestWorldEntity = lockedTestEntity->getIWorld().lock();
-			if(!lockedTestWorldEntity)
+			auto lockedTestMoveEntity = lockedTestEntity->getIMove().lock();
+			if(!lockedTestMoveEntity)
 				continue;
 
-			if (lockedTestWorldEntity.get() == pWorldEntity.get())
+			if (lockedTestMoveEntity.get() == pMoveEntity.get())
 				continue;
 
-			Box actorSearchBox(*lockedTestWorldEntity->m_pSize, *lockedTestWorldEntity->m_pPosition);
+			if (!lockedTestMoveEntity->m_isCollidable)
+				continue;
+
+			Box actorSearchBox(*lockedTestMoveEntity->m_pSize, *lockedTestMoveEntity->m_pPosition);
 			Coordinates push = Box::ColissionDir(currentPlace, actorSearchBox);
 			if (Coordinates(0, 0) != push)
 			{
-				if (ReactionPush::DONE != ReactionPush::Execute(pWorld, pWorldEntity, lockedTestWorldEntity, push))
+				if (ReactionPush::DONE != ReactionPush::Execute(pWorld, pMoveEntity, lockedTestMoveEntity, push))
 				{
 					rVal = COULDNOT_PUSH;
 					break;
@@ -57,7 +60,7 @@ public:
 		}
 		if (rVal == Status::DONE)
 		{
-			if (ActionMove::DONE != ActionMove::Execute(pWorld, pWorldEntity, coordinates))
+			if (ActionMove::DONE != ActionMove::Execute(pWorld, pMoveEntity, coordinates))
 				rVal = COULDNOT_MOVE;
 		}
 

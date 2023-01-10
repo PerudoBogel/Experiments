@@ -3,23 +3,16 @@
 #include "Size.hpp"
 #include "Coordinates.hpp"
 #include "Fraction.hpp"
-#include "EntityTypes.hpp"
 #include "IEntity.hpp"
+#include "EntityTypes.hpp"
 
 #include <memory>
 
 class IProjectile: public IEntity
 {
 public:
-	enum
-	{
-		TRAJECTORY_LINEAR
-	};
 
 	IProjectile() :
-			m_trajectory(TRAJECTORY_LINEAR),
-			m_health(1),
-			m_maxHealth(1),
 			m_damage(1),
 			m_attack(1),
 			m_defence(1),
@@ -28,14 +21,30 @@ public:
 			m_size(4,4),
 			m_position(0,0)
 	{
+		m_pIAttack->m_pAttack = &m_attack;
+		m_pIAttack->m_pDamage = &m_damage;
+		m_pIAttack->m_pDefence = &m_attack;
+		m_pIAttack->m_pPosition = &m_position;
+		m_pIAttack->m_pRange = &m_range;
+
+		m_pIDisplay->m_pPosition = &m_position;
+		m_pIDisplay->m_pSize = &m_size;
+		m_pIDisplay->m_pType = &m_type;
+		
+		m_pIWorld->m_pPosition = &m_position;
+		m_pIWorld->m_pSize = &m_size;
+		m_pIWorld->m_pType = &m_type;
+		
+		m_pIMove->m_isCollidable = false;
+		m_pIMove->m_pPosition = &m_position;
+		m_pIMove->m_pSize = &m_size;
+		m_pIMove->m_pSpeed = &m_speed;
+		
+		m_pIControl->m_controller = CONTROL_PROJECTILE;
 	}
     virtual ~IProjectile(){};
-
-    virtual int getType() = 0;
     
-    int m_trajectory;
-    int m_health;
-    int m_maxHealth;
+	int m_type;
     int m_damage;
     int m_attack;
     int m_defence;

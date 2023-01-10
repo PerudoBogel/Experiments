@@ -12,6 +12,7 @@ public:
     int *m_pDefence                 = nullptr;
     int *m_pAttack                  = nullptr;
     int *m_pDamage                  = nullptr;
+    bool m_isAlive                  = true;
     Fraction *m_pAllyFractions      = nullptr; 
     Fraction *m_pMemberFractions    = nullptr;
     Coordinates *m_pPosition        = nullptr;

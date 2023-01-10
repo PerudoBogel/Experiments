@@ -28,7 +28,7 @@ public:
 	{
 	}
 
-	weak_ptr<vector<ISector*>> getBox(Box mapBox)
+	shared_ptr<vector<ISector*>> getBox(Box mapBox)
 	{
 	    shared_ptr<vector<ISector*>> rVector = make_shared<vector<ISector*>>();
 

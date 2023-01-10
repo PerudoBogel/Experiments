@@ -27,7 +27,7 @@ UserControl::UserControl()
 	m_message.message = static_cast<UINT>(~WM_QUIT);
 }
 
-void UserControl::run()
+void UserControl::Run()
 {
 	while (PeekMessage(&m_message, NULL, 0, 0, PM_REMOVE))
 	{
@@ -75,11 +75,11 @@ void UserControl::run()
 	}
 }
 
-Coordinates UserControl::getMouseCoordinates(){
+Coordinates UserControl::GetMouseCoordinates(){
 	return m_coordinates;
 }
 
-void UserControl::registerKeyAction(KeyAction action, Callback callback ,void* pObj)
+void UserControl::RegisterKeyAction(KeyAction action, Callback callback ,void* pObj)
 {
 	try{
 		int key = m_keyActionLookup.at(action);
@@ -87,7 +87,7 @@ void UserControl::registerKeyAction(KeyAction action, Callback callback ,void* p
 	}catch(const out_of_range data){(void)data;}
 }
 
-void UserControl::registerWindowAction(WindowAction action, Callback callback ,void* pObj)
+void UserControl::RegisterWindowAction(WindowAction action, Callback callback ,void* pObj)
 {
 	try{
 		int key = m_windowActionLookup.at(action);
@@ -95,7 +95,7 @@ void UserControl::registerWindowAction(WindowAction action, Callback callback ,v
 	}catch(const out_of_range data){(void)data;}
 }
 
-void UserControl::registerMouseAction(MouseAction action, Callback callback, void* pObj)
+void UserControl::RegisterMouseAction(MouseAction action, Callback callback, void* pObj)
 {
 	m_registeredMouseActions[action] = CallbackExe(callback ,pObj);
 }

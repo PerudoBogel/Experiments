@@ -8,14 +8,15 @@
 
 using namespace std;
 
-class PlayerModelController
+class PlayerModelController: public Controller
 {
 public:
     PlayerModelController() = delete;
-    PlayerModelController(unique_ptr<Controller>&& controller, weak_ptr<Scope> scope);
+    PlayerModelController(weak_ptr<World> pWorld, weak_ptr<IEntity> pEntity, weak_ptr<Scope> pScope);
 	void addOffset(const Coordinates *pOffset){m_pOffset = pOffset;}
 
-    bool run();
+    void Run();
+	ControllerType GetType(){return CONTROL_PLAYER;}
 
     static void actionRightClick(void* pObj);
     static void actionLeftClick(void* pObj);
@@ -27,11 +28,9 @@ public:
 
 private:
 
-    unique_ptr<Controller> m_pController;
     weak_ptr<Scope> m_pScope;
     const Coordinates *m_pOffset;
     UserControl m_control;
 
     Coordinates m_movement;
-    bool m_isRunning;
 };

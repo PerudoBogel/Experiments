@@ -1,13 +1,13 @@
 #pragma once
 #include "IProjectile.hpp"
+#include "TrajectoryTypes.hpp"
 
 class Arrow: public IProjectile
 {
 public:
     Arrow()
     {
-        m_speed = 3;
+        m_speed = 5;
+        m_pIControl->m_customData = TRAJECTORY_LINE;
     }
-
-    int getType(){return PROJECTILE_TYPE_ARROW;}
 };

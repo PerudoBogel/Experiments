@@ -16,16 +16,16 @@
 
 using namespace std;
 
-class AIController {
+class AIController: public Controller
+{
 public:
 	AIController() = delete;
-	AIController(unique_ptr<Controller>&& pController);
+	AIController(weak_ptr<World> pWorld, weak_ptr<IEntity> pEntity);
 
 	void AddPost(Coordinates &&position);
 
 	void Run();
-
-    unique_ptr<Controller> m_pController;
+	ControllerType GetType(){return CONTROL_AI;}
 private:
 
     size_t m_nextPost;

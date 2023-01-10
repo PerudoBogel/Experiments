@@ -83,11 +83,10 @@ void Window2d::clear()
 
 void Window2d::addSprites(vector<sf::Sprite>& sprites)
 {
-    auto pDrawBuffer = &m_display;
-    for_each(sprites.begin(), sprites.end(), [pDrawBuffer](sf::Sprite sprite)
+    for(auto sprite : sprites)
     {
-        pDrawBuffer->draw(sprite);
-    });
+        m_display.draw(sprite);
+    }
 }
 
 void Window2d::lock()

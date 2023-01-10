@@ -82,11 +82,11 @@ bool ScopeDisplay::loadTexture(Texture &texture)
 
 bool ScopeDisplay::loadTextures()
 {
-    for (size_t i = 0; i < sizeof(m_entityTextures) / sizeof(m_entityTextures[0]); i++)
+    for (size_t i = 0; i < m_entityTextures.size(); i++)
         if (!loadTexture(m_entityTextures[i]))
             return false;
 
-    for (size_t i = 0; i < sizeof(m_landTextures) / sizeof(m_landTextures[0]); i++)
+    for (size_t i = 0; i < m_landTextures.size(); i++)
         if (!loadTexture(m_landTextures[i]))
             return false;
 
@@ -122,19 +122,12 @@ bool ScopeDisplay::draw_map()
         {
             int sectorIndex = mapX  + mapY * mapWidth;
 
-            m_sprites.push_back(sf::Sprite());
-
             if (sectorIndex >= mapSize || sectorIndex < 0)
-
-                m_sprites.back() = m_void.sprite;
-
+                m_sprites.push_back(m_void.sprite);
             else if (!lockedMap->at(sectorIndex))
-
-                m_sprites.back()  = m_void.sprite;
-
+                m_sprites.push_back(m_void.sprite);
             else
-
-                m_sprites.back()  = m_landTextures[lockedMap->at(sectorIndex)->getType()].sprite;
+                m_sprites.push_back(m_landTextures[lockedMap->at(sectorIndex)->getType()].sprite);
 
             m_sprites.back().setPosition(scope_x,scope_y);
         }
@@ -158,7 +151,7 @@ bool ScopeDisplay::draw_entities()
         // set relative position
         position -= m_pScope->getOffset();
         //align texture
-        position -= Coordinates(displayEntity->m_pSize->w, displayEntity->m_pSize->h);
+        position -= Coordinates(displayEntity->m_pSize->w/2, displayEntity->m_pSize->h/2);
         
 		m_sprites.back().setPosition(position.x, position.y);
         m_sprites.back().setRotation(position.phi);
@@ -167,13 +160,11 @@ bool ScopeDisplay::draw_entities()
         {
             //no health bar needed
         }
-        else if(displayEntity->m_pMaxHealth != displayEntity->m_pHealth)
-        {
-            sf::Texture &CharacterT = m_entityTextures[*displayEntity->m_pType].texture;
-    
+        else if(*displayEntity->m_pMaxHealth != *displayEntity->m_pHealth)
+        {    
             healthBarData.position = Coordinates(position.x,position.y);
             healthBarData.percentage = (*displayEntity->m_pHealth * 100) / *displayEntity->m_pMaxHealth;
-            healthBarData.size = Size(CharacterT.getSize().x, CharacterT.getSize().y / 5);
+            healthBarData.size = Size(displayEntity->m_pSize->w, displayEntity->m_pSize->h / 5);
             
             m_healthBarData.push_back(healthBarData);
             m_sprites.push_back(makeHealthBar(&m_healthBarData.back()));

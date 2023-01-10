@@ -3,6 +3,7 @@
 #include "Size.hpp"
 #include "ISector.hpp"
 #include "World.hpp"
+#include "IWorldEntity.hpp"
 
 #include <vector>
 #include <mutex>
@@ -13,7 +14,7 @@ class Scope
 {
 public:
     Scope() = delete;
-    Scope(weak_ptr<World> world, weak_ptr<Coordinates> pTracedCoordinates);
+    Scope(weak_ptr<World> world, weak_ptr<IWorldEntity> pTraced);
 
     void setWorld(weak_ptr<World> world);
     void update();
@@ -21,18 +22,18 @@ public:
     void move(Coordinates step);
     void setSize(Size size);
 
-    void trace(weak_ptr<Coordinates> pTracedCoordinates){m_pTracedCoordinates = pTracedCoordinates;}
-	void stopTrace(){ m_pTracedCoordinates.reset();}
+    void trace(weak_ptr<IWorldEntity> pTraced){m_pTraced = pTraced;}
+	void stopTrace(){ m_pTraced.reset();}
 
-    inline mutex &getMutex() { return m_mutex; }
+    mutex &getMutex() { return m_mutex; }
 
-    inline const Coordinates &getPosition() { return m_position;}
-    inline const Coordinates &getOffset() { return m_offset;}
+    const Coordinates &getPosition() { return m_position;}
+    const Coordinates &getOffset() { return m_offset;}
 
-    inline const Size &getSize() const { return m_size; }
+    const Size &getSize() const { return m_size; }
 
-    inline const weak_ptr<vector<ISector*>> getMap() const { return m_map; }
-    inline const weak_ptr<vector<weak_ptr<IEntity>>> getEntities() const { return m_entities; }
+    weak_ptr<vector<ISector*>> getMap() const { return m_map; }
+    weak_ptr<vector<weak_ptr<IEntity>>> getEntities() const { return m_entities; }
 
 private:
     Coordinates m_position;
@@ -42,7 +43,7 @@ private:
     shared_ptr<vector<ISector*>> m_map;
     shared_ptr<vector<weak_ptr<IEntity>>> m_entities;
     weak_ptr<World> m_pWorld;
-    weak_ptr<Coordinates> m_pTracedCoordinates;
+    weak_ptr<IWorldEntity> m_pTraced;
 
     void UpdateCoordinates();
 };

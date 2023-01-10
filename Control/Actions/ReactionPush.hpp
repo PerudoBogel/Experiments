@@ -21,7 +21,7 @@ public:
 		DONE, CANNOT_BE_MOVED, CANNOT_MOVE
 	};
 
-	static Status Execute(std::shared_ptr<World> pWorld, std::shared_ptr<IWorldEntity> pPushingModel, std::shared_ptr<IWorldEntity> pPushedModel, Coordinates coordinates)
+	static Status Execute(std::shared_ptr<World> pWorld, std::shared_ptr<IMoveEntity> pPushingModel, std::shared_ptr<IMoveEntity> pPushedModel, Coordinates coordinates)
 	{
 		Status retVal = CANNOT_BE_MOVED;
 

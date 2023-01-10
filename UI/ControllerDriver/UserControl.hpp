@@ -41,11 +41,11 @@ public:
 	static const map<WindowAction,int> m_windowActionLookup;
 	
 	UserControl();
-	void run();
-	void registerKeyAction(KeyAction action, Callback callback, void* pObj);
-	void registerMouseAction(MouseAction action, Callback callback, void* pObj);
-	void registerWindowAction(WindowAction action, Callback callback, void* pObj);
-	Coordinates getMouseCoordinates();
+	void Run();
+	void RegisterKeyAction(KeyAction action, Callback callback, void* pObj);
+	void RegisterMouseAction(MouseAction action, Callback callback, void* pObj);
+	void RegisterWindowAction(WindowAction action, Callback callback, void* pObj);
+	Coordinates GetMouseCoordinates();
 
 private:
 	class CallbackExe{

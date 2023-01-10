@@ -13,11 +13,6 @@ public:
 		m_maxHealth = m_health;
 		m_memberFractions.addFraction(Fraction::Type::FRACTION_DOGS);
 		m_speed = 1;
+		m_type = MODEL_TYPE_DOG;
 	}
-	~Dog()
-	{
-	}
-
-    int getType()override{return MODEL_TYPE_DOG;}
-
 };

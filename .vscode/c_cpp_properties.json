@@ -23,12 +23,14 @@
 				"Entities/Models",
 				"Entities/Projectiles",
 				"Control",
+				"Control/Controllers",
 				"Control/Actions",
-				"AI",
+				"Control/AI",
+                "Control/Player",
+                "Control/Projectile",
 				"UI",
 				"UI/DisplayDriver",
 				"UI/ControllerDriver",
-				"UI/GameInterface",
 				"Menu",
                 "utils"
             ]

@@ -12,11 +12,6 @@ public:
 		m_maxHealth = m_health;
 		m_speed = 2;
 		m_memberFractions.addFraction(Fraction::Type::FRACTION_HUMANS);
+		m_type = MODEL_TYPE_HUMAN;
 	}
-	~Human()
-	{
-	}
-
-    int getType()override{return MODEL_TYPE_HUMAN;}
-
 };

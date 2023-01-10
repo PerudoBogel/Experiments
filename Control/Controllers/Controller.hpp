@@ -11,6 +11,7 @@
 #include "IEntity.hpp"
 #include "World.hpp"
 #include "Coordinates.hpp"
+
 #include <memory>
 
 using namespace std;
@@ -23,16 +24,23 @@ public:
 		CANNOT_ATTACK
 	};
 
-	Controller(weak_ptr<World> pWorld, shared_ptr<IEntity> pEntity);
+	Controller() = delete;
+	Controller(weak_ptr<World> pWorld, weak_ptr<IEntity> pEntity);
+	virtual ~Controller(){}
 	
-	int move(Coordinates step);
-	int attack(shared_ptr<IEntity> pTarget);
-	int die();
-	int shoot(float direction);
+	virtual void Run();
+	virtual ControllerType GetType(){return CONTROL_NONE;}
 
-	shared_ptr<IEntity> m_pEntity;
-private:
+	int Move(Coordinates step);
+	int Attack(shared_ptr<IEntity> pTarget);
+	void Die();
+	int Shoot(float direction);
+	bool IfAlive(){return m_isAlive;};
+
+protected:
+	weak_ptr<IEntity> m_pEntity;
 	weak_ptr<World> m_pWorld;
+	bool m_isAlive;
 };
 
 #endif /* UI_CONTROLLER_CONTROLLER_HPP_ */

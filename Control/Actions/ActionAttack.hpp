@@ -110,7 +110,8 @@ public:
 		if (attacker == target)
 		{
 			retVal = NO_TARGET;
-		}else if((attacker->m_pPosition != nullptr) && (target->m_pPosition != nullptr))
+		}
+		else if((attacker->m_pPosition != nullptr) && (target->m_pPosition != nullptr))
 		{
 			if (attacker->m_pPosition->distance(*target->m_pPosition)
 					> *attacker->m_pRange)
@@ -122,10 +123,12 @@ public:
 		if(retVal != DONE)
 		{
 			//nothing just pass
-		}else if (Random::get(1000) > Probability )
+		}
+		else if (Random::get(1000) > Probability )
 		{
 			retVal = MISSED;
-		}else if((attacker->m_pAllyFractions != nullptr) && (target->m_pMemberFractions != nullptr))
+		}
+		else if((attacker->m_pAllyFractions != nullptr) && (target->m_pMemberFractions != nullptr))
 		{
 			if (*attacker->m_pAllyFractions & *target->m_pMemberFractions)
 			{
@@ -135,9 +138,12 @@ public:
 		
 		if(retVal == DONE)
 		{
-			DEBUG_DUMP_VAR(*target->m_pHealth);
-			DEBUG_DUMP_VAR(*attacker->m_pDamage);
 			*target->m_pHealth -= *attacker->m_pDamage;
+			
+			if(0 >= *target->m_pHealth)
+			{
+				target->m_isAlive = false;
+			}
 		}
 
 		return retVal;

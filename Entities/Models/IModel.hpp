@@ -3,8 +3,8 @@
 #include "Size.hpp"
 #include "Coordinates.hpp"
 #include "Fraction.hpp"
-#include "EntityTypes.hpp"
 #include "IEntity.hpp"
+#include "EntityTypes.hpp"
 
 #include <memory>
 
@@ -13,35 +13,49 @@ using namespace std;
 class IModel: public IEntity
 {
 public:
-	enum
-	{
-		CONTROL_PLAYER,
-		CONTROL_AI,
-		CONTROL_NONE
-	};
-
 	IModel() :
-			m_control(CONTROL_NONE),
 			m_health(1),
 			m_maxHealth(1),
 			m_damage(1),
 			m_attack(1),
 			m_defence(1),
 			m_range(1),
-			m_enemyFractions(),
 			m_memberFractions(),
 			m_allyFractions(),
 			m_speed(1),
 			m_moveStrength(0),
 			m_size(15,15),
-			m_position(make_shared<Coordinates>(0,0))
+			m_position(0,0)
 	{
+		m_pIAttack->m_pAllyFractions = &m_allyFractions;
+		m_pIAttack->m_pAttack = &m_attack;
+		m_pIAttack->m_pDamage = &m_damage;
+		m_pIAttack->m_pDefence = &m_attack;
+		m_pIAttack->m_pHealth = &m_health;
+		m_pIAttack->m_pMemberFractions = &m_memberFractions;
+		m_pIAttack->m_pPosition = &m_position;
+		m_pIAttack->m_pRange = &m_range;
+
+		m_pIDisplay->m_pHealth = &m_health;
+		m_pIDisplay->m_pMaxHealth = &m_maxHealth;
+		m_pIDisplay->m_pPosition = &m_position;
+		m_pIDisplay->m_pSize = &m_size;
+		m_pIDisplay->m_pType = &m_type;
+		
+		m_pIWorld->m_pPosition = &m_position;
+		m_pIWorld->m_pSize = &m_size;
+		m_pIWorld->m_pType = &m_type;
+
+		m_pIMove->m_pMoveStrength = &m_moveStrength;
+		m_pIMove->m_pPosition = &m_position;
+		m_pIMove->m_pSize = &m_size;
+		m_pIMove->m_pSpeed = &m_speed;
+
+		m_pIControl->m_controller = CONTROL_NONE;
 	}
     virtual ~IModel(){};
 
-    virtual int getType() = 0;
-    
-    int m_control;
+    int m_type;
 
     int m_health;
     int m_maxHealth;
@@ -50,12 +64,11 @@ public:
     int m_attack;
     int m_defence;
     int m_range;
-	Fraction m_enemyFractions,
-	m_memberFractions,
-	m_allyFractions;
+	Fraction m_memberFractions,	m_allyFractions;
 
 	decltype(Coordinates::x) m_speed;
     int m_moveStrength;
-    shared_ptr<Coordinates> m_position;
+    Coordinates m_position;
     Size m_size;
+
 };

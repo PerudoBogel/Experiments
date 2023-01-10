@@ -21,10 +21,11 @@ void Scope::UpdateCoordinates()
     m_offset = m_position - Coordinates(m_size.w/2,m_size.h/2);
 }
 
-Scope::Scope(weak_ptr<World> world, weak_ptr<Coordinates> pTracedCoordinates):
+Scope::Scope(weak_ptr<World> world, weak_ptr<IWorldEntity> pTraced):
         m_pWorld(world),
-        m_pTracedCoordinates(pTracedCoordinates)
+        m_pTraced(pTraced)
 {
+    update();
 }
 
 void Scope::setWorld(weak_ptr<World> world)
@@ -63,13 +64,15 @@ void Scope::setSize(Size size)
 
 void Scope::update()
 {
-    auto pTraced = m_pTracedCoordinates.lock();
+    auto pTraced = m_pTraced.lock();
 	if(pTraced)
     {
-        m_position = *pTraced.get();
+        m_position = *pTraced->m_pPosition;
         UpdateCoordinates();
 	}
 
-	m_map = m_pWorld.lock()->getMapInBox(Box(m_size, m_position)).lock();
+    m_map.reset();
+	m_map = m_pWorld.lock()->getMapInBox(Box(m_size, m_position));
+    m_entities.reset();
 	m_entities = m_pWorld.lock()->getEntitiesInBox(Box(m_size,m_position));
 }

@@ -24,7 +24,7 @@ public:
 		DONE, CANNOT_MOVE, END_OF_MAP
 	};
 
-	static bool isEndOfWorld(std::shared_ptr<World> pWorld, std::shared_ptr<IWorldEntity> pEntity, Coordinates coordinates)
+	static bool isEndOfWorld(std::shared_ptr<World> pWorld, std::shared_ptr<IMoveEntity> pEntity, Coordinates coordinates)
 	{
 		auto lockedMap = pWorld->getMap().lock();
 		assert(lockedMap);
@@ -38,7 +38,7 @@ public:
 		else if (modelBox.Xmin < 0 || modelBox.Ymin < 0)
 			rVal = true;
 
-		auto mapField = lockedMap->getBox(modelBox).lock();
+		auto mapField = lockedMap->getBox(modelBox);
 		for (auto mapSector : *mapField.get())
 			if (!mapSector)
 				rVal = true;
@@ -46,7 +46,7 @@ public:
 		return rVal;
 	}
 
-	static bool isPlaceTaken(std::shared_ptr<World> pWorld, std::shared_ptr<IWorldEntity> pEntity, Coordinates coordinates)
+	static bool isPlaceTaken(std::shared_ptr<World> pWorld, std::shared_ptr<IMoveEntity> pEntity, Coordinates coordinates)
 	{
 		bool rVal = false;
 
@@ -57,11 +57,14 @@ public:
 		{
 			for (auto testModel : *lockedEntities.get())
 			{
-				auto lockedTestWorldEntity = testModel->getIWorld().lock();
+				auto lockedTestWorldEntity = testModel.second->getIMove().lock();
 				if(!lockedTestWorldEntity)
 					continue;
 
 				if (lockedTestWorldEntity.get() == pEntity.get())
+					continue;
+
+				if(!lockedTestWorldEntity->m_isCollidable)
 					continue;
 				
 				Box testModelBox(*lockedTestWorldEntity->m_pSize, *lockedTestWorldEntity->m_pPosition);
@@ -76,7 +79,7 @@ public:
 		return rVal;
 	}
 
-	static Status Execute(std::shared_ptr<World> pWorld, std::shared_ptr<IWorldEntity> pEntity, Coordinates coordinates)
+	static Status Execute(std::shared_ptr<World> pWorld, std::shared_ptr<IMoveEntity> pEntity, Coordinates coordinates)
 	{
 		Status rVal = DONE;
 
