@@ -123,9 +123,11 @@ bool ScopeDisplay::draw_map()
             int sectorIndex = mapX  + mapY * mapWidth;
 
             if (sectorIndex >= mapSize || sectorIndex < 0)
-                m_sprites.push_back(m_void.sprite);
+                //m_sprites.push_back(m_void.sprite);
+                continue;
             else if (!lockedMap->at(sectorIndex))
-                m_sprites.push_back(m_void.sprite);
+                //m_sprites.push_back(m_void.sprite);
+                continue;
             else
                 m_sprites.push_back(m_landTextures[lockedMap->at(sectorIndex)->getType()].sprite);
 

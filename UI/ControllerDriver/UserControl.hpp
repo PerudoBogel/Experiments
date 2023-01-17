@@ -8,11 +8,14 @@
 #ifndef UI_CONTROLLER_USERCONTROL_HPP_
 #define UI_CONTROLLER_USERCONTROL_HPP_
 
-#include <windows.h>
-#include <map>
 #include "MultiButton.hpp"
 #include "MouseActions.hpp"
 #include "Coordinates.hpp"
+#include "Window2d.hpp"
+
+#include <windows.h>
+#include <map>
+#include <memory>
 
 using namespace std;
 
@@ -27,8 +30,14 @@ public:
 	};
 
 	enum class MouseAction{
-		MOUSE_CLICK_RIGHT,
-		MOUSE_CLICK_LEFT
+		MOUSE_PRESS_RIGHT,
+		MOUSE_DOWN_RIGHT,
+		MOUSE_RELEASE_RIGHT,
+		MOUSE_UP_RIGHT,
+		MOUSE_PRESS_LEFT,
+		MOUSE_DOWN_LEFT,
+		MOUSE_RELEASE_LEFT,
+		MOUSE_UP_LEFT
 	};
 
 	enum class WindowAction{
@@ -39,8 +48,10 @@ public:
 
 	static const map<KeyAction,int> m_keyActionLookup;
 	static const map<WindowAction,int> m_windowActionLookup;
-	
-	UserControl();
+	static const map<MouseAction,int> m_mouseActionLookup;
+
+	UserControl() = delete;
+	UserControl(Window2d* pWindow);
 	void Run();
 	void RegisterKeyAction(KeyAction action, Callback callback, void* pObj);
 	void RegisterMouseAction(MouseAction action, Callback callback, void* pObj);
@@ -59,14 +70,13 @@ private:
 		void* m_pObj;
 	};
 
-    MSG m_message;
     MultiButton m_multibutton;
     MouseActions m_mouseActions;
-	Coordinates m_coordinates;
+	Window2d* m_pWindow;
 
 	map<int,CallbackExe> m_registeredKeyActions;
 	map<int,CallbackExe> m_registeredWindowActions;
-	map<MouseAction,CallbackExe> m_registeredMouseActions;
+	map<int,CallbackExe> m_registeredMouseActions;
 };
 
 

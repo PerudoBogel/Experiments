@@ -6,7 +6,6 @@
  */
 #include "Controller.hpp"
 #include "ActionAttack.hpp"
-#include "ActionMoveAndPush.hpp"
 #include "ActionMove.hpp"
 #include "Debug.hpp"
 #include "Arrow.hpp"
@@ -21,7 +20,14 @@ Controller::Controller(weak_ptr<World> pWorld,
 {
 }
 
-int Controller::Move(Coordinates step)
+int Controller::Move(Coordinates step, bool allowSlide)
+{
+	std::shared_ptr<IEntity> dummy;
+
+	return Move(step, dummy, allowSlide);
+}
+
+int Controller::Move(Coordinates step, std::shared_ptr<IEntity> &pCollisionEntity, bool allowSlide)
 {
 	int rVal = CANNOT_MOVE;
 
@@ -36,27 +42,24 @@ int Controller::Move(Coordinates step)
 	{
 		auto lockedMoveEntity = lockedEntity->getIMove().lock();
 
-		float vectorLength = sqrt(pow(step.x, 2) + pow(step.y, 2));
-		float scaler = *lockedMoveEntity->m_pSpeed / vectorLength;
-		step *= scaler;
-
 		if (step != Coordinates(0, 0))
 		{
-			if (ActionMoveAndPush::Execute(lockedWorld, lockedMoveEntity, step)
-					== ActionMoveAndPush::DONE)
+			if (ActionMove::Execute(lockedWorld, lockedMoveEntity, step, pCollisionEntity)
+					== ActionMove::DONE)
 			{
 				rVal = DONE;
 			}
-			else if (ActionMoveAndPush::Execute(lockedWorld, lockedMoveEntity,
-					Coordinates(step.x, 0)) == ActionMoveAndPush::DONE)
-			{
-				rVal = DONE;
-			}
-			else if (ActionMoveAndPush::Execute(lockedWorld, lockedMoveEntity,
-					Coordinates(0, step.y)) == ActionMoveAndPush::DONE)
-			{
-				rVal = DONE;
-			}
+			else if(allowSlide)
+				if (ActionMove::Execute(lockedWorld, lockedMoveEntity,
+						Coordinates(step.x, 0), pCollisionEntity) == ActionMove::DONE)
+				{
+					rVal = DONE;
+				}
+				else if (ActionMove::Execute(lockedWorld, lockedMoveEntity,
+						Coordinates(0, step.y), pCollisionEntity) == ActionMove::DONE)
+				{
+					rVal = DONE;
+				}
 		}
 	}
 
@@ -97,7 +100,7 @@ void Controller::Die()
 	m_isAlive = false;
 }
 
-int Controller::Shoot(float direction)
+int Controller::Shoot(Coordinates &direction)
 {
 	auto lockedWorld = m_pWorld.lock();
 	auto lockedEntity = m_pEntity.lock();
@@ -109,10 +112,16 @@ int Controller::Shoot(float direction)
 	if(m_isAlive)
 	{
 		auto lockedWorldEntity = lockedEntity->getIWorld().lock();
+		auto startOffset = max(lockedWorldEntity->m_pSize->h,lockedWorldEntity->m_pSize->w);
+
+		auto rotationRad = atan(direction.y/ direction.x) ;
+        if(direction.x < 0)
+            rotationRad += PI;
 
 		auto arrow = make_shared<Arrow>();
 		arrow->m_position = *lockedWorldEntity->m_pPosition;
-		arrow->m_position.phi = direction;
+		arrow->m_position.phi = rotationRad / (2 * PI) * 360;
+		arrow->m_position += Coordinates(startOffset * cos(rotationRad), startOffset * sin(rotationRad)); 
 
 		lockedWorld->setEntity(static_cast<shared_ptr<IEntity>>(arrow));
 	}

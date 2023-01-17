@@ -5,9 +5,10 @@
 
 using namespace std;
 
-PlayerModelController::PlayerModelController(weak_ptr<World> pWorld, weak_ptr<IEntity> pEntity, weak_ptr<Scope> pScope):
+PlayerModelController::PlayerModelController(weak_ptr<World> pWorld, weak_ptr<IEntity> pEntity, weak_ptr<Scope> pScope, Window2d* pWindow):
 	Controller(pWorld, pEntity),
-    m_pScope(pScope)
+    m_pScope(pScope),
+    m_control(pWindow)
 {
 	m_control.RegisterKeyAction(UserControl::KeyAction::KEY_UP,(UserControl::Callback)&PlayerModelController::actionUpKey,this);
 	m_control.RegisterKeyAction(UserControl::KeyAction::KEY_DOWN,(UserControl::Callback)&PlayerModelController::actionDownKey,this);
@@ -16,8 +17,8 @@ PlayerModelController::PlayerModelController(weak_ptr<World> pWorld, weak_ptr<IE
 
 	m_control.RegisterWindowAction(UserControl::WindowAction::KEY_QUIT,(UserControl::Callback)&PlayerModelController::actionQuit,this);
     
-	m_control.RegisterMouseAction(UserControl::MouseAction::MOUSE_CLICK_RIGHT,(UserControl::Callback)&PlayerModelController::actionRightClick,this);
-	m_control.RegisterMouseAction(UserControl::MouseAction::MOUSE_CLICK_LEFT,(UserControl::Callback)&PlayerModelController::actionLeftClick,this);
+	m_control.RegisterMouseAction(UserControl::MouseAction::MOUSE_DOWN_RIGHT,(UserControl::Callback)&PlayerModelController::actionRightClick,this);
+	m_control.RegisterMouseAction(UserControl::MouseAction::MOUSE_PRESS_LEFT,(UserControl::Callback)&PlayerModelController::actionLeftClick,this);
 }
 
 void PlayerModelController::Run()
@@ -58,14 +59,7 @@ void PlayerModelController::actionRightClick(void* pObj)
         direction += lockedScope->getOffset();
         direction -= *worldEntity->m_pPosition;
 
-        auto rotation = atan(direction.y/ direction.x) / (2 * PI) * 360;
-
-        if(direction.x < 0)
-        {
-            rotation += 180;
-        }
-
-        pThis->Shoot(rotation);
+        pThis->Shoot(direction);
     }
 }
 void PlayerModelController::actionLeftClick(void* pObj)

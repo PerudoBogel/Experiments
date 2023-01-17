@@ -3,6 +3,7 @@
 #include "Controller.hpp"
 #include "Scope.hpp"
 #include "UserControl.hpp"
+#include "Window2d.hpp"
 
 #include <memory>
 
@@ -12,7 +13,7 @@ class PlayerModelController: public Controller
 {
 public:
     PlayerModelController() = delete;
-    PlayerModelController(weak_ptr<World> pWorld, weak_ptr<IEntity> pEntity, weak_ptr<Scope> pScope);
+    PlayerModelController(weak_ptr<World> pWorld, weak_ptr<IEntity> pEntity, weak_ptr<Scope> pScope, Window2d* pWindow);
 	void addOffset(const Coordinates *pOffset){m_pOffset = pOffset;}
 
     void Run();

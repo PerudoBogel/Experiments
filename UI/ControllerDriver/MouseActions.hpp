@@ -8,52 +8,70 @@
 #ifndef UI_CONTROLLER_MOUSEACTIONS_HPP_
 #define UI_CONTROLLER_MOUSEACTIONS_HPP_
 
-#include <windows.h>
+#include "Debug.hpp"
+#include "SFML/Window.hpp"
 
 class MouseActions{
 
 public:
+
+	enum {
+		STATE_NONE,
+		STATE_R_PRESSED,
+		STATE_R_DOWN,
+		STATE_R_RELEASED,
+		STATE_R_UP,
+		STATE_L_PRESSED,
+		STATE_L_DOWN,
+		STATE_L_RELEASED,
+		STATE_L_UP
+	};
+
 	MouseActions() :
-			m_rightDown(false),
-			m_leftDown(false)
+			m_rightState(STATE_NONE),
+			m_leftState(STATE_NONE)
 	{
 	}
 
-	bool isRigthClickDone(const MSG &m_message)
+	void updateEvent(const sf::Event &event)
 	{
-		bool retVal = false;
-		if (m_message.message == WM_RBUTTONDOWN)
+		if (event.type == sf::Event::MouseButtonPressed)
 		{
-			m_rightDown = true;
-		}else if (m_message.message == WM_RBUTTONUP && m_rightDown)
-		{
-			m_rightDown = false;
-			retVal = true;
+			if(event.mouseButton.button == sf::Mouse::Button::Left)
+				m_leftState = STATE_L_PRESSED;
+			else if (event.mouseButton.button == sf::Mouse::Button::Right)
+				m_rightState = STATE_R_PRESSED;
 		}
-
-		return retVal;
-	}
-	
-	bool isLeftClickDone(const MSG &m_message)
-	{
-		bool retVal = false;
-		if (m_message.message == WM_LBUTTONDOWN)
+		else if (event.type == sf::Event::MouseButtonReleased)
 		{
-			m_leftDown = true;
-		}else if (m_message.message == WM_LBUTTONUP && m_leftDown)
-		{
-			m_leftDown = false;
-			retVal = true;
+			if(event.mouseButton.button == sf::Mouse::Button::Left)
+				m_leftState = STATE_L_RELEASED;
+			else if (event.mouseButton.button == sf::Mouse::Button::Right)
+				m_rightState = STATE_R_RELEASED;
 		}
-
-		return retVal;
+		else if(event.type == sf::Event::MouseMoved)
+		{
+			m_x = event.mouseMove.x;
+			m_y = event.mouseMove.y;
+		}
 	}
 
-private:
+	void Run()
+	{
+		if(m_rightState == STATE_R_PRESSED)
+			m_rightState = STATE_R_DOWN;
+		else if(m_rightState == STATE_R_RELEASED)
+			m_rightState = STATE_R_UP;
 
-	bool m_rightDown;
-	bool m_leftDown;
+		if(m_leftState == STATE_L_PRESSED)
+			m_leftState = STATE_L_DOWN;
+		else if(m_leftState == STATE_L_RELEASED)
+			m_leftState = STATE_L_UP;
+	}
 
+	int m_rightState;
+	int m_leftState;
+	int m_x,m_y;
 };
 
 #endif /* UI_CONTROLLER_MOUSEACTIONS_HPP_ */

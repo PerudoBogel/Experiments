@@ -25,8 +25,19 @@ void ProjectileController::Run()
     if(lockedEntity)
     {
         auto MoveEntity = lockedEntity->getIMove().lock();
-        *MoveEntity->m_pPosition += m_pTrajectory->makeStep();
-        if(!m_pTrajectory->ifInRange())
+        auto moveStep = m_pTrajectory->makeStep();
+        shared_ptr<IEntity> collissionEntity;
+
+        if(Move(moveStep, collissionEntity, false) != DONE)
+        {
+            if(collissionEntity)
+            {
+                Attack(collissionEntity);
+                Die();
+            }
+        }
+
+        if(!m_pTrajectory->ifInRange() && m_isAlive)
         {
             Die();
         }
