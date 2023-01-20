@@ -24,7 +24,7 @@ public:
 			m_allyFractions(),
 			m_speed(1),
 			m_moveStrength(0),
-			m_size(15,15),
+			m_size(25,25),
 			m_position(0,0)
 	{
 		m_pIAttack->m_pAllyFractions = &m_allyFractions;
@@ -70,5 +70,17 @@ public:
     int m_moveStrength;
     Coordinates m_position;
     Size m_size;
+	
+protected:
+    IAttackEntity 	m_IAttack;
+    IDisplayEntity 	m_IDisplay;
+    IWorldEntity 	m_IWorld;
+    IMoveEntity		m_IMove;
+    IControlEntity 	m_IControl;
 
+    IAttackEntity  	*m_pIAttack		=	&m_IAttack;
+    IDisplayEntity	*m_pIDisplay	=	&m_IDisplay;
+    IWorldEntity	*m_pIWorld		=	&m_IWorld;
+    IMoveEntity		*m_pIMove		=	&m_IMove;
+    IControlEntity	*m_pIControl	=	&m_IControl;
 };

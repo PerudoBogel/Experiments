@@ -36,7 +36,7 @@ private:
 
     static map<int, Texture> m_landTextures;
     static map<int ,Texture> m_entityTextures;
-    static Texture m_void;
+    //static Texture m_void;
 
     shared_ptr<Scope> m_pScope;
     vector<sf::Sprite> m_sprites;

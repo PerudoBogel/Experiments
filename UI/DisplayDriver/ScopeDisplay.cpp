@@ -59,7 +59,7 @@ map<int, ScopeDisplay::Texture> ScopeDisplay::m_entityTextures =
 };
     
 
-ScopeDisplay::Texture ScopeDisplay::m_void = {sf::Sprite(), sf::Texture(), "GameResources/Sector/Void.png"};
+//ScopeDisplay::Texture ScopeDisplay::m_void = {sf::Sprite(), sf::Texture(), "GameResources/Sector/Void.png"};
 
 ScopeDisplay::ScopeDisplay(std::shared_ptr<Scope> scope) : m_pScope(scope)
 {
@@ -90,8 +90,8 @@ bool ScopeDisplay::loadTextures()
         if (!loadTexture(m_landTextures[i]))
             return false;
 
-    if (!loadTexture(m_void))
-        return false;
+    // if (!loadTexture(m_void))
+    //     return false;
 
     return true;
 }
@@ -158,7 +158,10 @@ bool ScopeDisplay::draw_entities()
 		m_sprites.back().setPosition(position.x, position.y);
         m_sprites.back().setRotation(position.phi);
 
-        if(!displayEntity->m_pMaxHealth || !displayEntity->m_pHealth)
+        m_sprites.back().setScale(displayEntity->m_pSize->w/m_entityTextures[*displayEntity->m_pType].texture.getSize().x, 
+            displayEntity->m_pSize->h/m_entityTextures[*displayEntity->m_pType].texture.getSize().y);
+
+        if(displayEntity->m_pMaxHealth == nullptr || displayEntity->m_pHealth == nullptr)
         {
             //no health bar needed
         }

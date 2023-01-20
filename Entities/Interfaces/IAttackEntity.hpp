@@ -1,12 +1,14 @@
 #pragma once
 
-#include "IEntityBase.hpp"
+#include "EntityBase.hpp"
 #include "Fraction.hpp"
 #include "Coordinates.hpp"
 
-class IAttackEntity: public IEntityBase
+class IAttackEntity: public EntityBase
 {
 public:
+    IAttackEntity(void* pObj):EntityBase(pObj){};
+    
     int *m_pHealth                  = nullptr;
     int *m_pRange                   = nullptr;
     int *m_pDefence                 = nullptr;

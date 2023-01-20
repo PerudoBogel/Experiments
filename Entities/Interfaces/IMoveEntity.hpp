@@ -1,11 +1,13 @@
 #pragma once
 
-#include "IEntityBase.hpp"
+#include "EntityBase.hpp"
 #include "Coordinates.hpp"
 
-class IMoveEntity: public IEntityBase
+class IMoveEntity: public EntityBase
 {
 public:
+    IMoveEntity(void* pObj):EntityBase(pObj){};
+    
 	decltype(Coordinates::x) *m_pSpeed  = nullptr;
     int *m_pMoveStrength                = nullptr;
     Coordinates *m_pPosition            = nullptr;

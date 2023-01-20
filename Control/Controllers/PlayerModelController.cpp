@@ -17,7 +17,7 @@ PlayerModelController::PlayerModelController(weak_ptr<World> pWorld, weak_ptr<IE
 
 	m_control.RegisterWindowAction(UserControl::WindowAction::KEY_QUIT,(UserControl::Callback)&PlayerModelController::actionQuit,this);
     
-	m_control.RegisterMouseAction(UserControl::MouseAction::MOUSE_DOWN_RIGHT,(UserControl::Callback)&PlayerModelController::actionRightClick,this);
+	m_control.RegisterMouseAction(UserControl::MouseAction::MOUSE_PRESS_RIGHT,(UserControl::Callback)&PlayerModelController::actionRightClick,this);
 	m_control.RegisterMouseAction(UserControl::MouseAction::MOUSE_PRESS_LEFT,(UserControl::Callback)&PlayerModelController::actionLeftClick,this);
 }
 

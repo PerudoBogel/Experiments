@@ -1,12 +1,14 @@
 #pragma once
 
-#include "IEntityBase.hpp"
+#include "EntityBase.hpp"
 #include "Coordinates.hpp"
 #include "Box.hpp"
 
-class IDisplayEntity: public IEntityBase
+class IDisplayEntity: public EntityBase
 {
 public:
+    IDisplayEntity(void* pObj):EntityBase(pObj){};
+    
     int *m_pType                = nullptr; 
     int *m_pHealth              = nullptr;
     int *m_pMaxHealth           = nullptr;

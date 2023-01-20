@@ -46,7 +46,7 @@ public:
 		return rVal;
 	}
 
-	static std::shared_ptr<IEntity> isPlaceTaken(std::shared_ptr<World> pWorld, std::shared_ptr<IMoveEntity> pEntity, Coordinates coordinates)
+	static std::shared_ptr<IEntity> isPlaceTaken(std::shared_ptr<World> pWorld, IMoveEntity& pEntity, Coordinates coordinates)
 	{
 		std::shared_ptr<IEntity> rVal = nullptr;
 
@@ -57,17 +57,17 @@ public:
 		{
 			for (auto testModel : *lockedEntities.get())
 			{
-				auto lockedTestMoveEntity = testModel.second->getIMove().lock();
-				if(!lockedTestMoveEntity)
+				auto testMoveEntity = testModel.second->getIMove();
+				if(!testMoveEntity)
 					continue;
 
-				if (lockedTestMoveEntity.get() == pEntity.get())
+				if (testMoveEntity == pEntity)
 					continue;
 
-				if(!lockedTestMoveEntity->m_isCollidable)
+				if(!testMoveEntity->m_isCollidable)
 					continue;
 				
-				Box testModelBox(*lockedTestMoveEntity->m_pSize, *lockedTestMoveEntity->m_pPosition);
+				Box testModelBox(*testMoveEntity->m_pSize, *testMoveEntity->m_pPosition);
 				if (modelBox.isCollision(testModelBox))
 				{
 					rVal = testModel.second;

@@ -21,26 +21,26 @@ public:
 			m_size(4,4),
 			m_position(0,0)
 	{
-		m_pIAttack->m_pAttack = &m_attack;
-		m_pIAttack->m_pDamage = &m_damage;
-		m_pIAttack->m_pDefence = &m_attack;
-		m_pIAttack->m_pPosition = &m_position;
-		m_pIAttack->m_pRange = &m_range;
+		m_IAttack.m_pAttack = &m_attack;
+		m_IAttack.m_pDamage = &m_damage;
+		m_IAttack.m_pDefence = &m_attack;
+		m_IAttack.m_pPosition = &m_position;
+		m_IAttack.m_pRange = &m_range;
 
-		m_pIDisplay->m_pPosition = &m_position;
-		m_pIDisplay->m_pSize = &m_size;
-		m_pIDisplay->m_pType = &m_type;
+		m_IDisplay.m_pPosition = &m_position;
+		m_IDisplay.m_pSize = &m_size;
+		m_IDisplay.m_pType = &m_type;
 		
-		m_pIWorld->m_pPosition = &m_position;
-		m_pIWorld->m_pSize = &m_size;
-		m_pIWorld->m_pType = &m_type;
+		m_IWorld.m_pPosition = &m_position;
+		m_IWorld.m_pSize = &m_size;
+		m_IWorld.m_pType = &m_type;
 		
-		m_pIMove->m_isCollidable = false;
-		m_pIMove->m_pPosition = &m_position;
-		m_pIMove->m_pSize = &m_size;
-		m_pIMove->m_pSpeed = &m_speed;
+		m_IMove.m_isCollidable = false;
+		m_IMove.m_pPosition = &m_position;
+		m_IMove.m_pSize = &m_size;
+		m_IMove.m_pSpeed = &m_speed;
 		
-		m_pIControl->m_controller = CONTROL_PROJECTILE;
+		m_IControl.m_controller = CONTROL_PROJECTILE;
 	}
     virtual ~IProjectile(){};
     
@@ -53,5 +53,16 @@ public:
     Coordinates m_position;
     Size m_size;
 
+	IAttackEntity& getIAttack(){return m_IAttack;}
+    IDisplayEntity&getIDisplay(){return m_IDisplay;}
+    IWorldEntity& getIWorld(){return m_IWorld;}
+    IMoveEntity& getIMove(){return m_IMove;}
+    IControlEntity& getIControl(){return m_IControl;}
+
 protected:
+    IAttackEntity 	m_IAttack;
+    IDisplayEntity 	m_IDisplay;
+    IWorldEntity 	m_IWorld;
+    IMoveEntity		m_IMove;
+    IControlEntity 	m_IControl;
 };

@@ -19,7 +19,7 @@ Window2d::~Window2d()
 void Window2d::addSprites(vector<sf::Sprite>& sprites)
 {
     m_display.clear();
-    for(auto sprite : sprites)
+    for(auto &sprite : sprites)
     {
         m_display.draw(sprite);
     }

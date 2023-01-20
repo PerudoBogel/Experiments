@@ -1,12 +1,13 @@
 #pragma once
 
-#include "IEntityBase.hpp"
+#include "EntityBase.hpp"
 #include "Coordinates.hpp"
 #include "Size.hpp"
 
-class IWorldEntity: public IEntityBase
+class IWorldEntity: public EntityBase
 {
 public:
+    IWorldEntity(void* pObj):EntityBase(pObj){};
 
     int *m_pType                        = nullptr; 
     Coordinates *m_pPosition            = nullptr;
