@@ -31,7 +31,7 @@ public:
 	virtual void Run();
 	virtual ControllerType GetType(){return CONTROL_NONE;}
 
-	int Move(Coordinates step, std::shared_ptr<IEntity> &pCollisionEntity, bool allowSlide = true);
+	int Move(Coordinates step, shared_ptr<IEntity> pCollisionEntity, bool allowSlide = true);
 	int Move(Coordinates step, bool allowSlide = true);
 	int Attack(shared_ptr<IEntity> pTarget);
 	void Die();

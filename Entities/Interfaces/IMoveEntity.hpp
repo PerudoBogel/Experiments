@@ -6,7 +6,9 @@
 class IMoveEntity: public EntityBase
 {
 public:
+    IMoveEntity(void):EntityBase(){}
     IMoveEntity(void* pObj):EntityBase(pObj){};
+    ~IMoveEntity(void){}
     
 	decltype(Coordinates::x) *m_pSpeed  = nullptr;
     int *m_pMoveStrength                = nullptr;

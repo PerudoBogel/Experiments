@@ -7,7 +7,9 @@
 class IAttackEntity: public EntityBase
 {
 public:
+    IAttackEntity(void):EntityBase(){}
     IAttackEntity(void* pObj):EntityBase(pObj){};
+    ~IAttackEntity(void){}
     
     int *m_pHealth                  = nullptr;
     int *m_pRange                   = nullptr;

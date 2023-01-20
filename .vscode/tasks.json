@@ -17,6 +17,7 @@
 				"lib/lodepng/lodepng.cpp",
 				"lib/lodepng/lodepng_util.cpp",
 				"Control/Controllers/*.cpp",
+				"Entities/Interfaces/*.cpp",
 				"-I",
                 "lib/SFML/include",
 				"-I",

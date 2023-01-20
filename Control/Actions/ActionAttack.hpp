@@ -101,20 +101,20 @@ public:
 		DONE, TARGET_TOO_FAR, MISSED, CANNOT_ATTACK, NO_TARGET
 	};
 
-	static int Execute(shared_ptr<IAttackEntity> attacker, shared_ptr<IAttackEntity> &target)
+	static int Execute(IAttackEntity& attacker, IAttackEntity &target)
 	{
 		int retVal = DONE;
-		int ADRatio = 1000 * (*attacker->m_pAttack) / (*target->m_pDefence);
+		int ADRatio = 1000 * (*attacker.m_pAttack) / (*target.m_pDefence);
 		int Probability = attackChanceLookUp.getAttackProbability(ADRatio);
 		
 		if (attacker == target)
 		{
 			retVal = NO_TARGET;
 		}
-		else if((attacker->m_pPosition != nullptr) && (target->m_pPosition != nullptr))
+		else if((attacker.m_pPosition != nullptr) && (target.m_pPosition != nullptr))
 		{
-			if (attacker->m_pPosition->distance(*target->m_pPosition)
-					> *attacker->m_pRange)
+			if (attacker.m_pPosition->distance(*target.m_pPosition)
+					> *attacker.m_pRange)
 			{
 				retVal = TARGET_TOO_FAR;
 			}
@@ -128,9 +128,9 @@ public:
 		{
 			retVal = MISSED;
 		}
-		else if((attacker->m_pAllyFractions != nullptr) && (target->m_pMemberFractions != nullptr))
+		else if((attacker.m_pAllyFractions != nullptr) && (target.m_pMemberFractions != nullptr))
 		{
-			if (*attacker->m_pAllyFractions & *target->m_pMemberFractions)
+			if (*attacker.m_pAllyFractions & *target.m_pMemberFractions)
 			{
 				retVal = CANNOT_ATTACK;
 			}
@@ -138,11 +138,11 @@ public:
 		
 		if(retVal == DONE)
 		{
-			*target->m_pHealth -= *attacker->m_pDamage;
+			*target.m_pHealth -= *attacker.m_pDamage;
 			
-			if(0 >= *target->m_pHealth)
+			if(0 >= *target.m_pHealth)
 			{
-				target->m_isAlive = false;
+				target.m_isAlive = false;
 			}
 		}
 

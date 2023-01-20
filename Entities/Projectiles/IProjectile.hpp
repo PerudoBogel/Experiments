@@ -14,9 +14,9 @@ public:
 
 	IProjectile() :
 			m_damage(1),
-			m_attack(1),
+			m_attack(10000),
 			m_defence(1),
-			m_range(100),
+			m_range(1000),
 			m_speed(1),
 			m_size(4,4),
 			m_position(0,0)

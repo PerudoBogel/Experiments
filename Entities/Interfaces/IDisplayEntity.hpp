@@ -7,7 +7,9 @@
 class IDisplayEntity: public EntityBase
 {
 public:
+    IDisplayEntity(void):EntityBase(){}
     IDisplayEntity(void* pObj):EntityBase(pObj){};
+    ~IDisplayEntity(void){}
     
     int *m_pType                = nullptr; 
     int *m_pHealth              = nullptr;

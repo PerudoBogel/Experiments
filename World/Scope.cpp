@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <assert.h>
 
 namespace
 {
@@ -21,11 +22,12 @@ void Scope::UpdateCoordinates()
     m_offset = m_position - Coordinates(m_size.w/2,m_size.h/2);
 }
 
-Scope::Scope(weak_ptr<World> world, weak_ptr<IWorldEntity> pTraced):
+Scope::Scope(weak_ptr<World> world, Coordinates position):
+        m_position(position),
         m_pWorld(world),
-        m_pTraced(pTraced)
+        m_isTracing(false)
 {
-    update();
+    
 }
 
 void Scope::setWorld(weak_ptr<World> world)
@@ -62,12 +64,20 @@ void Scope::setSize(Size size)
     update();
 }
 
+void Scope::trace(IWorldEntity *pTraced)
+{
+    if(pTraced && pTraced->ifValid())
+    {
+        m_pTraced = pTraced; 
+        m_isTracing = true;
+    }
+}
+
 void Scope::update()
 {
-    auto pTraced = m_pTraced.lock();
-	if(pTraced)
+	if(m_isTracing)
     {
-        m_position = *pTraced->m_pPosition;
+        m_position = *m_pTraced->m_pPosition;
         UpdateCoordinates();
 	}
 

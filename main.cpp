@@ -35,12 +35,12 @@ int main(int argc, char **argv)
 	dog1Model->m_position = Coordinates(40, 80);
 	dog2Model->m_position = Coordinates(30*5, 33*5);
 	dog3Model->m_position = Coordinates(8, 8);
-	humanModel->getIControl().lock()->m_controller = CONTROL_PLAYER;
+	humanModel->getIControl().m_controller = CONTROL_PLAYER;
 	// cat0->m_control= CONTROL_AI;
 	// cat1->m_control= CONTROL_AI;
 	// cat2->m_control= CONTROL_AI;
 	// dogModel->m_control= CONTROL_AI;
-	dog1Model->getIControl().lock()->m_controller = CONTROL_AI;
+	dog1Model->getIControl().m_controller = CONTROL_AI;
 	// dog2Model->m_control= CONTROL_AI;
 
 	auto templateGen = make_unique<TemplateReader>("GameResources/Maps/road.png");
@@ -60,8 +60,9 @@ int main(int argc, char **argv)
 	world->setEntity(dog1Model);
 	world->setEntity(dog2Model);
 
-	auto scope = make_shared<Scope>(world, humanModel->getIWorld());
+	auto scope = make_shared<Scope>(world, Coordinates(0,0));
 	scope->setSize(Size(121 * ISector::m_Size.w, 81 * ISector::m_Size.h));
+	scope->trace(&humanModel->getIWorld());
 	
 	auto scopeDisplay = make_unique<ScopeDisplay>(scope);
 	
@@ -69,11 +70,11 @@ int main(int argc, char **argv)
 
 	auto controllerRunner = make_unique<ControllersRunner>(world, scope, window.get());
 
-	auto pController = static_cast<AIController*>(controllerRunner->getController(dog1Model).get());
+	auto pController = static_cast<AIController*>(controllerRunner->getController(dog1Model.get()).get());
 	pController->AddPost(Coordinates(40, 40));
 	pController->AddPost(Coordinates(150, 200));
 	
-	auto controller = static_cast<PlayerModelController*>(controllerRunner->getController(humanModel).get());
+	auto controller = static_cast<PlayerModelController*>(controllerRunner->getController(humanModel.get()).get());
 	
 	controller->addOffset(&scope->getOffset());
 

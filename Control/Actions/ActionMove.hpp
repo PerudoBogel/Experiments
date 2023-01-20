@@ -24,13 +24,13 @@ public:
 		DONE, CANNOT_MOVE, END_OF_MAP
 	};
 
-	static bool isEndOfWorld(std::shared_ptr<World> pWorld, std::shared_ptr<IMoveEntity> pEntity, Coordinates coordinates)
+	static bool isEndOfWorld(std::shared_ptr<World> pWorld, IMoveEntity &entity, Coordinates coordinates)
 	{
 		auto lockedMap = pWorld->getMap().lock();
 		assert(lockedMap);
 
 		bool rVal = false;
-		Box modelBox(*pEntity->m_pSize, *pEntity->m_pPosition + coordinates);
+		Box modelBox(*entity.m_pSize, *entity.m_pPosition + coordinates);
 
 		if (modelBox.Xmax >= lockedMap->m_size.w * ISector::m_Size.w
 				|| modelBox.Ymax >= lockedMap->m_size.h * ISector::m_Size.h)
@@ -46,55 +46,52 @@ public:
 		return rVal;
 	}
 
-	static std::shared_ptr<IEntity> isPlaceTaken(std::shared_ptr<World> pWorld, IMoveEntity& pEntity, Coordinates coordinates)
+	static shared_ptr<IEntity> isPlaceTaken(std::shared_ptr<World> pWorld, IMoveEntity& entity, Coordinates coordinates)
 	{
-		std::shared_ptr<IEntity> rVal = nullptr;
+		shared_ptr<IEntity> rVal = nullptr;
 
-		auto lockedEntities = pWorld->getEntities().lock();
-		Box modelBox(*pEntity->m_pSize, *pEntity->m_pPosition + coordinates);
+		auto lockedEntities = pWorld->getEntities();
+		Box modelBox(*entity.m_pSize, *entity.m_pPosition + coordinates);
 
-		if(lockedEntities)
+		for (auto testModel : lockedEntities)
 		{
-			for (auto testModel : *lockedEntities.get())
+			auto testMoveEntity = testModel.second->getIMove();
+			if(!testMoveEntity.ifValid())
+				continue;
+
+			if (testMoveEntity == entity)
+				continue;
+
+			if(!testMoveEntity.m_isCollidable)
+				continue;
+			
+			Box testModelBox(*testMoveEntity.m_pSize, *testMoveEntity.m_pPosition);
+			if (modelBox.isCollision(testModelBox))
 			{
-				auto testMoveEntity = testModel.second->getIMove();
-				if(!testMoveEntity)
-					continue;
-
-				if (testMoveEntity == pEntity)
-					continue;
-
-				if(!testMoveEntity->m_isCollidable)
-					continue;
-				
-				Box testModelBox(*testMoveEntity->m_pSize, *testMoveEntity->m_pPosition);
-				if (modelBox.isCollision(testModelBox))
-				{
-					rVal = testModel.second;
-					break;
-				}
+				rVal = testModel.second;
+				break;
 			}
 		}
-
+		
 		return rVal;
 	}
 
-	static Status Execute(std::shared_ptr<World> pWorld, std::shared_ptr<IMoveEntity> pEntity, Coordinates coordinates, std::shared_ptr<IEntity> &pCollisionEntity)
+	static Status Execute(std::shared_ptr<World> pWorld, IMoveEntity &entity, Coordinates coordinates, shared_ptr<IEntity> pCollisionEntity)
 	{
 		Status rVal = DONE;
 		
 		float vectorLength = sqrt(pow(coordinates.x, 2) + pow(coordinates.y, 2));
-		float scaler = *pEntity->m_pSpeed / vectorLength;
+		float scaler = *entity.m_pSpeed / vectorLength;
 		coordinates *= scaler;
 
-		if(isEndOfWorld(pWorld, pEntity, coordinates))
+		if(isEndOfWorld(pWorld, entity, coordinates))
 			rVal = END_OF_MAP;
-		else if (pCollisionEntity = isPlaceTaken(pWorld, pEntity, coordinates))
+		else if (pCollisionEntity = isPlaceTaken(pWorld, entity, coordinates))
 			rVal = CANNOT_MOVE;
 
 		if(rVal == DONE)
 		{
-			*pEntity->m_pPosition += coordinates;
+			*entity.m_pPosition += coordinates;
 		}
 
 		return rVal;

@@ -7,7 +7,9 @@
 class IWorldEntity: public EntityBase
 {
 public:
+    IWorldEntity(void):EntityBase(){}
     IWorldEntity(void* pObj):EntityBase(pObj){};
+    ~IWorldEntity(void){}
 
     int *m_pType                        = nullptr; 
     Coordinates *m_pPosition            = nullptr;

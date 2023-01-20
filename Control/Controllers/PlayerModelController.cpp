@@ -2,6 +2,7 @@
 #include "Debug.hpp"
 
 #include <cmath>
+#include <assert.h>
 
 using namespace std;
 
@@ -10,6 +11,10 @@ PlayerModelController::PlayerModelController(weak_ptr<World> pWorld, weak_ptr<IE
     m_pScope(pScope),
     m_control(pWindow)
 {
+    assert(m_pEntity.lock()->getIMove().ifValid());
+    assert(m_pEntity.lock()->getIWorld().ifValid());
+    assert(m_pEntity.lock()->getIAttack().ifValid());
+
 	m_control.RegisterKeyAction(UserControl::KeyAction::KEY_UP,(UserControl::Callback)&PlayerModelController::actionUpKey,this);
 	m_control.RegisterKeyAction(UserControl::KeyAction::KEY_DOWN,(UserControl::Callback)&PlayerModelController::actionDownKey,this);
 	m_control.RegisterKeyAction(UserControl::KeyAction::KEY_LEFT,(UserControl::Callback)&PlayerModelController::actionLeftKey,this);
@@ -29,13 +34,13 @@ void PlayerModelController::Run()
 
     if(m_isAlive)
     {
-        auto moveEntity = lockedEntity->getIMove().lock();
+        auto moveEntity = lockedEntity->getIMove();
         m_movement = Coordinates(0,0);
         m_control.Run();
 
         if (m_movement != Coordinates(0, 0))
         {
-            m_movement *= *moveEntity->m_pSpeed;
+            m_movement *= *moveEntity.m_pSpeed;
             Move(m_movement);
         }
     }
@@ -54,10 +59,10 @@ void PlayerModelController::actionRightClick(void* pObj)
 
     if(pThis->m_isAlive)
     {
-        auto worldEntity = lockedEntity->getIWorld().lock();
+        auto worldEntity = lockedEntity->getIWorld();
         Coordinates direction = pThis->m_control.GetMouseCoordinates();
         direction += lockedScope->getOffset();
-        direction -= *worldEntity->m_pPosition;
+        direction -= *worldEntity.m_pPosition;
 
         pThis->Shoot(direction);
     }
@@ -79,11 +84,16 @@ void PlayerModelController::actionLeftClick(void* pObj)
         
         for (auto pEntity : *lockedScope->getEntities().lock().get())
         {
-            auto lockedTarget = pEntity.lock();
-            auto worldTarget = lockedTarget->getIWorld().lock();
-            if (Box(*worldTarget->m_pSize, *worldTarget->m_pPosition).Contains(target) && lockedTarget)
+            auto worldTarget = pEntity->getIWorld();
+
+            if(!worldTarget.ifValid())
             {
-                pThis->Attack(lockedTarget);
+                continue;
+            }
+
+            if (Box(*worldTarget.m_pSize, *worldTarget.m_pPosition).Contains(target))
+            {
+                pThis->Attack(pEntity);
                 break;
             }
         }
@@ -92,26 +102,41 @@ void PlayerModelController::actionLeftClick(void* pObj)
 void PlayerModelController::actionUpKey(void* pObj)
 {
     PlayerModelController *pThis = static_cast<PlayerModelController*>(pObj);
-    pThis->m_movement += Coordinates(0,-1); 
+    if(pThis->m_isAlive)
+    {
+        pThis->m_movement += Coordinates(0,-1); 
+    }
 }
 void PlayerModelController::actionDownKey(void* pObj)
 {
     PlayerModelController *pThis = static_cast<PlayerModelController*>(pObj);
-    pThis->m_movement += Coordinates(0,1); 
+    if(pThis->m_isAlive)
+    {
+        pThis->m_movement += Coordinates(0,1); 
+    }
 }
 void PlayerModelController::actionRightKey(void* pObj)
 {
     PlayerModelController *pThis = static_cast<PlayerModelController*>(pObj);
-    pThis->m_movement += Coordinates(1,0); 
+    if(pThis->m_isAlive)
+    {
+        pThis->m_movement += Coordinates(1,0); 
+    }
 }
 void PlayerModelController::actionLeftKey(void* pObj)
 {
     PlayerModelController *pThis = static_cast<PlayerModelController*>(pObj);
-    pThis->m_movement += Coordinates(-1,0); 
+    if(pThis->m_isAlive)
+    {
+        pThis->m_movement += Coordinates(-1,0); 
+    }
 }
 
 void PlayerModelController::actionQuit(void* pObj)
 {
     PlayerModelController *pThis = static_cast<PlayerModelController*>(pObj);
-    pThis->m_isAlive = false;
+    if(pThis->m_isAlive)
+    {
+        pThis->m_isAlive = false;
+    }
 }

@@ -31,7 +31,7 @@ public:
 	{
 		updateControllers();
 
-		vector<void*> deadKeys;
+		vector<IEntity*> deadKeys;
 
 		for(auto pController: m_controllers)
 		{
@@ -45,10 +45,10 @@ public:
 			m_controllers.erase(deadKey);
 	}
 
-	shared_ptr<Controller> getController(shared_ptr<IEntity> pEntity)
+	shared_ptr<Controller> getController(IEntity *pEntity)
 	{
 		shared_ptr<Controller> rVal;
-		auto key = pEntity.get();
+		auto key = pEntity;
 		
 		updateControllers();
 		
@@ -63,19 +63,24 @@ private:
 	weak_ptr<World> m_pWorld;
 	weak_ptr<Scope> m_pScope;
 	Window2d* m_pWindow;
-	map<void*,shared_ptr<Controller>> m_controllers;
+	map<IEntity*,shared_ptr<Controller>> m_controllers;
 	
 	void updateControllers()
 	{
-		for(auto pEntity: *m_pWorld.lock()->getEntities().lock().get())
+		for(auto pEntity: m_pWorld.lock()->getEntities())
 		{
-			auto controlEntity = pEntity.second->getIControl().lock();
+			auto controlEntity = pEntity.second->getIControl();
 			auto key = pEntity.second.get();
+
+			if(!controlEntity.ifValid())
+			{
+				continue;
+			}
 
 			if(m_controllers.find(key) != m_controllers.end())
 				continue;
 
-			switch(controlEntity->m_controller)
+			switch(controlEntity.m_controller)
             {
             case CONTROL_AI:
 			    m_controllers.insert(pair(key,make_shared<AIController>(m_pWorld, pEntity.second)));

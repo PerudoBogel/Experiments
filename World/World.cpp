@@ -2,16 +2,22 @@
 
 #include <algorithm>
 
-shared_ptr<vector<weak_ptr<IEntity>>> World::getEntitiesInBox(Box box)
+shared_ptr<vector<shared_ptr<IEntity>>> World::getEntitiesInBox(Box box)
 {
-	auto rVector = make_shared<vector<weak_ptr<IEntity>>>();
+	auto rVector = make_shared<vector<shared_ptr<IEntity>>>();
 
-	for (auto pEntity : *m_entities.get())
+	for (auto pEntity : m_entities)
 	{
-		auto pWorldEntity = pEntity.second->getIWorld().lock();
-		Box projectileBox(*pWorldEntity->m_pSize, *pWorldEntity->m_pPosition);
+		auto pWorldEntity = pEntity.second->getIWorld();
 
-		if (box.isCollision(projectileBox))
+		if(!pWorldEntity.ifValid())
+		{
+			continue;
+		}
+
+		Box entityBox(*pWorldEntity.m_pSize, *pWorldEntity.m_pPosition);
+
+		if (box.isCollision(entityBox))
 		{
 			rVector->push_back(pEntity.second);
 		}
@@ -19,21 +25,21 @@ shared_ptr<vector<weak_ptr<IEntity>>> World::getEntitiesInBox(Box box)
 	return rVector;
 }
 
-void World::setEntity(std::shared_ptr<IEntity> pEntity)
+void World::setEntity(shared_ptr<IEntity> pEntity)
 {
 	auto key = pEntity.get();
-	if (m_entities->find(key) == m_entities->end())
-		m_entities->insert(pair(key,pEntity));
+	if (m_entities.find(key) == m_entities.end())
+		m_entities.insert(pair(key,pEntity));
 }
 
-bool World::deleteEntity(weak_ptr<IEntity> pEntity)
+bool World::deleteEntity(shared_ptr<IEntity> pEntity)
 {
 	bool rVal = false;
-	auto key = pEntity.lock().get();
-	if (m_entities->find(key) != m_entities->end())
+	auto key = pEntity.get();
+	if (m_entities.find(key) != m_entities.end())
 	{
-		m_entities->at(key).reset();
-		m_entities->erase(key);
+		m_entities[key].reset();
+		m_entities.erase(key);
 		rVal = true;
 	}
 	return rVal;

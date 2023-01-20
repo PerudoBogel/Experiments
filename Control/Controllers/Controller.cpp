@@ -22,12 +22,12 @@ Controller::Controller(weak_ptr<World> pWorld,
 
 int Controller::Move(Coordinates step, bool allowSlide)
 {
-	std::shared_ptr<IEntity> dummy;
+	shared_ptr<IEntity> dummy;
 
 	return Move(step, dummy, allowSlide);
 }
 
-int Controller::Move(Coordinates step, std::shared_ptr<IEntity> &pCollisionEntity, bool allowSlide)
+int Controller::Move(Coordinates step, shared_ptr<IEntity> pCollisionEntity, bool allowSlide)
 {
 	int rVal = CANNOT_MOVE;
 
@@ -40,7 +40,7 @@ int Controller::Move(Coordinates step, std::shared_ptr<IEntity> &pCollisionEntit
 
 	if(m_isAlive)
 	{
-		auto lockedMoveEntity = lockedEntity->getIMove().lock();
+		auto lockedMoveEntity = lockedEntity->getIMove();
 
 		if (step != Coordinates(0, 0))
 		{
@@ -69,7 +69,6 @@ int Controller::Move(Coordinates step, std::shared_ptr<IEntity> &pCollisionEntit
 int Controller::Attack(shared_ptr<IEntity> pTarget)
 {
 	int rVal = CANNOT_ATTACK;
-
 	auto lockedEntity = m_pEntity.lock();
 	if(!lockedEntity)
 	{
@@ -78,8 +77,8 @@ int Controller::Attack(shared_ptr<IEntity> pTarget)
 
 	if(m_isAlive)
 	{
-		auto attacker = lockedEntity->getIAttack().lock();
-		auto defender = pTarget->getIAttack().lock();
+		auto attacker = lockedEntity->getIAttack();
+		auto defender = pTarget->getIAttack();
 
 		auto status = ActionAttack::Execute(attacker, defender);
 		if (ActionAttack::DONE == status)
@@ -93,9 +92,10 @@ int Controller::Attack(shared_ptr<IEntity> pTarget)
 void Controller::Die()
 {
 	auto lockedWorld = m_pWorld.lock();
-	if(m_pEntity.lock() && lockedWorld)
+	auto lockedEntity = m_pEntity.lock();
+	if(lockedEntity && lockedWorld)
 	{
-		lockedWorld->deleteEntity(m_pEntity);
+		lockedWorld->deleteEntity(lockedEntity);
 	}
 	m_isAlive = false;
 }
@@ -111,15 +111,17 @@ int Controller::Shoot(Coordinates &direction)
 
 	if(m_isAlive)
 	{
-		auto lockedWorldEntity = lockedEntity->getIWorld().lock();
-		auto startOffset = max(lockedWorldEntity->m_pSize->h,lockedWorldEntity->m_pSize->w);
+		auto lockedWorldEntity = lockedEntity->getIWorld();
+		auto startOffset = max(lockedWorldEntity.m_pSize->h,lockedWorldEntity.m_pSize->w);
 
 		auto rotationRad = atan(direction.y/ direction.x) ;
         if(direction.x < 0)
             rotationRad += PI;
 
-		auto arrow = make_shared<Arrow>();
-		arrow->m_position = *lockedWorldEntity->m_pPosition;
+		// check if eq is available and select projectile based on that
+
+		auto arrow = make_shared<Arrow>(); //use factory
+		arrow->m_position = *lockedWorldEntity.m_pPosition;
 		arrow->m_position.phi = rotationRad / (2 * PI) * 360;
 		arrow->m_position += Coordinates(startOffset * cos(rotationRad), startOffset * sin(rotationRad)); 
 
@@ -139,7 +141,12 @@ void Controller::Run()
 
 	if(m_isAlive)
 	{
-		if(!lockedEntity->getIAttack().lock()->m_isAlive)
+		auto attackEntity = lockedEntity->getIAttack();
+		if(!attackEntity.ifValid())
+		{ 
+			/*cannot die*/
+		}
+		else if(!attackEntity.m_isAlive)
 		{
 			Die();
 		}

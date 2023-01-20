@@ -9,7 +9,7 @@ public:
     {
         m_speed = 5;
         m_type = PROJECTILE_TYPE_ARROW;
-        m_pIControl->m_customData = TRAJECTORY_LINE;
+        m_IControl.m_customData = TRAJECTORY_LINE;
         m_size.h = 8;
         m_size.w = 20;
     }
