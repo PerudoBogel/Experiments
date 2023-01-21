@@ -1,0 +1,13 @@
+fabryki dla konkretnych rodzajów entity:
+    singleton
+    przenieść objekty ze sterty do ramu, ograniczyć ilość objektów przez statyczną alokację o zadanym rozmiarze.
+    własność przeniesiona do fabryki(obsługa narodzin i śmierci).
+animacje:
+    sposób przechowywania i automatyzacji odczytu tekstur
+    powiązanie akcji z konkretnymi animacjami (bitmapa w IDisplay i IControl). Plik txt z info o rozmiarze i opisem sekcji animacji?
+    Izolacjia animacji ruchu i innych (podział na nogi i tłów).
+    koncepcja: zbudowanie modelu z patyczaka i obsługa tekstur poszczegolnych zegmentów ciała?
+IEntity powinno zwracać Action interfacy jako zwykłe pointery, alokacja statyczna w konkretnych specjalizacjach
+poprawnienie systemu kolizji:
+    przeliczanie collission box dla każdego ruchu
+    skompikolane collission boxy (zbudowane z prostokątów). dodanie klasy wspieracjące powiązane akcje.

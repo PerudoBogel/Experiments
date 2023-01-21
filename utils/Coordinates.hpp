@@ -1,6 +1,8 @@
 #pragma once
 #include <math.h>
 
+const float PI = 3.141592653589793238462643383279502884;
+
 struct Coordinates
 {
 	float x, y, phi;
@@ -57,6 +59,15 @@ struct Coordinates
 		auto tmpX = x - pCoords.x;
 		auto tmpY = y - pCoords.y;
 		auto tmpPhi = phi - pCoords.phi;
+
+		return Coordinates(tmpX, tmpY, tmpPhi);
+	}
+
+	inline Coordinates operator*(const float &multiply)
+	{
+		auto tmpX = x * multiply;
+		auto tmpY = y * multiply;
+		auto tmpPhi = phi * multiply;
 
 		return Coordinates(tmpX, tmpY, tmpPhi);
 	}

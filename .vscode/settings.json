@@ -54,6 +54,7 @@
         "mutex": "cpp",
         "iomanip": "cpp",
         "cstring": "cpp",
-        "set": "cpp"
+        "set": "cpp",
+        "*.rh": "cpp"
     }
 }

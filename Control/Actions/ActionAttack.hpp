@@ -9,147 +9,143 @@
 #define CONTROL_ACTIONS_ACTIONATTACK_HPP_
 
 #include "World.hpp"
-#include "IModel.hpp"
 #include "Random.hpp"
-#include "ReactionAttack.hpp"
+#include "Box.hpp"
+#include "IAttackEntity.hpp"
+#include "Debug.hpp"
+
 #include <vector>
 #include <memory>
 #include <array>
-#include "Box.hpp"
+
+using namespace std;
 
 namespace
 {
-
-int ratioMin = 100, ratioMax = 10000;
-int probabilityMin = 5, probabilityMax = 995;
-
-struct attackChance
-{
-	int ratioX1000;
-	int probabilityx1000;
-};
-
-template<int lookUpSize>
-struct AttackChanceLookUp
-{
-	std::array<attackChance, lookUpSize> m_lookUp;
-
-	constexpr AttackChanceLookUp()
+	struct attackChance
 	{
-		for (size_t index = 0; index < m_lookUp.size(); index++)
+		int ratioX1000;
+		int probabilityx1000;
+	};
+
+	template<int lookUpSize>
+	struct AttackChanceLookUp
+	{
+		std::array<attackChance, lookUpSize> m_lookUp;
+		
+		const int ratioMin = 100, ratioMax = 10000;
+		const int probabilityMin = 5, probabilityMax = 995;
+
+		constexpr AttackChanceLookUp()
 		{
-			m_lookUp[index].ratioX1000 = setRatio(index, lookUpSize);
-			m_lookUp[index].probabilityx1000 = setProbability(index,
-					lookUpSize);
-		}
-	}
-
-	constexpr int setRatio(int Index, int maxIndex)
-	{
-		int stepSize = (ratioMax - ratioMin) / maxIndex;
-
-		return ratioMin + stepSize * Index;
-	}
-
-	constexpr int setProbability(int Index, int maxIndex)
-	{
-		int stepSize = (probabilityMax - probabilityMin) / maxIndex;
-
-		return probabilityMin + stepSize * Index;
-	}
-};
-
-const AttackChanceLookUp<128> attackChanceLookUp;
-
-int interpolateAttackProbability(const attackChance &point1,
-		const attackChance &point2, int ratio)
-{
-	int diffRatio = ratio - point1.ratioX1000;
-	int ratioRange = point2.ratioX1000 - point1.ratioX1000;
-	int ProbabilityRange = point2.probabilityx1000 - point1.probabilityx1000;
-	return diffRatio * ProbabilityRange / ratioRange;
-}
-
-int getAttackProbability(int ADRatio)
-{
-	int retVal;
-	if (ADRatio < attackChanceLookUp.m_lookUp.begin()->ratioX1000)
-		retVal = attackChanceLookUp.m_lookUp.begin()->probabilityx1000;
-	else if (ADRatio > (attackChanceLookUp.m_lookUp.end())->ratioX1000)
-		retVal = (attackChanceLookUp.m_lookUp.end())->ratioX1000;
-	else
-		for (auto element = attackChanceLookUp.m_lookUp.begin();
-				element != attackChanceLookUp.m_lookUp.end(); element++)
-			if (ADRatio < element->ratioX1000)
+			for (size_t index = 0; index < lookUpSize; index++)
 			{
-				auto currentElement = element;
-				retVal = interpolateAttackProbability(*(--element),
-						*currentElement, ADRatio);
-				break;
+				m_lookUp[index].ratioX1000 = setRatio(index, lookUpSize);
+				m_lookUp[index].probabilityx1000 = setProbability(index,
+						lookUpSize);
+			}
+		}
+
+		constexpr int setRatio(int index, int maxIndex)
+		{
+			float ratio = index / maxIndex;
+			ratio *= ratioMax - ratioMin;
+			ratio += ratioMin;
+
+			return static_cast<int>(ratio);
+		}
+
+		constexpr int setProbability(int index, int maxIndex)
+		{
+			float probability = index / maxIndex;
+			probability *= probabilityMax - probabilityMin;
+			probability += probabilityMin;
+
+			return static_cast<int>(probability);
+		}
+
+		int getAttackProbability(int ADRatio) const
+		{
+			int retVal;
+			if (ADRatio < m_lookUp.begin()->ratioX1000)
+			{
+				retVal = m_lookUp.begin()->probabilityx1000;
+			}else if (ADRatio > m_lookUp.end()->ratioX1000)
+			{
+				retVal = m_lookUp.end()->probabilityx1000;
+			}else
+			{
+				for (auto element = m_lookUp.begin() + 1, previous = m_lookUp.begin();
+						element != m_lookUp.end(); element++)
+				{
+					if (ADRatio < element->ratioX1000 && ADRatio >= previous->ratioX1000)
+					{
+						retVal = element->probabilityx1000;
+						break;
+					}
+				}
 			}
 
-	return retVal;
-}
+			return retVal;
+		}
+	};
+
+	const AttackChanceLookUp<256> attackChanceLookUp;
 }
 
 class ActionAttack
 {
 public:
-	enum
+	enum Status
 	{
 		DONE, TARGET_TOO_FAR, MISSED, CANNOT_ATTACK, NO_TARGET
 	};
 
-	static int Execute(std::shared_ptr<World> pWorld,
-			std::shared_ptr<IModel> attacker, Coordinates &target)
+	static int Execute(IAttackEntity& attacker, IAttackEntity &target)
 	{
-		int retVal = NO_TARGET;
-		bool targetFound = false;
-		std::shared_ptr<IModel> pTargetModel;
-
-		for (auto pModel : *pWorld->getModels().get())
+		int retVal = DONE;
+		int ADRatio = 1000 * (*attacker.m_pAttack) / (*target.m_pDefence);
+		int Probability = attackChanceLookUp.getAttackProbability(ADRatio);
+		
+		if (attacker == target)
 		{
-			if (Box(pModel->getSize(), pModel->m_position).Contains(target))
-			{
-				targetFound = true;
-				pTargetModel = pModel;
-				break;
-			}
+			retVal = NO_TARGET;
 		}
-
-		if (attacker.get() == pTargetModel.get())
-			targetFound = false;
-
-		if (targetFound)
+		else if((attacker.m_pPosition != nullptr) && (target.m_pPosition != nullptr))
 		{
-			int ADRatio = 1000 * attacker->m_attack / pTargetModel->m_defence;
-			int Probability = getAttackProbability(ADRatio);
-
-			if (attacker->m_position.distance(pTargetModel->m_position)
-					> attacker->m_range)
+			if (attacker.m_pPosition->distance(*target.m_pPosition)
+					> *attacker.m_pRange)
 			{
 				retVal = TARGET_TOO_FAR;
 			}
-			else if (Random::get(1000) < Probability)
+		}
+
+		if(retVal != DONE)
+		{
+			//nothing just pass
+		}
+		else if (Random::get(1000) > Probability )
+		{
+			retVal = MISSED;
+		}
+		else if((attacker.m_pAllyFractions != nullptr) && (target.m_pMemberFractions != nullptr))
+		{
+			if (*attacker.m_pAllyFractions & *target.m_pMemberFractions)
 			{
-				switch (ReactionAttack::Execute(attacker, pTargetModel))
-				{
-				case ReactionAttack::DONE:
-					retVal = DONE;
-					break;
-				case ReactionAttack::CANNOT_ATTACK:
-					retVal = CANNOT_ATTACK;
-					break;
-				default:
-					retVal = MISSED;
-					break;
-				}
-			}
-			else
-			{
-				retVal = MISSED;
+				retVal = CANNOT_ATTACK;
 			}
 		}
+		
+		if(retVal == DONE)
+		{
+			*target.m_pHealth -= *attacker.m_pDamage;
+			
+			if(0 >= *target.m_pHealth)
+			{
+				target.m_isAlive = false;
+			}
+		}
+
 		return retVal;
 	}
 private:

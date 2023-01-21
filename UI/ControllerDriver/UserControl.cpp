@@ -8,73 +8,94 @@
 #include "UserControl.hpp"
 #include <iostream>
 #include <windowsx.h>
-#include "Debug.hpp"
 
-UserControl::UserControl(Controller &&pController) :
-		m_input(0), m_controller(pController)
+const map<UserControl::KeyAction,int> UserControl::m_keyActionLookup = 
 {
-	m_message.message = static_cast<UINT>(~WM_QUIT);
+	{UserControl::KeyAction::KEY_UP, 	sf::Keyboard::Key::Up},
+	{UserControl::KeyAction::KEY_DOWN, 	sf::Keyboard::Key::Down},
+	{UserControl::KeyAction::KEY_LEFT, 	sf::Keyboard::Key::Left},
+	{UserControl::KeyAction::KEY_RIGHT, sf::Keyboard::Key::Right}
+};
+
+const map<UserControl::WindowAction,int> UserControl::m_windowActionLookup = 
+{
+	{UserControl::WindowAction::KEY_QUIT, 	sf::Event::Closed}
+};
+
+const map<UserControl::MouseAction,int> UserControl::m_mouseActionLookup=
+{
+	{UserControl::MouseAction::MOUSE_PRESS_RIGHT,	MouseActions::STATE_R_PRESSED	},
+	{UserControl::MouseAction::MOUSE_DOWN_RIGHT,	MouseActions::STATE_R_DOWN		},
+	{UserControl::MouseAction::MOUSE_RELEASE_RIGHT,	MouseActions::STATE_R_RELEASED	},
+	{UserControl::MouseAction::MOUSE_UP_RIGHT,		MouseActions::STATE_R_UP		},
+	{UserControl::MouseAction::MOUSE_PRESS_LEFT,	MouseActions::STATE_L_PRESSED	},
+	{UserControl::MouseAction::MOUSE_DOWN_LEFT,		MouseActions::STATE_L_DOWN		},
+	{UserControl::MouseAction::MOUSE_RELEASE_LEFT,	MouseActions::STATE_L_RELEASED	},
+	{UserControl::MouseAction::MOUSE_UP_LEFT,		MouseActions::STATE_L_UP		}
+};
+
+UserControl::UserControl(Window2d* pWindow):
+m_pWindow(pWindow)
+{}
+
+void UserControl::Run()
+{
+	m_mouseActions.Run();
+	sf::Event event;
+	
+	while (m_pWindow->m_display.pollEvent(event))
+	{
+		m_mouseActions.updateEvent(event);
+		m_multibutton.updateEvent(event);
+
+		try{
+			m_registeredWindowActions.at(event.type)();
+		}catch(const out_of_range data){(void)data;}
+	}
+	
+	try{
+		m_registeredMouseActions.at(m_mouseActions.m_leftState)();
+	}catch(const out_of_range data){(void)data;}
+	
+	try{
+		m_registeredMouseActions.at(m_mouseActions.m_rightState)();
+	}catch(const out_of_range data){(void)data;}
+	
+	for (int i = 0; i < m_multibutton.get().size() && m_multibutton.getPressedCount() > 0; i++)
+	{
+		if(m_multibutton.get()[i])
+		{
+			try{
+				m_registeredKeyActions.at(i)();
+			}catch(const out_of_range data){(void)data;}
+		}
+	}
 }
 
-UserControl::Move UserControl::m_moves[] =
+Coordinates UserControl::GetMouseCoordinates(){
+	return Coordinates(m_mouseActions.m_x,m_mouseActions.m_y);
+}
+
+void UserControl::RegisterKeyAction(KeyAction action, Callback callback ,void* pObj)
 {
-{ VK_UP,
-{ 0, -1 } },
-{ VK_DOWN,
-{ 0, 1 } },
-{ VK_LEFT,
-{ -1, 0 } },
-{ VK_RIGHT,
-{ 1, 0 } } };
+	try{
+		int key = m_keyActionLookup.at(action);
+		m_registeredKeyActions[key] = CallbackExe(callback ,pObj);
+	}catch(const out_of_range data){(void)data;}
+}
 
-int UserControl::run()
+void UserControl::RegisterWindowAction(WindowAction action, Callback callback ,void* pObj)
 {
-	int retVal = DONE;
-	while (PeekMessage(&m_message, NULL, 0, 0, PM_REMOVE))
-	{
-		if (m_message.message == WM_QUIT)
-		{
-			retVal = QUIT;
-			break;
-		}
+	try{
+		int key = m_windowActionLookup.at(action);
+		m_registeredWindowActions[key] = CallbackExe(callback ,pObj);
+	}catch(const out_of_range data){(void)data;}
+}
 
-		// If a message was waiting in the message queue, process it
-		TranslateMessage(&m_message);
-		DispatchMessage(&m_message);
-
-		if (m_message.message == WM_KEYDOWN || m_message.message == WM_KEYUP)
-			m_multibutton.registerMsg(m_message);
-	}
-
-	if (!m_multibutton.get().empty())
-	{
-		Coordinates step(0, 0);
-
-		for (size_t i = 0; i < sizeof(m_moves) / sizeof(m_moves[0]); i++)
-			for (auto button : m_multibutton.get())
-				if (m_moves[i].m_symbol == button)
-					step += m_moves[i].move;
-
-		if (step != Coordinates(0, 0))
-			m_controller.move(step);
-	}
-
-
-	if (m_mouseActions.isRigthClickDone(m_message))
-	{
-		std::cout<<"mouse right clicked: "<<std::endl;
-		std::cout << "x " << GET_X_LPARAM(m_message.lParam)
-				<< " y " << GET_Y_LPARAM(m_message.lParam) << std::endl;
-
-		Coordinates target(GET_X_LPARAM(m_message.lParam), GET_Y_LPARAM(m_message.lParam));
-		if(m_pOffset)
-			target += *m_pOffset;
-
-		DEBUG_DUMP_VAR(target.x);
-		DEBUG_DUMP_VAR(target.y);
-
-		m_controller.attack(target);
-	}
-
-	return retVal;
+void UserControl::RegisterMouseAction(MouseAction action, Callback callback, void* pObj)
+{
+	try{
+		int key = m_mouseActionLookup.at(action);
+		m_registeredMouseActions[key] = CallbackExe(callback ,pObj);
+	}catch(const out_of_range data){(void)data;}
 }

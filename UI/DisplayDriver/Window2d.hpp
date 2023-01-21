@@ -1,7 +1,6 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 #include "Size.hpp"
-#include <windows.h>
 #include <memory>
 
 using namespace std;
@@ -20,11 +19,9 @@ public:
 
     bool update();
 
-private:
-
     sf::RenderWindow m_display;
-    HINSTANCE m_instance;
-    HWND m_window;
+private:
+    // HINSTANCE m_instance;
+    // HWND m_window;
     unsigned int m_PW, m_PH;
-    bool m_frameReady;
 };

@@ -1,33 +1,46 @@
 #include "World.hpp"
-#include <iostream>
+
 #include <algorithm>
 
-std::vector<std::shared_ptr<IModel>> World::getModelsInBox(Box box)
+shared_ptr<vector<shared_ptr<IEntity>>> World::getEntitiesInBox(Box box)
 {
-	std::vector<std::shared_ptr<IModel>> outBuffer;
+	auto rVector = make_shared<vector<shared_ptr<IEntity>>>();
 
-	for (auto model : *m_models.get())
-		if (model->m_position.x >= box.Xmin
-				&& model->m_position.x <= box.Xmax
-				&& model->m_position.y >= box.Ymin
-				&& model->m_position.y <= box.Ymax)
-			outBuffer.push_back(model);
+	for (auto pEntity : m_entities)
+	{
+		auto pWorldEntity = pEntity.second->getIWorld();
 
-	return outBuffer;
+		if(!pWorldEntity.ifValid())
+		{
+			continue;
+		}
+
+		Box entityBox(*pWorldEntity.m_pSize, *pWorldEntity.m_pPosition);
+
+		if (box.isCollision(entityBox))
+		{
+			rVector->push_back(pEntity.second);
+		}
+	}
+	return rVector;
 }
 
-void World::setModel(std::shared_ptr<IModel> pModel)
+void World::setEntity(shared_ptr<IEntity> pEntity)
 {
-	if (std::find((*m_models).begin(), (*m_models).end(), pModel) == (*m_models).end())
-		m_models->push_back(pModel);
+	auto key = pEntity.get();
+	if (m_entities.find(key) == m_entities.end())
+		m_entities.insert(pair(key,pEntity));
 }
 
-std::shared_ptr<IModel> World::getPlayer()
+bool World::deleteEntity(shared_ptr<IEntity> pEntity)
 {
-	std::shared_ptr<IModel> player;
-	for (auto model : *m_models.get())
-		if (model->m_control == IModel::CONTROL_PLAYER)
-			player = model;
-
-	return player;
+	bool rVal = false;
+	auto key = pEntity.get();
+	if (m_entities.find(key) != m_entities.end())
+	{
+		m_entities[key].reset();
+		m_entities.erase(key);
+		rVal = true;
+	}
+	return rVal;
 }

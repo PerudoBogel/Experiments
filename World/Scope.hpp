@@ -1,45 +1,50 @@
 #pragma once
-#include <IModel.hpp>
-#include <vector>
-#include <mutex>
 
 #include "Size.hpp"
 #include "ISector.hpp"
 #include "World.hpp"
+#include "IWorldEntity.hpp"
+
+#include <vector>
+#include <mutex>
+
+using namespace std;
 
 class Scope
 {
 public:
-    Scope();
-    Scope(std::shared_ptr<World> world, Coordinates& pModel);
+    Scope() = delete;
+    Scope(weak_ptr<World> world, Coordinates position);
 
-    void setWorld(std::shared_ptr<World> world);
+    void setWorld(weak_ptr<World> world);
     void update();
     void setPosition(Coordinates position);
     void move(Coordinates step);
     void setSize(Size size);
 
-    void trace(Coordinates& traceOject);
-	void stopTrace(){ m_traceActive = false;}
+    void trace(IWorldEntity *pTraced);
+	void stopTrace(){ m_isTracing = false;}
 
-    inline std::mutex &getMutex() { return m_mutex; }
+    mutex &getMutex() {return m_mutex;}
 
-    inline const Coordinates &getPosition() { return m_position;}
-    inline const Coordinates &getOffset() { return m_offset;}
+    const Coordinates &getPosition() const {return m_position;}
+    const Coordinates &getOffset() const {return m_offset;}
 
-    inline const Size &getSize() const { return m_size; }
+    const Size &getSize() const {return m_size;}
 
-    inline const std::vector<ISector*> &getMap() const { return m_map; }
-    inline const std::vector<std::shared_ptr<IModel>> &getCharacters() const { return m_models; }
+    weak_ptr<vector<ISector*>> getMap() const {return m_map;}
+    weak_ptr<vector<shared_ptr<IEntity>>> getEntities() const {return m_entities;}
 
 private:
     Coordinates m_position;
     Coordinates m_offset;
-    std::mutex m_mutex;
+    mutex m_mutex; 
     Size m_size;
-    std::vector<ISector*> m_map;
-    std::vector<std::shared_ptr<IModel>> m_models;
-    std::shared_ptr<World> m_pWorld;
-    Coordinates* m_pTracedObject;
-    bool m_traceActive;
+    shared_ptr<vector<ISector*>> m_map;
+    shared_ptr<vector<shared_ptr<IEntity>>> m_entities;
+    weak_ptr<World> m_pWorld;
+    IWorldEntity *m_pTraced;
+    bool m_isTracing;
+
+    void UpdateCoordinates();
 };

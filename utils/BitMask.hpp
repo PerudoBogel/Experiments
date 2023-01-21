@@ -7,6 +7,7 @@
 
 #ifndef UTILS_BITMAP_HPP_
 #define UTILS_BITMAP_HPP_
+#include "Debug.hpp"
 
 template <typename bufferType, typename flagType>
 class BitMask{

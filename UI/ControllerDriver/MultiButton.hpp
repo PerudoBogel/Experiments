@@ -9,51 +9,45 @@
 #define UI_CONTROLLER_MULTIBUTTON_HPP_
 
 #include <array>
-#include <windows.h>
-
-#define NUMBER_OF_BUTTONS 64
+#include "SFML/Window.hpp"
 
 class MultiButton
 {
 public:
 
-	MultiButton() :
-			m_button(
-			{ })
+	MultiButton():
+	m_button({})
 	{
 	}
 
-	void registerMsg(const MSG &m_message)
+	void updateEvent(const sf::Event &event)
 	{
-		if (m_message.message == WM_KEYDOWN)
-		{
-			bool alreadyPresent = false;
-			for (auto button : m_button)
-				if (button == m_message.wParam)
-					alreadyPresent = true;
-			if (!alreadyPresent)
-				for (auto button = m_button.begin(); button != m_button.end();
-						++button)
-					if (*button == 0)
-					{
-						*button = m_message.wParam;
-						break;
-					}
-		}
-		else if (m_message.message == WM_KEYUP)
-			for (auto button = m_button.begin(); button != m_button.end();
-					++button)
-				if (*button == m_message.wParam)
-					*button = 0;
+		if(event.key.code == sf::Keyboard::Key::Unknown)
+		{}
+		if (event.type == sf::Event::KeyPressed)
+			m_button[event.key.code] = true;
+		else if (event.type == sf::Event::KeyReleased)
+			m_button[event.key.code] = false;
 	}
 
-	const std::array<WPARAM, NUMBER_OF_BUTTONS>& get() const
+	const std::array<bool, sf::Keyboard::Key::KeyCount>& get() const
 	{
 		return m_button;
 	}
 
+	int getPressedCount()
+	{
+		int pressedKeyCount = 0;
+		for(auto button : m_button)
+			if(button)
+				pressedKeyCount++;
+		
+		return pressedKeyCount;
+	}
+
+
 private:
-	std::array<WPARAM, NUMBER_OF_BUTTONS> m_button;
+	std::array<bool, sf::Keyboard::Key::KeyCount> m_button;
 };
 
 #endif /* UI_CONTROLLER_MULTIBUTTON_HPP_ */

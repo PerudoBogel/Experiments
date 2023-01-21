@@ -1,38 +1,40 @@
 #pragma once
-#include <vector>
-#include <memory>
-#include <mutex>
 
 #include "Coordinates.hpp"
 #include "Size.hpp"
 #include "Box.hpp"
 #include "SectorGenerator.hpp"
 #include "Map.hpp"
-#include "IModel.hpp"
+#include "ISector.hpp"
+#include "IEntity.hpp"
+
+#include <vector>
+#include <map>
+#include <memory>
+#include <mutex>
+
+using namespace std;
 
 class World
 {
 public:
+	World(){}
 
-	World():m_models(std::make_shared<std::vector<std::shared_ptr<IModel>>>()){}
+    inline mutex& getMutex(){return m_mutex;}
 
-    inline std::mutex& getMutex(){return m_mutex;}
+    inline weak_ptr<Map> getMap(){return m_map;}
+    inline void setMap(shared_ptr<Map> map){m_map = map;}
 
-    inline std::shared_ptr<Map> getMap(){return m_map;}
-    inline void setMap(std::shared_ptr<Map> map){m_map = map;}
+    const map<IEntity*,shared_ptr<IEntity>>& getEntities(void) const{return m_entities;}
+    shared_ptr<vector<shared_ptr<IEntity>>> getEntitiesInBox(Box box);
+    void setEntity(shared_ptr<IEntity> pEntity);
+    bool deleteEntity(shared_ptr<IEntity> pEntity);
 
-    std::shared_ptr<IModel> getPlayer();
-    inline std::shared_ptr<std::vector<std::shared_ptr<IModel>>> getModels(){return m_models;}
-    void setModel(std::shared_ptr<IModel> pModel);
-
-
-    inline std::vector<ISector*> getMapInBox(Box box){return m_map->getBox(box);}
-    std::vector<std::shared_ptr<IModel>> getModelsInBox(Box box);
+    shared_ptr<vector<ISector*>> getMapInBox(Box box){return m_map->getBox(box);}
 
 private:
-    std::shared_ptr<Map> m_map;
-    std::shared_ptr<std::vector<std::shared_ptr<IModel>>> m_models;
-    std::shared_ptr<IModel> m_pPlayerModel;
+    shared_ptr<Map> m_map;
+    map<IEntity*,shared_ptr<IEntity>> m_entities;
 
-    std::mutex m_mutex;
+    mutex m_mutex;
 };

@@ -8,38 +8,75 @@
 #ifndef UI_CONTROLLER_USERCONTROL_HPP_
 #define UI_CONTROLLER_USERCONTROL_HPP_
 
-#include <windows.h>
-#include <memory>
-#include "Coordinates.hpp"
-#include "IModel.hpp"
 #include "MultiButton.hpp"
 #include "MouseActions.hpp"
-#include "Controller.hpp"
+#include "Coordinates.hpp"
+#include "Window2d.hpp"
+
+#include <windows.h>
+#include <map>
+#include <memory>
+
+using namespace std;
 
 class UserControl{
 public:
-	enum{
-		DONE,
-		QUIT
-	};
-	UserControl(Controller&& pController);
-	int run();
-	void addOffset(const Coordinates *pOffset){m_pOffset = pOffset;}
-private:
-	struct Move
-	{
-		WPARAM m_symbol;
-		Coordinates move;
-	};
-	char m_input;
-	static Move m_moves[];
 
-    MSG m_message;
+	enum class KeyAction{
+		KEY_UP,
+		KEY_DOWN,
+		KEY_LEFT,
+		KEY_RIGHT
+	};
+
+	enum class MouseAction{
+		MOUSE_PRESS_RIGHT,
+		MOUSE_DOWN_RIGHT,
+		MOUSE_RELEASE_RIGHT,
+		MOUSE_UP_RIGHT,
+		MOUSE_PRESS_LEFT,
+		MOUSE_DOWN_LEFT,
+		MOUSE_RELEASE_LEFT,
+		MOUSE_UP_LEFT
+	};
+
+	enum class WindowAction{
+		KEY_QUIT
+	};
+
+	using Callback = void (*)(void* pObj);
+
+	static const map<KeyAction,int> m_keyActionLookup;
+	static const map<WindowAction,int> m_windowActionLookup;
+	static const map<MouseAction,int> m_mouseActionLookup;
+
+	UserControl() = delete;
+	UserControl(Window2d* pWindow);
+	void Run();
+	void RegisterKeyAction(KeyAction action, Callback callback, void* pObj);
+	void RegisterMouseAction(MouseAction action, Callback callback, void* pObj);
+	void RegisterWindowAction(WindowAction action, Callback callback, void* pObj);
+	Coordinates GetMouseCoordinates();
+
+private:
+	class CallbackExe{
+	public:
+		CallbackExe(){}
+		CallbackExe(Callback callback ,void* pObj):m_callback(callback),m_pObj(pObj){}
+		void operator()(){m_callback(m_pObj);};
+		
+	private:
+		Callback m_callback;
+		void* m_pObj;
+	};
+
     MultiButton m_multibutton;
     MouseActions m_mouseActions;
+	Window2d* m_pWindow;
 
-	const Coordinates *m_pOffset;
-	Controller m_controller;
+	map<int,CallbackExe> m_registeredKeyActions;
+	map<int,CallbackExe> m_registeredWindowActions;
+	map<int,CallbackExe> m_registeredMouseActions;
 };
 
 
