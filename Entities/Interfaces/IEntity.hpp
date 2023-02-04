@@ -17,16 +17,15 @@ public:
     IEntity(){}
     virtual ~IEntity(){}
 
-    virtual IAttackEntity& getIAttack(){return ATTACK_EMPTY;}
-    virtual IDisplayEntity& getIDisplay(){return DISPLAY_EMPTY;}
-    virtual IWorldEntity& getIWorld(){return WORLD_EMPTY;}
-    virtual IMoveEntity& getIMove(){return MOVE_EMPTY;}
-    virtual IControlEntity& getIControl(){return CONTROL_EMPTY;}
-
-private:
-    static IAttackEntity ATTACK_EMPTY;
-    static IDisplayEntity DISPLAY_EMPTY;
-    static IWorldEntity WORLD_EMPTY;
-    static IMoveEntity MOVE_EMPTY;
-    static IControlEntity CONTROL_EMPTY;
+    virtual bool getIAttack(IAttackEntity& entity){return false;}
+    virtual bool getIDisplay(IDisplayEntity& entity){return false;}
+    virtual bool getIWorld(IWorldEntity& entity){return false;}
+    virtual bool getIMove(IMoveEntity& entity){return false;}
+    virtual bool getIControl(IControlEntity& entity){return false;}
+    
+    virtual void setIAttack(const IAttackEntity& entity){}
+    virtual void setIDisplay(const IDisplayEntity& entity){}
+    virtual void setIWorld(const IWorldEntity& entity){}
+    virtual void setIMove(const IMoveEntity& entity){}
+    virtual void setIControl(const IControlEntity& entity){}
 };

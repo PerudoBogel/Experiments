@@ -4,15 +4,15 @@
 
 #include <assert.h>
 
-ProjectileController::ProjectileController(weak_ptr<World> pWorld, weak_ptr<IEntity>pEntity):
+ProjectileController::ProjectileController(weak_ptr<World> pWorld, shared_ptr<IEntity>pEntity):
     Controller(pWorld, pEntity)
 {
-    auto ControlEntity = m_pEntity.lock()->getIControl();
-    auto MoveEntity = m_pEntity.lock()->getIMove();
+    auto ControlEntity = m_pEntity->getIControl();
+    auto MoveEntity = m_pEntity->getIMove();
 
     assert(ControlEntity.ifValid());
     assert(MoveEntity.ifValid());
-    assert(m_pEntity.lock()->getIAttack().ifValid());
+    assert(m_pEntity->getIAttack().ifValid());
 
     switch(ControlEntity.m_customData)
     {
@@ -25,12 +25,17 @@ ProjectileController::ProjectileController(weak_ptr<World> pWorld, weak_ptr<IEnt
 
 void ProjectileController::Run()
 {
-    auto lockedEntity = m_pEntity.lock();
+    auto lockedEntity = m_pEntity;
     if(lockedEntity)
     {
         auto MoveEntity = lockedEntity->getIMove();
         auto moveStep = m_pTrajectory->makeStep();
         shared_ptr<IEntity> pCollissionEntity;
+
+        if(!m_pTrajectory->ifInRange() && m_isAlive)
+        {
+            Die();
+        }
 
         if(Move(moveStep, pCollissionEntity, false) != DONE)
         {
@@ -39,11 +44,6 @@ void ProjectileController::Run()
                 Attack(pCollissionEntity);
                 Die();
             }
-        }
-
-        if(!m_pTrajectory->ifInRange() && m_isAlive)
-        {
-            Die();
         }
     }
     else{

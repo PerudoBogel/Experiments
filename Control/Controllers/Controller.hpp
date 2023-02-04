@@ -25,13 +25,13 @@ public:
 	};
 
 	Controller() = delete;
-	Controller(weak_ptr<World> pWorld, weak_ptr<IEntity> pEntity);
+	Controller(weak_ptr<World> pWorld, shared_ptr<IEntity> pEntity);
 	virtual ~Controller(){}
 	
 	virtual void Run();
 	virtual ControllerType GetType(){return CONTROL_NONE;}
 
-	int Move(Coordinates step, shared_ptr<IEntity> pCollisionEntity, bool allowSlide = true);
+	int Move(Coordinates step, shared_ptr<IEntity> &pCollisionEntity, bool allowSlide = true);
 	int Move(Coordinates step, bool allowSlide = true);
 	int Attack(shared_ptr<IEntity> pTarget);
 	void Die();
@@ -39,7 +39,7 @@ public:
 	bool IfAlive(){return m_isAlive;};
 
 protected:
-	weak_ptr<IEntity> m_pEntity;
+	shared_ptr<IEntity> m_pEntity;
 	weak_ptr<World> m_pWorld;
 	bool m_isAlive;
 };

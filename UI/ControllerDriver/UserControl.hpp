@@ -13,7 +13,6 @@
 #include "Coordinates.hpp"
 #include "Window2d.hpp"
 
-#include <windows.h>
 #include <map>
 #include <memory>
 

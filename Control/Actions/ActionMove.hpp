@@ -26,24 +26,19 @@ public:
 
 	static bool isEndOfWorld(std::shared_ptr<World> pWorld, IMoveEntity &entity, Coordinates coordinates)
 	{
-		auto lockedMap = pWorld->getMap().lock();
-		assert(lockedMap);
+		// auto lockedMap = pWorld->getMap().lock();
+		// assert(lockedMap);
 
-		bool rVal = false;
-		Box modelBox(*entity.m_pSize, *entity.m_pPosition + coordinates);
+		// bool rVal = false;
 
-		if (modelBox.Xmax >= lockedMap->m_size.w * ISector::m_Size.w
-				|| modelBox.Ymax >= lockedMap->m_size.h * ISector::m_Size.h)
-			rVal = true;
-		else if (modelBox.Xmin < 0 || modelBox.Ymin < 0)
-			rVal = true;
 
-		auto mapField = lockedMap->getBox(modelBox);
-		for (auto mapSector : *mapField.get())
-			if (!mapSector)
-				rVal = true;
+		// auto mapField = lockedMap->getBox(modelBox);
+		// for (auto mapSector : *mapField.get())
+		// 	if (!mapSector)
+		// 		rVal = true;
 
-		return rVal;
+		// return rVal;
+		return false;
 	}
 
 	static shared_ptr<IEntity> isPlaceTaken(std::shared_ptr<World> pWorld, IMoveEntity& entity, Coordinates coordinates)
@@ -51,7 +46,6 @@ public:
 		shared_ptr<IEntity> rVal = nullptr;
 
 		auto lockedEntities = pWorld->getEntities();
-		Box modelBox(*entity.m_pSize, *entity.m_pPosition + coordinates);
 
 		for (auto testModel : lockedEntities)
 		{
@@ -65,8 +59,7 @@ public:
 			if(!testMoveEntity.m_isCollidable)
 				continue;
 			
-			Box testModelBox(*testMoveEntity.m_pSize, *testMoveEntity.m_pPosition);
-			if (modelBox.isCollision(testModelBox))
+			if (entity.m_pHitbox->isCollision(*testMoveEntity.m_pHitbox))
 			{
 				rVal = testModel.second;
 				break;
@@ -76,7 +69,7 @@ public:
 		return rVal;
 	}
 
-	static Status Execute(std::shared_ptr<World> pWorld, IMoveEntity &entity, Coordinates coordinates, shared_ptr<IEntity> pCollisionEntity)
+	static Status Execute(std::shared_ptr<World> pWorld, IMoveEntity &entity, Coordinates coordinates, shared_ptr<IEntity> &pCollisionEntity)
 	{
 		Status rVal = DONE;
 		
@@ -92,6 +85,7 @@ public:
 		if(rVal == DONE)
 		{
 			*entity.m_pPosition += coordinates;
+			entity.m_pHitbox->update();
 		}
 
 		return rVal;

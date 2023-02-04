@@ -10,6 +10,6 @@ public:
     IControlEntity(void* pObj):EntityBase(pObj){};
     ~IControlEntity(void){}
     
-    ControllerType m_controller = CONTROL_NONE;
-    int m_customData = -1;
+    ControllerType m_controller;
+    int m_customData;
 };

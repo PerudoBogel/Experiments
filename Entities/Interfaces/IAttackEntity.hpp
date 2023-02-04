@@ -3,6 +3,7 @@
 #include "EntityBase.hpp"
 #include "Fraction.hpp"
 #include "Coordinates.hpp"
+#include "Hitbox.hpp"
 
 class IAttackEntity: public EntityBase
 {
@@ -11,13 +12,14 @@ public:
     IAttackEntity(void* pObj):EntityBase(pObj){};
     ~IAttackEntity(void){}
     
-    int *m_pHealth                  = nullptr;
-    int *m_pRange                   = nullptr;
-    int *m_pDefence                 = nullptr;
-    int *m_pAttack                  = nullptr;
-    int *m_pDamage                  = nullptr;
-    bool m_isAlive                  = true;
-    Fraction *m_pAllyFractions      = nullptr; 
-    Fraction *m_pMemberFractions    = nullptr;
-    Coordinates *m_pPosition        = nullptr;
+    int m_health;
+    int m_range;
+    int m_defence;
+    int m_attack;
+    int m_damage;
+    bool m_isAlive;
+    Fraction m_allyFractions; 
+    Fraction m_memberFractions;
+    Coordinates m_position;
+    Hitbox m_hitbox;
 };

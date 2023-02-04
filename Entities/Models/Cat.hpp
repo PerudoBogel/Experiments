@@ -1,8 +1,8 @@
 #pragma once
 
-#include <IModel.hpp>
+#include <ModelBase.hpp>
 
-class Cat : public IModel
+class Cat : public ModelBase
 {
 public:
 

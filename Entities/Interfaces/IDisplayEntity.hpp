@@ -11,11 +11,11 @@ public:
     IDisplayEntity(void* pObj):EntityBase(pObj){};
     ~IDisplayEntity(void){}
     
-    int *m_pType                = nullptr; 
-    int *m_pHealth              = nullptr;
-    int *m_pMaxHealth           = nullptr;
-    Coordinates *m_pPosition    = nullptr;
-    Size *m_pSize               = nullptr;
+    int m_type; 
+    int m_health;
+    int m_maxHealth;
+    Coordinates m_position;
+    Size m_size;
 
     int m_frameNo;
     int m_frameCount;

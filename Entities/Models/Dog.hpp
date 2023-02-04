@@ -1,8 +1,8 @@
 #pragma once
 
-#include <IModel.hpp>
+#include <ModelBase.hpp>
 
-class Dog : public IModel
+class Dog : public ModelBase
 {
 public:
 

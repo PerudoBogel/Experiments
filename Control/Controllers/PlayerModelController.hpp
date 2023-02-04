@@ -13,7 +13,7 @@ class PlayerModelController: public Controller
 {
 public:
     PlayerModelController() = delete;
-    PlayerModelController(weak_ptr<World> pWorld, weak_ptr<IEntity> pEntity, weak_ptr<Scope> pScope, Window2d* pWindow);
+    PlayerModelController(weak_ptr<World> pWorld, shared_ptr<IEntity> pEntity, weak_ptr<Scope> pScope, Window2d* pWindow);
 	void addOffset(const Coordinates *pOffset){m_pOffset = pOffset;}
 
     void Run();

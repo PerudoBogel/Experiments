@@ -1,5 +1,5 @@
 #include "ScopeDisplay.hpp"
-#include "EntityTypes.hpp"
+#include "EntityType.hpp"
 
 #include <iostream>
 #include <math.h>

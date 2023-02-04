@@ -4,15 +4,23 @@
 
 struct Box
 {
-	Box(const Size &size, const Coordinates &position) :
-			Xmin(position.x - size.w / 2), Xmax(
-					position.x + size.w / 2), Ymin(
-					position.y - size.h / 2), Ymax(
-					position.y + size.h / 2)
+	Box(const Size &size, const Coordinates &position)
 	{
+		calculate(size, position);
 	}
-	const float Xmin, Xmax;
-	const float Ymin, Ymax;
+	
+	float Xmin, Xmax;
+	float Ymin, Ymax;
+	
+    Box& operator=( const Box& ) = default;
+
+	inline void calculate(const Size &size, const Coordinates &position)
+	{
+		Xmin = position.x - size.w / 2; 
+		Xmax = position.x + size.w / 2; 
+		Ymin = position.y - size.h / 2;
+		Ymax = position.y + size.h / 2;
+	}
 
 	inline bool isCollision(const Box &box) const
 	{

@@ -14,11 +14,11 @@
 #include <array>
 #include <assert.h>
 
-AIController::AIController(weak_ptr<World> pWorld, weak_ptr<IEntity> pEntity):
+AIController::AIController(weak_ptr<World> pWorld, shared_ptr<IEntity> pEntity):
 		Controller(pWorld, pEntity),
 		m_nextPost(0)
 {
-	assert(pEntity.lock()->getIMove().ifValid());
+	assert(pEntity->getIMove().ifValid());
 }
 
 void AIController::AddPost(Coordinates &&position)
@@ -30,7 +30,7 @@ void AIController::Run()
 {	
     Controller::Run();
 
-	auto lockedMoveEntity = m_pEntity.lock()->getIMove();
+	auto lockedMoveEntity = m_pEntity->getIMove();
 	if (lockedMoveEntity.ifValid())
 	{
 		Coordinates moveStep;

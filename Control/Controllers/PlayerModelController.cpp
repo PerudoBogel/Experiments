@@ -6,14 +6,14 @@
 
 using namespace std;
 
-PlayerModelController::PlayerModelController(weak_ptr<World> pWorld, weak_ptr<IEntity> pEntity, weak_ptr<Scope> pScope, Window2d* pWindow):
+PlayerModelController::PlayerModelController(weak_ptr<World> pWorld, shared_ptr<IEntity> pEntity, weak_ptr<Scope> pScope, Window2d* pWindow):
 	Controller(pWorld, pEntity),
     m_pScope(pScope),
     m_control(pWindow)
 {
-    assert(m_pEntity.lock()->getIMove().ifValid());
-    assert(m_pEntity.lock()->getIWorld().ifValid());
-    assert(m_pEntity.lock()->getIAttack().ifValid());
+    assert(m_pEntity->getIMove().ifValid());
+    assert(m_pEntity->getIWorld().ifValid());
+    assert(m_pEntity->getIAttack().ifValid());
 
 	m_control.RegisterKeyAction(UserControl::KeyAction::KEY_UP,(UserControl::Callback)&PlayerModelController::actionUpKey,this);
 	m_control.RegisterKeyAction(UserControl::KeyAction::KEY_DOWN,(UserControl::Callback)&PlayerModelController::actionDownKey,this);
@@ -28,7 +28,7 @@ PlayerModelController::PlayerModelController(weak_ptr<World> pWorld, weak_ptr<IE
 
 void PlayerModelController::Run()
 {
-    auto lockedEntity = m_pEntity.lock();
+    auto lockedEntity = m_pEntity;
     if(!lockedEntity)
         m_isAlive = false;
 
@@ -51,7 +51,7 @@ void PlayerModelController::actionRightClick(void* pObj)
 {
     PlayerModelController *pThis = static_cast<PlayerModelController*>(pObj);
 
-    auto lockedEntity = pThis->m_pEntity.lock();
+    auto lockedEntity = pThis->m_pEntity;
     auto lockedScope = pThis->m_pScope.lock();
     
     if(!lockedEntity || !lockedScope)

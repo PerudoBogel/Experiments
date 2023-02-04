@@ -38,7 +38,6 @@ bool World::deleteEntity(shared_ptr<IEntity> pEntity)
 	auto key = pEntity.get();
 	if (m_entities.find(key) != m_entities.end())
 	{
-		m_entities[key].reset();
 		m_entities.erase(key);
 		rVal = true;
 	}

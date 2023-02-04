@@ -10,6 +10,14 @@ struct Coordinates
 	Coordinates(): x(0), y(0), phi(0){}
 
 	Coordinates(decltype(x) nx, decltype(y) ny, decltype(phi) nphi = 0): x(nx), y(ny),phi(nphi){}
+	
+    Coordinates& operator=( const Coordinates& coords) 
+	{
+		x = coords.x;
+		y = coords.y;
+		phi = coords.phi;
+		return *this;
+	}
 
 	inline bool operator==(const Coordinates &coords)
 	{

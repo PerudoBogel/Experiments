@@ -1,8 +1,8 @@
 #pragma once
-#include "IProjectile.hpp"
+#include "ProjectileBase.hpp"
 #include "TrajectoryTypes.hpp"
 
-class Arrow: public IProjectile
+class Arrow: public ProjectileBase
 {
 public:
     Arrow()

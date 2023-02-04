@@ -1,6 +1,7 @@
 #pragma once
 
-enum {
+enum EntityType
+{
     PROJECTILE_TYPE_ARROW,
 
     MODEL_TYPE_DOG,

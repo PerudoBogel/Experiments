@@ -14,19 +14,20 @@
 #include "Scope.hpp"
 #include "ScopeDisplay.hpp"
 #include "Debug.hpp"
+#include "EntityFactory.hpp"
 
 using namespace std;
 
 int main(int argc, char **argv)
 {
-	auto humanModel = make_shared<Human>();
-	auto cat0 = make_shared<Cat>();
-	auto cat1 = make_shared<Cat>();
-	auto cat2 = make_shared<Cat>();
-	auto dogModel = make_shared<Dog>();
-	auto dog1Model = make_shared<Dog>();
-	auto dog2Model = make_shared<Dog>();
-	auto dog3Model = make_shared<Dog>();
+	auto humanModel = EntityFactory::makeEntity<Human>();
+	auto cat0 = EntityFactory::makeEntity<Cat>();
+	auto cat1 = EntityFactory::makeEntity<Cat>();
+	auto cat2 = EntityFactory::makeEntity<Cat>();
+	auto dogModel = EntityFactory::makeEntity<Dog>();
+	auto dog1Model = EntityFactory::makeEntity<Dog>();
+	auto dog2Model = EntityFactory::makeEntity<Dog>();
+	auto dog3Model = EntityFactory::makeEntity<Dog>();
 	humanModel->m_position = Coordinates(50,50);
 	cat0->m_position = Coordinates(143*5, 80*5);
 	cat1->m_position = Coordinates(150*5, 81*5);
@@ -77,6 +78,15 @@ int main(int argc, char **argv)
 	auto controller = static_cast<PlayerModelController*>(controllerRunner->getController(humanModel.get()).get());
 	
 	controller->addOffset(&scope->getOffset());
+
+	humanModel.reset();
+	cat0.reset();
+	cat1.reset();
+	cat2.reset();
+	dogModel.reset();
+	dog1Model.reset();
+	dog2Model.reset();
+	dog3Model.reset();
 
 	while (controller->IfAlive())
 	{

@@ -11,7 +11,7 @@ public:
     IWorldEntity(void* pObj):EntityBase(pObj){};
     ~IWorldEntity(void){}
 
-    int *m_pType                        = nullptr; 
-    Coordinates *m_pPosition            = nullptr;
-    Size *m_pSize                       = nullptr;
+    int m_type; 
+    Coordinates m_position;
+    Size m_size;
 };

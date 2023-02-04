@@ -1,6 +1,7 @@
 #pragma once
-#include "IModel.hpp"
-class Human: public IModel{
+#include "ModelBase.hpp"
+class Human: public ModelBase
+{
 public:
 	Human()
 	{

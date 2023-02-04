@@ -4,28 +4,30 @@
 #include "Coordinates.hpp"
 #include "Fraction.hpp"
 #include "IEntity.hpp"
-#include "EntityTypes.hpp"
+#include "EntityType.hpp"
 
 #include <memory>
 
-class IProjectile: public IEntity
+class ProjectileBase: public IEntity
 {
 public:
 
-	IProjectile() :
+	ProjectileBase() :
 			m_damage(1),
 			m_attack(10000),
 			m_defence(1),
 			m_range(1000),
 			m_speed(1),
 			m_size(4,4),
-			m_position(0,0)
+			m_position(0,0),
+			m_hitbox(m_position,m_size)
 	{
 		m_IAttack.m_pAttack = &m_attack;
 		m_IAttack.m_pDamage = &m_damage;
 		m_IAttack.m_pDefence = &m_attack;
 		m_IAttack.m_pPosition = &m_position;
 		m_IAttack.m_pRange = &m_range;
+		m_IAttack.m_pHitbox = &m_hitbox;
 
 		m_IDisplay.m_pPosition = &m_position;
 		m_IDisplay.m_pSize = &m_size;
@@ -37,12 +39,12 @@ public:
 		
 		m_IMove.m_isCollidable = false;
 		m_IMove.m_pPosition = &m_position;
-		m_IMove.m_pSize = &m_size;
+		m_IMove.m_pHitbox = &m_hitbox;
 		m_IMove.m_pSpeed = &m_speed;
 		
 		m_IControl.m_controller = CONTROL_PROJECTILE;
 	}
-    virtual ~IProjectile(){};
+    virtual ~ProjectileBase(){};
     
 	int m_type;
     int m_damage;
@@ -52,6 +54,7 @@ public:
 	decltype(Coordinates::x) m_speed;
     Coordinates m_position;
     Size m_size;
+	Hitbox m_hitbox;
 
 	IAttackEntity& getIAttack(){return m_IAttack;}
     IDisplayEntity&getIDisplay(){return m_IDisplay;}

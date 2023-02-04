@@ -20,7 +20,7 @@ class AIController: public Controller
 {
 public:
 	AIController() = delete;
-	AIController(weak_ptr<World> pWorld, weak_ptr<IEntity> pEntity);
+	AIController(weak_ptr<World> pWorld, shared_ptr<IEntity> pEntity);
 
 	void AddPost(Coordinates &&position);
 
