@@ -49,17 +49,17 @@ public:
 
 		for (auto testModel : lockedEntities)
 		{
-			auto testMoveEntity = testModel.second->getIMove();
-			if(!testMoveEntity.ifValid())
+			IMoveEntity moveEntity;
+			if(!testModel.second->getIMove(moveEntity))
 				continue;
 
-			if (testMoveEntity == entity)
+			if (moveEntity == entity)
 				continue;
 
-			if(!testMoveEntity.m_isCollidable)
+			if(!moveEntity.m_isCollidable)
 				continue;
 			
-			if (entity.m_pHitbox->isCollision(*testMoveEntity.m_pHitbox))
+			if (entity.m_hitbox.isCollision(moveEntity.m_hitbox))
 			{
 				rVal = testModel.second;
 				break;
@@ -74,7 +74,7 @@ public:
 		Status rVal = DONE;
 		
 		float vectorLength = sqrt(pow(coordinates.x, 2) + pow(coordinates.y, 2));
-		float scaler = *entity.m_pSpeed / vectorLength;
+		float scaler = entity.m_speed / vectorLength;
 		coordinates *= scaler;
 
 		if(isEndOfWorld(pWorld, entity, coordinates))
@@ -83,9 +83,8 @@ public:
 			rVal = CANNOT_MOVE;
 
 		if(rVal == DONE)
-		{
-			*entity.m_pPosition += coordinates;
-			entity.m_pHitbox->update();
+		{	
+			entity.m_position += coordinates;
 		}
 
 		return rVal;

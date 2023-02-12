@@ -144,36 +144,36 @@ bool ScopeDisplay::draw_entities()
 
     for(auto pEntity : *m_pScope->getEntities().lock().get())
 	{
-        auto displayEntity = pEntity->getIDisplay();
-        if(!displayEntity.ifValid())
+        IDisplayEntity displayEntity;
+        if(!pEntity->getIDisplay(displayEntity))
         {
             continue;
         }
        
-        m_sprites.push_back(m_entityTextures[*displayEntity.m_pType].sprite);
+        m_sprites.push_back(m_entityTextures[displayEntity.m_type].sprite);
 
         //set absolute position;
-        position = *displayEntity.m_pPosition;
+        position = displayEntity.m_position;
         // set relative position
         position -= m_pScope->getOffset();
         //align texture
-        position -= Coordinates(displayEntity.m_pSize->w/2, displayEntity.m_pSize->h/2);
+        position -= Coordinates(displayEntity.m_size.w/2, displayEntity.m_size.h/2);
         
 		m_sprites.back().setPosition(position.x, position.y);
         m_sprites.back().setRotation(position.phi);
 
-        m_sprites.back().setScale(displayEntity.m_pSize->w/m_entityTextures[*displayEntity.m_pType].texture.getSize().x, 
-            displayEntity.m_pSize->h/m_entityTextures[*displayEntity.m_pType].texture.getSize().y);
+        m_sprites.back().setScale(displayEntity.m_size.w/m_entityTextures[displayEntity.m_type].texture.getSize().x, 
+            displayEntity.m_size.h/m_entityTextures[displayEntity.m_type].texture.getSize().y);
 
-        if(displayEntity.m_pMaxHealth == nullptr || displayEntity.m_pHealth == nullptr)
+        if(displayEntity.m_maxHealth == -1)
         {
             //no health bar needed
         }
-        else if(*displayEntity.m_pMaxHealth != *displayEntity.m_pHealth)
+        else if(displayEntity.m_maxHealth != displayEntity.m_health)
         {    
             healthBarData.position = Coordinates(position.x,position.y);
-            healthBarData.percentage = (*displayEntity.m_pHealth * 100) / *displayEntity.m_pMaxHealth;
-            healthBarData.size = Size(displayEntity.m_pSize->w, displayEntity.m_pSize->h / 5);
+            healthBarData.percentage = (displayEntity.m_health * 100) / displayEntity.m_maxHealth;
+            healthBarData.size = Size(displayEntity.m_size.w, displayEntity.m_size.h / 5);
             
             m_healthBarData.push_back(healthBarData);
             m_sprites.push_back(makeHealthBar(&m_healthBarData.back()));

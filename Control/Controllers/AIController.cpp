@@ -17,9 +17,7 @@
 AIController::AIController(weak_ptr<World> pWorld, shared_ptr<IEntity> pEntity):
 		Controller(pWorld, pEntity),
 		m_nextPost(0)
-{
-	assert(pEntity->getIMove().ifValid());
-}
+{}
 
 void AIController::AddPost(Coordinates &&position)
 {
@@ -30,29 +28,29 @@ void AIController::Run()
 {	
     Controller::Run();
 
-	auto lockedMoveEntity = m_pEntity->getIMove();
-	if (lockedMoveEntity.ifValid())
+	IMoveEntity moveEntity;
+	if (m_pEntity->getIMove(moveEntity))
 	{
 		Coordinates moveStep;
 		if (m_posts.empty())
 		{
-			moveStep.x = Random::get(*lockedMoveEntity.m_pSpeed * 2) - *lockedMoveEntity.m_pSpeed;
-			moveStep.y = Random::get(*lockedMoveEntity.m_pSpeed * 2) - *lockedMoveEntity.m_pSpeed;
+			moveStep.x = Random::get(moveEntity.m_speed * 2) - moveEntity.m_speed;
+			moveStep.y = Random::get(moveEntity.m_speed * 2) - moveEntity.m_speed;
 		}
 		else
 		{
 			Coordinates post = m_posts[m_nextPost];
-			Coordinates difference = post - *lockedMoveEntity.m_pPosition;
+			Coordinates difference = post - moveEntity.m_position;
 			Box postBox({100,100},post);
 			if (difference.x > 0)
-				moveStep.x = *lockedMoveEntity.m_pSpeed > difference.x? *lockedMoveEntity.m_pSpeed : difference.x;
+				moveStep.x = moveEntity.m_speed > difference.x? moveEntity.m_speed : difference.x;
 			if (difference.y > 0)
-				moveStep.y = *lockedMoveEntity.m_pSpeed > difference.y? *lockedMoveEntity.m_pSpeed : difference.y;
+				moveStep.y = moveEntity.m_speed > difference.y? moveEntity.m_speed : difference.y;
 			if (difference.x < 0)
-				moveStep.x = *lockedMoveEntity.m_pSpeed < difference.x? *lockedMoveEntity.m_pSpeed : difference.x;
+				moveStep.x = moveEntity.m_speed < difference.x? moveEntity.m_speed : difference.x;
 			if (difference.y < 0)
-				moveStep.y = *lockedMoveEntity.m_pSpeed < difference.y? *lockedMoveEntity.m_pSpeed : difference.y;
-			if (postBox.Contains(*lockedMoveEntity.m_pPosition))
+				moveStep.y = moveEntity.m_speed < difference.y? moveEntity.m_speed : difference.y;
+			if (postBox.Contains(moveEntity.m_position))
 				m_nextPost++;
 			if (m_nextPost >= m_posts.size())
 				m_nextPost = 0;

@@ -20,28 +20,54 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
+	IMoveEntity moveEntity;
 	auto humanModel = EntityFactory::makeEntity<Human>();
-	auto cat0 = EntityFactory::makeEntity<Cat>();
-	auto cat1 = EntityFactory::makeEntity<Cat>();
-	auto cat2 = EntityFactory::makeEntity<Cat>();
+	// auto cat0 = EntityFactory::makeEntity<Cat>();
+	// auto cat1 = EntityFactory::makeEntity<Cat>();
+	// auto cat2 = EntityFactory::makeEntity<Cat>();
 	auto dogModel = EntityFactory::makeEntity<Dog>();
 	auto dog1Model = EntityFactory::makeEntity<Dog>();
-	auto dog2Model = EntityFactory::makeEntity<Dog>();
-	auto dog3Model = EntityFactory::makeEntity<Dog>();
-	humanModel->m_position = Coordinates(50,50);
-	cat0->m_position = Coordinates(143*5, 80*5);
-	cat1->m_position = Coordinates(150*5, 81*5);
-	cat2->m_position = Coordinates(153*5, 75*5);
-	dogModel->m_position = Coordinates(30*5, 30*5);
-	dog1Model->m_position = Coordinates(40, 80);
-	dog2Model->m_position = Coordinates(30*5, 33*5);
-	dog3Model->m_position = Coordinates(8, 8);
-	humanModel->getIControl().m_controller = CONTROL_PLAYER;
+	// auto dog2Model = EntityFactory::makeEntity<Dog>();
+	// auto dog3Model = EntityFactory::makeEntity<Dog>();
+	
+	humanModel->getIMove(moveEntity);
+	moveEntity.m_position = Coordinates(50,50);
+	humanModel->setIMove(moveEntity);
+
+	// cat0->getIMove(moveEntity);
+	// moveEntity.m_position = Coordinates(143*5, 80*5);
+	// cat0->setIMove(moveEntity);
+
+	// cat1->getIMove(moveEntity);
+	// moveEntity.m_position = Coordinates(150*5, 81*5);
+	// cat1->setIMove(moveEntity);
+
+	// cat2->getIMove(moveEntity);
+	// moveEntity.m_position = Coordinates(153*5, 75*5);
+	// cat2->setIMove(moveEntity);
+
+	dogModel->getIMove(moveEntity);
+	moveEntity.m_position = Coordinates(30*5, 30*5);
+	dogModel->setIMove(moveEntity);
+
+	dog1Model->getIMove(moveEntity);
+	moveEntity.m_position = Coordinates(40, 80);
+	dog1Model->setIMove(moveEntity);
+	
+	// dog2Model->getIMove(moveEntity);
+	// moveEntity.m_position = Coordinates(30*5, 33*5);
+	// dog2Model->setIMove(moveEntity);
+
+	// dog3Model->getIMove(moveEntity);
+	// moveEntity.m_position = Coordinates(8, 8);
+	// dog3Model->setIMove(moveEntity);
+
+	humanModel->m_controller = CONTROL_PLAYER;
 	// cat0->m_control= CONTROL_AI;
 	// cat1->m_control= CONTROL_AI;
 	// cat2->m_control= CONTROL_AI;
 	// dogModel->m_control= CONTROL_AI;
-	dog1Model->getIControl().m_controller = CONTROL_AI;
+	// dog1Model->m_controller = CONTROL_AI;
 	// dog2Model->m_control= CONTROL_AI;
 
 	auto templateGen = make_unique<TemplateReader>("GameResources/Maps/road.png");
@@ -52,18 +78,19 @@ int main(int argc, char **argv)
 
 	auto world = make_shared<World>();
 	world->setMap(map);
-	world->setEntity(dog3Model);
+	// world->setEntity(dog3Model);
 	world->setEntity(humanModel);
-	world->setEntity(cat1);
-	world->setEntity(cat2);
-	world->setEntity(cat0);
+	// world->setEntity(cat1);
+	// world->setEntity(cat2);
+	// world->setEntity(cat0);
 	world->setEntity(dogModel);
 	world->setEntity(dog1Model);
-	world->setEntity(dog2Model);
+	// world->setEntity(dog2Model);
+	world->sync();
 
 	auto scope = make_shared<Scope>(world, Coordinates(0,0));
 	scope->setSize(Size(121 * ISector::m_Size.w, 81 * ISector::m_Size.h));
-	scope->trace(&humanModel->getIWorld());
+	scope->trace(humanModel);
 	
 	auto scopeDisplay = make_unique<ScopeDisplay>(scope);
 	
@@ -71,22 +98,22 @@ int main(int argc, char **argv)
 
 	auto controllerRunner = make_unique<ControllersRunner>(world, scope, window.get());
 
-	auto pController = static_cast<AIController*>(controllerRunner->getController(dog1Model.get()).get());
-	pController->AddPost(Coordinates(40, 40));
-	pController->AddPost(Coordinates(150, 200));
+	// auto pController = static_cast<AIController*>(controllerRunner->getController(dog1Model.get()).get());
+	// pController->AddPost(Coordinates(40, 40));
+	// pController->AddPost(Coordinates(150, 200));
 	
 	auto controller = static_cast<PlayerModelController*>(controllerRunner->getController(humanModel.get()).get());
 	
 	controller->addOffset(&scope->getOffset());
 
 	humanModel.reset();
-	cat0.reset();
-	cat1.reset();
-	cat2.reset();
+	// cat0.reset();
+	// cat1.reset();
+	// cat2.reset();
 	dogModel.reset();
 	dog1Model.reset();
-	dog2Model.reset();
-	dog3Model.reset();
+	// dog2Model.reset();
+	// dog3Model.reset();
 
 	while (controller->IfAlive())
 	{

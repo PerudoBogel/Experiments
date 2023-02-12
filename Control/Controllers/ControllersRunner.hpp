@@ -40,9 +40,11 @@ public:
 			else
 				deadKeys.push_back(pController.first);
 		}
-		
 		for(auto deadKey: deadKeys)
+		{
 			m_controllers.erase(deadKey);
+		}
+		m_pWorld.lock()->sync();
 	}
 
 	shared_ptr<Controller> getController(IEntity *pEntity)
@@ -69,13 +71,13 @@ private:
 	{
 		for(auto pEntity: m_pWorld.lock()->getEntities())
 		{
-			auto controlEntity = pEntity.second->getIControl();
-			auto key = pEntity.second.get();
+			IControlEntity controlEntity;
 
-			if(!controlEntity.ifValid())
+			if(!pEntity.second->getIControl(controlEntity))
 			{
 				continue;
 			}
+			auto key = pEntity.second.get();
 
 			if(m_controllers.find(key) != m_controllers.end())
 				continue;

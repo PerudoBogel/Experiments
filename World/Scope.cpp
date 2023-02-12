@@ -24,8 +24,7 @@ void Scope::UpdateCoordinates()
 
 Scope::Scope(weak_ptr<World> world, Coordinates position):
         m_position(position),
-        m_pWorld(world),
-        m_isTracing(false)
+        m_pWorld(world)
 {
     
 }
@@ -64,20 +63,19 @@ void Scope::setSize(Size size)
     update();
 }
 
-void Scope::trace(IWorldEntity *pTraced)
+void Scope::trace(weak_ptr<IEntity> pTraced)
 {
-    if(pTraced && pTraced->ifValid())
-    {
-        m_pTraced = pTraced; 
-        m_isTracing = true;
-    }
+    m_pTraced = pTraced;
 }
 
 void Scope::update()
 {
-	if(m_isTracing)
+    auto lockedTracer = m_pTraced.lock();
+	if(lockedTracer)
     {
-        m_position = *m_pTraced->m_pPosition;
+        IMoveEntity moveEntity;
+        lockedTracer->getIMove(moveEntity);
+        m_position = moveEntity.m_position;
         UpdateCoordinates();
 	}
 

@@ -14,61 +14,30 @@ class ModelBase: public IEntity
 {
 public:
 	ModelBase() :
-			m_health(1),
-			m_maxHealth(1),
-			m_damage(1),
-			m_attack(1),
-			m_defence(1),
-			m_range(1),
-			m_memberFractions(),
-			m_allyFractions(),
-			m_speed(1),
-			m_moveStrength(0),
 			m_size(25,25),
-			m_position(0,0),
-			m_hitbox(m_position,m_size)
-	{
-
-		m_IDisplay.m_pHealth = &m_health;
-		m_IDisplay.m_pMaxHealth = &m_maxHealth;
-		m_IDisplay.m_pPosition = &m_position;
-		m_IDisplay.m_pSize = &m_size;
-		m_IDisplay.m_pType = &m_type;
-		
-		m_IWorld.m_pPosition = &m_position;
-		m_IWorld.m_pSize = &m_size;
-		m_IWorld.m_pType = &m_type;
-
-		m_IMove.m_pMoveStrength = &m_moveStrength;
-		m_IMove.m_pPosition = &m_position;
-		m_IMove.m_pHitbox = &m_hitbox;
-		m_IMove.m_pSpeed = &m_speed;
-
-		m_IControl.m_controller = CONTROL_NONE;
-	}
+			m_hitbox(&m_position,&m_size)
+	{}
     virtual ~ModelBase(){};
 
     int m_type;
-
-    int m_health;
-    int m_maxHealth;
-	bool m_isAlive;
-
-    int m_damage;
-    int m_attack;
-    int m_defence;
-    int m_range;
+	int m_customData;
+    int m_health						= 1;
+    int m_maxHealth						= 1;
+	bool m_isAlive						= 1;
+	bool m_isCollidable					= true;
+    int m_damage						= 1;
+    int m_attack						= 1;
+    int m_defence						= 1;
+    int m_range							= 100;
+    int m_moveStrength					= 1;
+	decltype(Coordinates::x) m_speed	= 1;
+	ControllerType m_controller = CONTROL_NONE;
 	Fraction m_memberFractions,	m_allyFractions;
-
-	decltype(Coordinates::x) m_speed;
-    int m_moveStrength;
     Coordinates m_position;
     Size m_size;
 	Hitbox m_hitbox;
-	
-	#define COPY_TO_ENTITY(varName) entity.varName = varName
 
-    virtual bool getIAttack(IAttackEntity& entity)
+    bool getIAttack(IAttackEntity& entity)
 	{
 		COPY_TO_ENTITY(m_allyFractions);
 		COPY_TO_ENTITY(m_attack);
@@ -80,16 +49,83 @@ public:
 		COPY_TO_ENTITY(m_range);
 		COPY_TO_ENTITY(m_hitbox);
 		COPY_TO_ENTITY(m_isAlive);
+		SET_ENTITY_PTR();
 		return true;
 	}
-    virtual bool getIDisplay(IDisplayEntity& entity){return false;}
-    virtual bool getIWorld(IWorldEntity& entity){return false;}
-    virtual bool getIMove(IMoveEntity& entity){return false;}
-    virtual bool getIControl(IControlEntity& entity){return false;}
+    bool getIDisplay(IDisplayEntity& entity)
+	{
+		COPY_TO_ENTITY(m_health);
+		COPY_TO_ENTITY(m_maxHealth);
+		COPY_TO_ENTITY(m_position);
+		COPY_TO_ENTITY(m_size);
+		COPY_TO_ENTITY(m_type);
+		SET_ENTITY_PTR();
+		return true;
+	}
+
+    bool getIWorld(IWorldEntity& entity)
+	{
+		COPY_TO_ENTITY(m_position);
+		COPY_TO_ENTITY(m_size);
+		COPY_TO_ENTITY(m_type);
+		SET_ENTITY_PTR();
+		return true;
+	}
+    bool getIMove(IMoveEntity& entity)
+	{
+		COPY_TO_ENTITY(m_moveStrength);
+		COPY_TO_ENTITY(m_position);
+		COPY_TO_ENTITY(m_hitbox);
+		COPY_TO_ENTITY(m_speed);
+		COPY_TO_ENTITY(m_isCollidable);
+		SET_ENTITY_PTR();
+		return true;
+	}
+    bool getIControl(IControlEntity& entity)
+	{
+		COPY_TO_ENTITY(m_controller);
+		COPY_TO_ENTITY(m_customData);
+		SET_ENTITY_PTR();
+		return true;
+	}
     
-    virtual void setIAttack(const IAttackEntity& entity){}
-    virtual void setIDisplay(const IDisplayEntity& entity){}
-    virtual void setIWorld(const IWorldEntity& entity){}
-    virtual void setIMove(const IMoveEntity& entity){}
-    virtual void setIControl(const IControlEntity& entity){}
+    void setIAttack(const IAttackEntity& entity)
+	{
+		COPY_FROM_ENTITY(m_allyFractions);
+		COPY_FROM_ENTITY(m_attack);
+		COPY_FROM_ENTITY(m_damage);
+		COPY_FROM_ENTITY(m_defence);
+		COPY_FROM_ENTITY(m_health);
+		COPY_FROM_ENTITY(m_memberFractions);
+		COPY_FROM_ENTITY(m_position);
+		COPY_FROM_ENTITY(m_range);
+		COPY_FROM_ENTITY(m_hitbox);
+		COPY_FROM_ENTITY(m_isAlive);
+	}
+    void setIDisplay(const IDisplayEntity& entity)
+	{
+		COPY_FROM_ENTITY(m_health);
+		COPY_FROM_ENTITY(m_maxHealth);
+		COPY_FROM_ENTITY(m_position);
+		COPY_FROM_ENTITY(m_size);
+		COPY_FROM_ENTITY(m_type);
+	}
+    void setIWorld(const IWorldEntity& entity)
+	{
+		COPY_FROM_ENTITY(m_position);
+		COPY_FROM_ENTITY(m_size);
+		COPY_FROM_ENTITY(m_type);
+	}
+    void setIMove(const IMoveEntity& entity)
+	{
+		COPY_FROM_ENTITY(m_moveStrength);
+		COPY_FROM_ENTITY(m_position);
+		m_hitbox.update();
+		COPY_FROM_ENTITY(m_speed);
+	}
+    void setIControl(const IControlEntity& entity)
+	{
+		COPY_FROM_ENTITY(m_controller);
+		COPY_FROM_ENTITY(m_customData);
+	}
 };

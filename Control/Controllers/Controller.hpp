@@ -38,8 +38,8 @@ public:
 	int Shoot(Coordinates &direction);
 	bool IfAlive(){return m_isAlive;};
 
-protected:
 	shared_ptr<IEntity> m_pEntity;
+protected:
 	weak_ptr<World> m_pWorld;
 	bool m_isAlive;
 };

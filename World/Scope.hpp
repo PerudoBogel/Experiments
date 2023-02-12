@@ -22,8 +22,8 @@ public:
     void move(Coordinates step);
     void setSize(Size size);
 
-    void trace(IWorldEntity *pTraced);
-	void stopTrace(){ m_isTracing = false;}
+    void trace(weak_ptr<IEntity> pTraced);
+	void stopTrace(){ m_pTraced.reset();}
 
     mutex &getMutex() {return m_mutex;}
 
@@ -43,8 +43,7 @@ private:
     shared_ptr<vector<ISector*>> m_map;
     shared_ptr<vector<shared_ptr<IEntity>>> m_entities;
     weak_ptr<World> m_pWorld;
-    IWorldEntity *m_pTraced;
-    bool m_isTracing;
+    weak_ptr<IEntity> m_pTraced;
 
     void UpdateCoordinates();
 };

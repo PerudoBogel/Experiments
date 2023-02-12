@@ -7,33 +7,42 @@
 class Hitbox
 {
 public:
-    Hitbox(Coordinates &position, Size &size):
-    m_hitbox(size, position),
-    m_postion(position),
-    m_size(size)
+    Hitbox():
+    m_pPostion(nullptr),
+    m_psize(nullptr)
+    {}
+    Hitbox(Coordinates *pPosition, Size *pSize):
+    m_hitbox(*pSize, *pPosition),
+    m_pPostion(pPosition),
+    m_psize(pSize)
     {}
     
     Hitbox& operator=(const Hitbox& hitbox)
     {   
         m_hitbox = hitbox.m_hitbox;
-        m_postion = hitbox.m_postion;
-        m_size = hitbox.m_size;
+        m_pPostion = hitbox.m_pPostion;
+        m_psize = hitbox.m_psize;
         return *this;
     }
 
     void update()
     {
-        m_hitbox.calculate(m_size, m_postion);
+        m_hitbox.calculate(*m_psize, *m_pPostion);
     }
 
     bool isCollision(Hitbox &testHitbox)
     {
         return m_hitbox.isCollision(testHitbox.m_hitbox);
     }
+    
+	bool Contains(const Coordinates &coordinates)
+    {
+        return m_hitbox.Contains(coordinates);
+    }
 
 private:
 
     Box m_hitbox;
-    Coordinates &m_postion;
-    Size &m_size;
+    Coordinates *m_pPostion;
+    Size *m_psize;
 };

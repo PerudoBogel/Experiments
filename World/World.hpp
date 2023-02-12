@@ -29,12 +29,16 @@ public:
     shared_ptr<vector<shared_ptr<IEntity>>> getEntitiesInBox(Box box);
     void setEntity(shared_ptr<IEntity> pEntity);
     bool deleteEntity(shared_ptr<IEntity> pEntity);
+    void sync();
 
     shared_ptr<vector<ISector*>> getMapInBox(Box box){return m_map->getBox(box);}
 
 private:
     shared_ptr<Map> m_map;
     map<IEntity*,shared_ptr<IEntity>> m_entities;
+    map<IEntity*,shared_ptr<IEntity>> m_deadEntities;
+    map<IEntity*,shared_ptr<IEntity>> m_newEntities;
+
 
     mutex m_mutex;
 };

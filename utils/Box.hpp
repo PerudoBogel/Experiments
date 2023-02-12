@@ -4,6 +4,7 @@
 
 struct Box
 {
+	Box(void){}
 	Box(const Size &size, const Coordinates &position)
 	{
 		calculate(size, position);

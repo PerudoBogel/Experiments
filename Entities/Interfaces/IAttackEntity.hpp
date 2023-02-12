@@ -1,17 +1,13 @@
 #pragma once
 
-#include "EntityBase.hpp"
 #include "Fraction.hpp"
 #include "Coordinates.hpp"
 #include "Hitbox.hpp"
+#include "IBaseEntity.hpp"
 
-class IAttackEntity: public EntityBase
+class IAttackEntity: public IBaseEntity
 {
 public:
-    IAttackEntity(void):EntityBase(){}
-    IAttackEntity(void* pObj):EntityBase(pObj){};
-    ~IAttackEntity(void){}
-    
     int m_health;
     int m_range;
     int m_defence;

@@ -11,10 +11,6 @@ PlayerModelController::PlayerModelController(weak_ptr<World> pWorld, shared_ptr<
     m_pScope(pScope),
     m_control(pWindow)
 {
-    assert(m_pEntity->getIMove().ifValid());
-    assert(m_pEntity->getIWorld().ifValid());
-    assert(m_pEntity->getIAttack().ifValid());
-
 	m_control.RegisterKeyAction(UserControl::KeyAction::KEY_UP,(UserControl::Callback)&PlayerModelController::actionUpKey,this);
 	m_control.RegisterKeyAction(UserControl::KeyAction::KEY_DOWN,(UserControl::Callback)&PlayerModelController::actionDownKey,this);
 	m_control.RegisterKeyAction(UserControl::KeyAction::KEY_LEFT,(UserControl::Callback)&PlayerModelController::actionLeftKey,this);
@@ -22,7 +18,7 @@ PlayerModelController::PlayerModelController(weak_ptr<World> pWorld, shared_ptr<
 
 	m_control.RegisterWindowAction(UserControl::WindowAction::KEY_QUIT,(UserControl::Callback)&PlayerModelController::actionQuit,this);
     
-	m_control.RegisterMouseAction(UserControl::MouseAction::MOUSE_PRESS_RIGHT,(UserControl::Callback)&PlayerModelController::actionRightClick,this);
+	m_control.RegisterMouseAction(UserControl::MouseAction::MOUSE_DOWN_RIGHT,(UserControl::Callback)&PlayerModelController::actionRightClick,this);
 	m_control.RegisterMouseAction(UserControl::MouseAction::MOUSE_PRESS_LEFT,(UserControl::Callback)&PlayerModelController::actionLeftClick,this);
 }
 
@@ -34,13 +30,13 @@ void PlayerModelController::Run()
 
     if(m_isAlive)
     {
-        auto moveEntity = lockedEntity->getIMove();
+        IMoveEntity moveEntity;
         m_movement = Coordinates(0,0);
         m_control.Run();
 
-        if (m_movement != Coordinates(0, 0))
+        if (m_movement != Coordinates(0, 0) && lockedEntity->getIMove(moveEntity))
         {
-            m_movement *= *moveEntity.m_pSpeed;
+            m_movement *= moveEntity.m_speed;
             Move(m_movement);
         }
     }
@@ -59,12 +55,15 @@ void PlayerModelController::actionRightClick(void* pObj)
 
     if(pThis->m_isAlive)
     {
-        auto worldEntity = lockedEntity->getIWorld();
-        Coordinates direction = pThis->m_control.GetMouseCoordinates();
-        direction += lockedScope->getOffset();
-        direction -= *worldEntity.m_pPosition;
+        IWorldEntity worldEntity;
+        if(lockedEntity->getIWorld(worldEntity))
+        {
+            Coordinates direction = pThis->m_control.GetMouseCoordinates();
+            direction += lockedScope->getOffset();
+            direction -= worldEntity.m_position;
 
-        pThis->Shoot(direction);
+            pThis->Shoot(direction);
+        }
     }
 }
 void PlayerModelController::actionLeftClick(void* pObj)
@@ -84,14 +83,14 @@ void PlayerModelController::actionLeftClick(void* pObj)
         
         for (auto pEntity : *lockedScope->getEntities().lock().get())
         {
-            auto worldTarget = pEntity->getIWorld();
+            IWorldEntity worldTarget;
 
-            if(!worldTarget.ifValid())
+            if(!pEntity->getIWorld(worldTarget))
             {
                 continue;
             }
 
-            if (Box(*worldTarget.m_pSize, *worldTarget.m_pPosition).Contains(target))
+            if (Box(worldTarget.m_size, worldTarget.m_position).Contains(target))
             {
                 pThis->Attack(pEntity);
                 break;

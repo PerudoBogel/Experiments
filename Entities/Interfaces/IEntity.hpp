@@ -10,6 +10,10 @@
 
 using namespace std;
 
+#define COPY_TO_ENTITY(varName) entity.varName = varName
+#define COPY_FROM_ENTITY(varName) varName = entity.varName
+#define SET_ENTITY_PTR() entity.m_pEntity = this
+
 class IEntity
 {
 public:

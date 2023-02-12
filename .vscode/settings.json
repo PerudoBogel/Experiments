@@ -56,5 +56,6 @@
         "cstring": "cpp",
         "set": "cpp",
         "*.rh": "cpp"
-    }
+    },
+    "cmake.configureOnOpen": false
 }

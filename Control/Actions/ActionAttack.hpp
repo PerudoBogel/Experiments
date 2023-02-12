@@ -98,26 +98,18 @@ class ActionAttack
 public:
 	enum Status
 	{
-		DONE, TARGET_TOO_FAR, MISSED, CANNOT_ATTACK, NO_TARGET
+		DONE, TARGET_TOO_FAR, MISSED, CANNOT_ATTACK
 	};
 
 	static int Execute(IAttackEntity& attacker, IAttackEntity &target)
 	{
 		int retVal = DONE;
-		int ADRatio = 1000 * (*attacker.m_pAttack) / (*target.m_pDefence);
+		int ADRatio = 1000 * attacker.m_attack / target.m_defence;
 		int Probability = attackChanceLookUp.getAttackProbability(ADRatio);
 		
-		if (attacker == target)
+		if (attacker.m_position.distance(target.m_position) > attacker.m_range)
 		{
-			retVal = NO_TARGET;
-		}
-		else if((attacker.m_pPosition != nullptr) && (target.m_pPosition != nullptr))
-		{
-			if (attacker.m_pPosition->distance(*target.m_pPosition)
-					> *attacker.m_pRange)
-			{
-				retVal = TARGET_TOO_FAR;
-			}
+			retVal = TARGET_TOO_FAR;
 		}
 
 		if(retVal != DONE)
@@ -128,19 +120,16 @@ public:
 		{
 			retVal = MISSED;
 		}
-		else if((attacker.m_pAllyFractions != nullptr) && (target.m_pMemberFractions != nullptr))
+		else if (attacker.m_allyFractions & target.m_memberFractions)
 		{
-			if (*attacker.m_pAllyFractions & *target.m_pMemberFractions)
-			{
-				retVal = CANNOT_ATTACK;
-			}
+			retVal = CANNOT_ATTACK;
 		}
 		
 		if(retVal == DONE)
 		{
-			*target.m_pHealth -= *attacker.m_pDamage;
+			target.m_health -= attacker.m_damage;
 			
-			if(0 >= *target.m_pHealth)
+			if(0 >= target.m_health)
 			{
 				target.m_isAlive = false;
 			}

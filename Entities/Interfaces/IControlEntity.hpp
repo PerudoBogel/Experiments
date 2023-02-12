@@ -1,15 +1,11 @@
 #pragma once
 
-#include "EntityBase.hpp"
 #include "ControllerType.hpp"
+#include "IBaseEntity.hpp"
 
-class IControlEntity: public EntityBase
+class IControlEntity: public IBaseEntity
 {
 public:
-    IControlEntity(void):EntityBase(){}
-    IControlEntity(void* pObj):EntityBase(pObj){};
-    ~IControlEntity(void){}
-    
     ControllerType m_controller;
     int m_customData;
 };
