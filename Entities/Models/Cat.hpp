@@ -13,5 +13,8 @@ public:
 		m_memberFractions.addFraction(Fraction::Type::FRACTION_CATS);
 		m_speed = 2;
 		m_type = MODEL_TYPE_CAT;
+        m_size.h = 10;
+        m_size.w = 10;
+		m_hitbox.updateSize(m_size);
 	}
 };

@@ -52,7 +52,7 @@ map<int, ScopeDisplay::Texture> ScopeDisplay::m_landTextures =
 
 map<int, ScopeDisplay::Texture> ScopeDisplay::m_entityTextures = 
 {
-    {PROJECTILE_TYPE_ARROW,     {sf::Sprite(), sf::Texture(), "GameResources/Projectiles/Arrow.png" }},
+    {PROJECTILE_TYPE_ORB,       {sf::Sprite(), sf::Texture(), "GameResources/Projectiles/Orb.png"   }},
     {MODEL_TYPE_DOG,            {sf::Sprite(), sf::Texture(), "GameResources/Models/Dog.png"        }},
     {MODEL_TYPE_HUMAN,          {sf::Sprite(), sf::Texture(), "GameResources/Models/Human.png"      }},
     {MODEL_TYPE_CAT,            {sf::Sprite(), sf::Texture(), "GameResources/Models/Cat.png"        }}

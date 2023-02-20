@@ -18,18 +18,20 @@ struct Size
 		return (w == size.w) && (h == size.h);
 	}
 
-	inline Size& operator=(const Size &size)
+	inline Size operator=(const Size &size)
 	{
 		this->w = size.w;
 		this->h = size.h;
 		return *this;
 	}
 
-	friend Size operator+(Size lSize, const Size &pSize)
+	inline Size operator+(const Size &pSize)
 	{
-		lSize.w += pSize.w;
-		lSize.h += pSize.h;
+		return Size(pSize.w + w, pSize.h + h);
+	}
 
-		return lSize;
+	inline Size operator-(const Size &pSize)
+	{
+		return Size(w - pSize.w, h - pSize.h);
 	}
 };

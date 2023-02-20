@@ -5,6 +5,7 @@
 #include "Fraction.hpp"
 #include "IEntity.hpp"
 #include "EntityType.hpp"
+#include "Hitbox.hpp"
 
 #include <memory>
 
@@ -14,7 +15,7 @@ public:
 
 	ProjectileBase() :
 			m_size(4,4),
-			m_hitbox(&m_position,&m_size)
+			m_hitbox(m_size)
 	{}
     virtual ~ProjectileBase(){};
     
@@ -119,7 +120,7 @@ public:
 		COPY_FROM_ENTITY(m_isCollidable);
 		COPY_FROM_ENTITY(m_moveStrength);
 		COPY_FROM_ENTITY(m_position);
-		m_hitbox.update();
+		COPY_FROM_ENTITY(m_hitbox);
 		COPY_FROM_ENTITY(m_speed);
 	}
     virtual void setIControl(const IControlEntity& entity)

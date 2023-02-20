@@ -2,7 +2,7 @@
 
 enum EntityType
 {
-    PROJECTILE_TYPE_ARROW,
+    PROJECTILE_TYPE_ORB,
 
     MODEL_TYPE_DOG,
     MODEL_TYPE_HUMAN,

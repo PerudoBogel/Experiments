@@ -14,7 +14,6 @@
 
 #include <vector>
 #include <memory>
-#include <assert.h>
 
 class ActionMove
 {
@@ -24,7 +23,7 @@ public:
 		DONE, CANNOT_MOVE, END_OF_MAP
 	};
 
-	static bool isEndOfWorld(std::shared_ptr<World> pWorld, IMoveEntity &entity, Coordinates coordinates)
+	static bool isEndOfWorld(std::shared_ptr<World> pWorld, IMoveEntity &entity, Coordinates step)
 	{
 		// auto lockedMap = pWorld->getMap().lock();
 		// assert(lockedMap);
@@ -41,7 +40,7 @@ public:
 		return false;
 	}
 
-	static shared_ptr<IEntity> isPlaceTaken(std::shared_ptr<World> pWorld, IMoveEntity& entity, Coordinates coordinates)
+	static shared_ptr<IEntity> isPlaceTaken(std::shared_ptr<World> pWorld, IMoveEntity& entity, Coordinates step)
 	{
 		shared_ptr<IEntity> rVal = nullptr;
 
@@ -58,7 +57,7 @@ public:
 
 			if(!moveEntity.m_isCollidable)
 				continue;
-			
+
 			if (entity.m_hitbox.isCollision(moveEntity.m_hitbox))
 			{
 				rVal = testModel.second;
@@ -69,22 +68,24 @@ public:
 		return rVal;
 	}
 
-	static Status Execute(std::shared_ptr<World> pWorld, IMoveEntity &entity, Coordinates coordinates, shared_ptr<IEntity> &pCollisionEntity)
+	static Status Execute(std::shared_ptr<World> pWorld, IMoveEntity &entity, Coordinates step, shared_ptr<IEntity> &pCollisionEntity)
 	{
 		Status rVal = DONE;
 		
-		float vectorLength = sqrt(pow(coordinates.x, 2) + pow(coordinates.y, 2));
+		float vectorLength = sqrt(pow(step.x, 2) + pow(step.y, 2));
 		float scaler = entity.m_speed / vectorLength;
-		coordinates *= scaler;
+		step *= scaler;
+		auto nextPosition = entity.m_position + step;
 
-		if(isEndOfWorld(pWorld, entity, coordinates))
+		if(isEndOfWorld(pWorld, entity, step))
 			rVal = END_OF_MAP;
-		else if (pCollisionEntity = isPlaceTaken(pWorld, entity, coordinates))
+		else if (pCollisionEntity = isPlaceTaken(pWorld, entity, step))
 			rVal = CANNOT_MOVE;
 
 		if(rVal == DONE)
 		{	
-			entity.m_position += coordinates;
+			entity.m_position += step;
+			entity.m_hitbox.update(entity.m_position);
 		}
 
 		return rVal;

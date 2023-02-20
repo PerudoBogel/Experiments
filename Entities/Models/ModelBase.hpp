@@ -5,6 +5,7 @@
 #include "Fraction.hpp"
 #include "IEntity.hpp"
 #include "EntityType.hpp"
+#include "Hitbox.hpp"
 
 #include <memory>
 
@@ -15,7 +16,7 @@ class ModelBase: public IEntity
 public:
 	ModelBase() :
 			m_size(25,25),
-			m_hitbox(&m_position,&m_size)
+			m_hitbox(m_size)
 	{}
     virtual ~ModelBase(){};
 
@@ -120,7 +121,7 @@ public:
 	{
 		COPY_FROM_ENTITY(m_moveStrength);
 		COPY_FROM_ENTITY(m_position);
-		m_hitbox.update();
+		COPY_FROM_ENTITY(m_hitbox);
 		COPY_FROM_ENTITY(m_speed);
 	}
     void setIControl(const IControlEntity& entity)

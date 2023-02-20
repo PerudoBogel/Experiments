@@ -2,15 +2,13 @@
 #include "ProjectileBase.hpp"
 #include "TrajectoryTypes.hpp"
 
-class Arrow: public ProjectileBase
+class Orb: public ProjectileBase
 {
 public:
-    Arrow()
+    Orb()
     {
         m_speed = 5;
-        m_type = PROJECTILE_TYPE_ARROW;
+        m_type = PROJECTILE_TYPE_ORB;
         m_customData = TRAJECTORY_LINE;
-        m_size.h = 8;
-        m_size.w = 20;
     }
 };

@@ -32,6 +32,7 @@ int main(int argc, char **argv)
 	
 	humanModel->getIMove(moveEntity);
 	moveEntity.m_position = Coordinates(50,50);
+	moveEntity.m_hitbox.update(moveEntity.m_position);
 	humanModel->setIMove(moveEntity);
 
 	// cat0->getIMove(moveEntity);
@@ -48,10 +49,12 @@ int main(int argc, char **argv)
 
 	dogModel->getIMove(moveEntity);
 	moveEntity.m_position = Coordinates(30*5, 30*5);
+	moveEntity.m_hitbox.update(moveEntity.m_position);
 	dogModel->setIMove(moveEntity);
 
 	dog1Model->getIMove(moveEntity);
 	moveEntity.m_position = Coordinates(40, 80);
+	moveEntity.m_hitbox.update(moveEntity.m_position);
 	dog1Model->setIMove(moveEntity);
 	
 	// dog2Model->getIMove(moveEntity);

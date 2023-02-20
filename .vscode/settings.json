@@ -55,7 +55,8 @@
         "iomanip": "cpp",
         "cstring": "cpp",
         "set": "cpp",
-        "*.rh": "cpp"
+        "*.rh": "cpp",
+        "strstream": "cpp"
     },
     "cmake.configureOnOpen": false
 }

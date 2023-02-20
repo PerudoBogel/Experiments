@@ -27,11 +27,11 @@ struct Box
 	{
 		bool noCollision = false;
 
-		noCollision |= this->Xmin > box.Xmax;
-		noCollision |= this->Ymin > box.Ymax;
+		noCollision |= this->Xmin >= box.Xmax;
+		noCollision |= this->Ymin >= box.Ymax;
 
-		noCollision |= this->Xmax < box.Xmin;
-		noCollision |= this->Ymax < box.Ymin;
+		noCollision |= this->Xmax <= box.Xmin;
+		noCollision |= this->Ymax <= box.Ymin;
 
 		return !noCollision;
 	}

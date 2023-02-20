@@ -8,7 +8,7 @@
 #include "ActionAttack.hpp"
 #include "ActionMove.hpp"
 #include "Debug.hpp"
-#include "Arrow.hpp"
+#include "Orb.hpp"
 #include "EntityFactory.hpp"
 
 #include <assert.h>
@@ -130,15 +130,15 @@ int Controller::Shoot(Coordinates &direction)
 				rotationRad += PI;
 
 			// check if eq is available and select projectile based on that
-			IMoveEntity arrowMoveEntity;
-			auto arrow = EntityFactory::makeEntity<Arrow>();
-			arrow->getIMove(arrowMoveEntity);
-			arrowMoveEntity.m_position = worldEntity.m_position;
-			arrowMoveEntity.m_position.phi = rotationRad / (2 * PI) * 360;
-			arrowMoveEntity.m_position += Coordinates(startOffset * cos(rotationRad), startOffset * sin(rotationRad));
-			arrow->setIMove(arrowMoveEntity);
+			IMoveEntity orbMoveEntity;
+			auto orb = EntityFactory::makeEntity<Orb>();
+			orb->getIMove(orbMoveEntity);
+			orbMoveEntity.m_position = worldEntity.m_position;
+			orbMoveEntity.m_position.phi = rotationRad / (2 * PI) * 360;
+			orbMoveEntity.m_position += Coordinates(startOffset * cos(rotationRad), startOffset * sin(rotationRad));
+			orb->setIMove(orbMoveEntity);
 
-			lockedWorld->setEntity(static_cast<shared_ptr<IEntity>>(arrow));
+			lockedWorld->setEntity(static_cast<shared_ptr<IEntity>>(orb));
 		}
 	}
 
