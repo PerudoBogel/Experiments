@@ -2,7 +2,8 @@ animacje:
     sposób przechowywania i automatyzacji odczytu tekstur
     powiązanie akcji z konkretnymi animacjami (bitmapa w IDisplay i IControl). Plik txt z info o rozmiarze i opisem sekcji animacji?
     Izolacjia animacji ruchu i innych (podział na nogi i tłów).
-    koncepcja: zbudowanie modelu z patyczaka i obsługa tekstur poszczegolnych zegmentów ciała?
+    koncepcja: zbudowanie modelu z patyczaka i obsługa tekstur poszczegolnych segmentów ciała?
 poprawnienie systemu kolizji:
-    przeliczanie collission box dla każdego ruchu
     skompikolane collission boxy (zbudowane z prostokątów). dodanie klasy wspieracjące powiązane akcje.
+    budawanie poszczególnych kształtów -> dodać klasę shapes factory, która wspiera różne kształty (np prostokąt, kółko, L, donut)
+    

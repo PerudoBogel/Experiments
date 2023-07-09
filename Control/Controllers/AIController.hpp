@@ -9,14 +9,14 @@
 #define UI_CONTROLLER_AICONTROLLER_HPP_
 
 #include "Coordinates.hpp"
-#include "Controller.hpp"
+#include "ControllerBase.hpp"
 
 #include <memory>
 #include <vector>
 
 using namespace std;
 
-class AIController: public Controller
+class AIController: public ControllerBase
 {
 public:
 	AIController() = delete;

@@ -5,12 +5,12 @@
 #include <assert.h>
 
 ProjectileController::ProjectileController(weak_ptr<World> pWorld, shared_ptr<IEntity>pEntity):
-    Controller(pWorld, pEntity)
+    ControllerBase(pWorld, pEntity)
 {
     IControlEntity ControlEntity;
     IMoveEntity MoveEntity;
 
-    if(pEntity->getIControl(ControlEntity) && pEntity->getIMove(MoveEntity))
+    if(IEntity::getInterface(pEntity ,ControlEntity) && IEntity::getInterface(pEntity ,MoveEntity))
     {
         switch(ControlEntity.m_customData)
         {

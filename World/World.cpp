@@ -9,7 +9,7 @@ shared_ptr<vector<shared_ptr<IEntity>>> World::getEntitiesInBox(Box box)
 	for (auto pEntity : m_entities)
 	{
 		IWorldEntity worldEntity;
-		if(!pEntity.second->getIWorld(worldEntity))
+		if(!IEntity::getInterface(pEntity.second, worldEntity))
 		{
 			continue;
 		}

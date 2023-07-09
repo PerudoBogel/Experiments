@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Controller.hpp"
+#include "ControllerBase.hpp"
 #include "Scope.hpp"
 #include "UserControl.hpp"
 #include "Window2d.hpp"
@@ -9,7 +9,7 @@
 
 using namespace std;
 
-class PlayerModelController: public Controller
+class PlayerModelController: public ControllerBase
 {
 public:
     PlayerModelController() = delete;

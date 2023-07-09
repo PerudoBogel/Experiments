@@ -16,7 +16,7 @@
 
 using namespace std;
 
-class Controller{
+class ControllerBase{
 public:
 	enum{
 		DONE,
@@ -24,9 +24,9 @@ public:
 		CANNOT_ATTACK
 	};
 
-	Controller() = delete;
-	Controller(weak_ptr<World> pWorld, shared_ptr<IEntity> pEntity);
-	virtual ~Controller(){}
+	ControllerBase() = delete;
+	ControllerBase(weak_ptr<World> pWorld, shared_ptr<IEntity> pEntity);
+	virtual ~ControllerBase(){}
 	
 	virtual void Run();
 	virtual ControllerType GetType(){return CONTROL_NONE;}

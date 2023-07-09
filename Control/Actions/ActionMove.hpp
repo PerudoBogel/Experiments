@@ -23,24 +23,22 @@ public:
 		DONE, CANNOT_MOVE, END_OF_MAP
 	};
 
-	static bool isEndOfWorld(std::shared_ptr<World> pWorld, IMoveEntity &entity, Coordinates step)
+	static bool isEndOfWorld(std::shared_ptr<World> pWorld, IMoveEntity &entity)
 	{
-		// auto lockedMap = pWorld->getMap().lock();
-		// assert(lockedMap);
+		auto lockedMap = pWorld->getMap().lock();
 
-		// bool rVal = false;
+		bool rVal = false;
+		auto colissionBox = Box(entity.m_size,entity.m_position);
 
+		auto mapField = lockedMap->getBox(colissionBox);
+		for (auto mapSector : *mapField.get())
+			if (!mapSector)
+				rVal = true;
 
-		// auto mapField = lockedMap->getBox(modelBox);
-		// for (auto mapSector : *mapField.get())
-		// 	if (!mapSector)
-		// 		rVal = true;
-
-		// return rVal;
-		return false;
+		return rVal;
 	}
 
-	static shared_ptr<IEntity> isPlaceTaken(std::shared_ptr<World> pWorld, IMoveEntity& entity, Coordinates step)
+	static shared_ptr<IEntity> isPlaceTaken(std::shared_ptr<World> pWorld, IMoveEntity& entity)
 	{
 		shared_ptr<IEntity> rVal = nullptr;
 
@@ -49,7 +47,7 @@ public:
 		for (auto testModel : lockedEntities)
 		{
 			IMoveEntity moveEntity;
-			if(!testModel.second->getIMove(moveEntity))
+			if(!IEntity::getInterface(testModel.second, moveEntity))
 				continue;
 
 			if (moveEntity == entity)
@@ -75,17 +73,20 @@ public:
 		float vectorLength = sqrt(pow(step.x, 2) + pow(step.y, 2));
 		float scaler = entity.m_speed / vectorLength;
 		step *= scaler;
-		auto nextPosition = entity.m_position + step;
 
-		if(isEndOfWorld(pWorld, entity, step))
+		auto tmpMoveEntity = entity;
+		tmpMoveEntity.m_position += step;
+		tmpMoveEntity.m_hitbox.update(tmpMoveEntity.m_position);
+
+		if(isEndOfWorld(pWorld, tmpMoveEntity))
 			rVal = END_OF_MAP;
-		else if (pCollisionEntity = isPlaceTaken(pWorld, entity, step))
+		else if (pCollisionEntity = isPlaceTaken(pWorld, tmpMoveEntity))
 			rVal = CANNOT_MOVE;
 
 		if(rVal == DONE)
 		{	
-			entity.m_position += step;
-			entity.m_hitbox.update(entity.m_position);
+			entity.m_position = tmpMoveEntity.m_position;
+			entity.m_hitbox = tmpMoveEntity.m_hitbox;
 		}
 
 		return rVal;

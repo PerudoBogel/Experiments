@@ -70,11 +70,9 @@ void Scope::trace(weak_ptr<IEntity> pTraced)
 
 void Scope::update()
 {
-    auto lockedTracer = m_pTraced.lock();
-	if(lockedTracer)
+    IMoveEntity moveEntity;
+	if(IEntity::getInterface(m_pTraced.lock(), moveEntity))
     {
-        IMoveEntity moveEntity;
-        lockedTracer->getIMove(moveEntity);
         m_position = moveEntity.m_position;
         UpdateCoordinates();
 	}

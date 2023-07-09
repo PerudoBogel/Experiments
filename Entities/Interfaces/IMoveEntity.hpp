@@ -12,4 +12,5 @@ public:
     Coordinates m_position;
     bool m_isCollidable;
     Hitbox m_hitbox;
+    Size m_size;
 };

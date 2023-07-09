@@ -7,7 +7,7 @@
 using namespace std;
 
 PlayerModelController::PlayerModelController(weak_ptr<World> pWorld, shared_ptr<IEntity> pEntity, weak_ptr<Scope> pScope, Window2d* pWindow):
-	Controller(pWorld, pEntity),
+	ControllerBase(pWorld, pEntity),
     m_pScope(pScope),
     m_control(pWindow)
 {
@@ -34,13 +34,13 @@ void PlayerModelController::Run()
         m_movement = Coordinates(0,0);
         m_control.Run();
 
-        if (m_movement != Coordinates(0, 0) && lockedEntity->getIMove(moveEntity))
+        if (m_movement != Coordinates(0, 0) && IEntity::getInterface(lockedEntity, moveEntity))
         {
             m_movement *= moveEntity.m_speed;
             Move(m_movement);
         }
     }
-    Controller::Run();
+    ControllerBase::Run();
 }
 
 void PlayerModelController::actionRightClick(void* pObj)
@@ -56,7 +56,7 @@ void PlayerModelController::actionRightClick(void* pObj)
     if(pThis->m_isAlive)
     {
         IWorldEntity worldEntity;
-        if(lockedEntity->getIWorld(worldEntity))
+        if(IEntity::getInterface(lockedEntity, worldEntity))
         {
             Coordinates direction = pThis->m_control.GetMouseCoordinates();
             direction += lockedScope->getOffset();
@@ -85,7 +85,7 @@ void PlayerModelController::actionLeftClick(void* pObj)
         {
             IWorldEntity worldTarget;
 
-            if(!pEntity->getIWorld(worldTarget))
+            if(!IEntity::getInterface(pEntity, worldTarget))
             {
                 continue;
             }

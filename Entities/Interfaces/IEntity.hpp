@@ -21,15 +21,40 @@ public:
     IEntity(){}
     virtual ~IEntity(){}
 
-    virtual bool getIAttack(IAttackEntity& entity){return false;}
-    virtual bool getIDisplay(IDisplayEntity& entity){return false;}
-    virtual bool getIWorld(IWorldEntity& entity){return false;}
-    virtual bool getIMove(IMoveEntity& entity){return false;}
-    virtual bool getIControl(IControlEntity& entity){return false;}
+    template<typename T>
+    static inline bool getInterface(shared_ptr<IEntity> pEntity, T &interfaceEntity)
+    {
+        bool rValue = false;
+        if(pEntity)
+        {
+            if(pEntity->getInterface(interfaceEntity))
+            {
+                rValue = true;
+            }
+        }
+        return rValue;
+    }
     
-    virtual void setIAttack(const IAttackEntity& entity){}
-    virtual void setIDisplay(const IDisplayEntity& entity){}
-    virtual void setIWorld(const IWorldEntity& entity){}
-    virtual void setIMove(const IMoveEntity& entity){}
-    virtual void setIControl(const IControlEntity& entity){}
+    template<typename T>
+    static inline void setInterface(shared_ptr<IEntity> pEntity, T &interfaceEntity)
+    {
+        if(pEntity)
+        {
+            pEntity->setInterface(interfaceEntity);
+        }
+    }
+
+protected:
+
+    virtual bool getInterface(IAttackEntity& entity){return false;}
+    virtual bool getInterface(IDisplayEntity& entity){return false;}
+    virtual bool getInterface(IWorldEntity& entity){return false;}
+    virtual bool getInterface(IMoveEntity& entity){return false;}
+    virtual bool getInterface(IControlEntity& entity){return false;}
+    
+    virtual void setInterface(const IAttackEntity& entity){}
+    virtual void setInterface(const IDisplayEntity& entity){}
+    virtual void setInterface(const IWorldEntity& entity){}
+    virtual void setInterface(const IMoveEntity& entity){}
+    virtual void setInterface(const IControlEntity& entity){}
 };

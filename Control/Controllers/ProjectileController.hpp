@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Controller.hpp"
+#include "ControllerBase.hpp"
 #include "ITrajectory.hpp"
 
 using namespace std;
 
-class ProjectileController: public Controller
+class ProjectileController: public ControllerBase
 {
 public:
 	ProjectileController() = delete;

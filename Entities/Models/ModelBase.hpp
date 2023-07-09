@@ -38,7 +38,7 @@ public:
     Size m_size;
 	Hitbox m_hitbox;
 
-    bool getIAttack(IAttackEntity& entity)
+    bool getInterface(IAttackEntity& entity)
 	{
 		COPY_TO_ENTITY(m_allyFractions);
 		COPY_TO_ENTITY(m_attack);
@@ -53,7 +53,7 @@ public:
 		SET_ENTITY_PTR();
 		return true;
 	}
-    bool getIDisplay(IDisplayEntity& entity)
+    bool getInterface(IDisplayEntity& entity)
 	{
 		COPY_TO_ENTITY(m_health);
 		COPY_TO_ENTITY(m_maxHealth);
@@ -64,7 +64,7 @@ public:
 		return true;
 	}
 
-    bool getIWorld(IWorldEntity& entity)
+    bool getInterface(IWorldEntity& entity)
 	{
 		COPY_TO_ENTITY(m_position);
 		COPY_TO_ENTITY(m_size);
@@ -72,17 +72,18 @@ public:
 		SET_ENTITY_PTR();
 		return true;
 	}
-    bool getIMove(IMoveEntity& entity)
+    bool getInterface(IMoveEntity& entity)
 	{
 		COPY_TO_ENTITY(m_moveStrength);
 		COPY_TO_ENTITY(m_position);
 		COPY_TO_ENTITY(m_hitbox);
 		COPY_TO_ENTITY(m_speed);
 		COPY_TO_ENTITY(m_isCollidable);
+		COPY_TO_ENTITY(m_size);
 		SET_ENTITY_PTR();
 		return true;
 	}
-    bool getIControl(IControlEntity& entity)
+    bool getInterface(IControlEntity& entity)
 	{
 		COPY_TO_ENTITY(m_controller);
 		COPY_TO_ENTITY(m_customData);
@@ -90,7 +91,7 @@ public:
 		return true;
 	}
     
-    void setIAttack(const IAttackEntity& entity)
+    void setInterface(const IAttackEntity& entity)
 	{
 		COPY_FROM_ENTITY(m_allyFractions);
 		COPY_FROM_ENTITY(m_attack);
@@ -103,7 +104,7 @@ public:
 		COPY_FROM_ENTITY(m_hitbox);
 		COPY_FROM_ENTITY(m_isAlive);
 	}
-    void setIDisplay(const IDisplayEntity& entity)
+    void setInterface(const IDisplayEntity& entity)
 	{
 		COPY_FROM_ENTITY(m_health);
 		COPY_FROM_ENTITY(m_maxHealth);
@@ -111,20 +112,21 @@ public:
 		COPY_FROM_ENTITY(m_size);
 		COPY_FROM_ENTITY(m_type);
 	}
-    void setIWorld(const IWorldEntity& entity)
+    void setInterface(const IWorldEntity& entity)
 	{
 		COPY_FROM_ENTITY(m_position);
 		COPY_FROM_ENTITY(m_size);
 		COPY_FROM_ENTITY(m_type);
 	}
-    void setIMove(const IMoveEntity& entity)
+    void setInterface(const IMoveEntity& entity)
 	{
 		COPY_FROM_ENTITY(m_moveStrength);
 		COPY_FROM_ENTITY(m_position);
 		COPY_FROM_ENTITY(m_hitbox);
 		COPY_FROM_ENTITY(m_speed);
+		COPY_FROM_ENTITY(m_size);
 	}
-    void setIControl(const IControlEntity& entity)
+    void setInterface(const IControlEntity& entity)
 	{
 		COPY_FROM_ENTITY(m_controller);
 		COPY_FROM_ENTITY(m_customData);

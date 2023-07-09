@@ -30,10 +30,10 @@ int main(int argc, char **argv)
 	// auto dog2Model = EntityFactory::makeEntity<Dog>();
 	// auto dog3Model = EntityFactory::makeEntity<Dog>();
 	
-	humanModel->getIMove(moveEntity);
+	IEntity::getInterface(humanModel, moveEntity);
 	moveEntity.m_position = Coordinates(50,50);
 	moveEntity.m_hitbox.update(moveEntity.m_position);
-	humanModel->setIMove(moveEntity);
+	IEntity::setInterface(humanModel, moveEntity);
 
 	// cat0->getIMove(moveEntity);
 	// moveEntity.m_position = Coordinates(143*5, 80*5);
@@ -47,15 +47,15 @@ int main(int argc, char **argv)
 	// moveEntity.m_position = Coordinates(153*5, 75*5);
 	// cat2->setIMove(moveEntity);
 
-	dogModel->getIMove(moveEntity);
+	IEntity::getInterface(dogModel, moveEntity);
 	moveEntity.m_position = Coordinates(30*5, 30*5);
 	moveEntity.m_hitbox.update(moveEntity.m_position);
-	dogModel->setIMove(moveEntity);
+	IEntity::setInterface(dogModel, moveEntity);
 
-	dog1Model->getIMove(moveEntity);
+	IEntity::getInterface(dog1Model, moveEntity);
 	moveEntity.m_position = Coordinates(40, 80);
 	moveEntity.m_hitbox.update(moveEntity.m_position);
-	dog1Model->setIMove(moveEntity);
+	IEntity::setInterface(dog1Model, moveEntity);
 	
 	// dog2Model->getIMove(moveEntity);
 	// moveEntity.m_position = Coordinates(30*5, 33*5);

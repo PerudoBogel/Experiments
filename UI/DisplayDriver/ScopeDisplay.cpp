@@ -145,7 +145,7 @@ bool ScopeDisplay::draw_entities()
     for(auto pEntity : *m_pScope->getEntities().lock().get())
 	{
         IDisplayEntity displayEntity;
-        if(!pEntity->getIDisplay(displayEntity))
+        if(!IEntity::getInterface(pEntity, displayEntity))
         {
             continue;
         }
@@ -162,8 +162,10 @@ bool ScopeDisplay::draw_entities()
 		m_sprites.back().setPosition(position.x, position.y);
         m_sprites.back().setRotation(position.phi);
 
-        m_sprites.back().setScale(displayEntity.m_size.w/m_entityTextures[displayEntity.m_type].texture.getSize().x, 
-            displayEntity.m_size.h/m_entityTextures[displayEntity.m_type].texture.getSize().y);
+        auto xScale = displayEntity.m_size.w/m_entityTextures[displayEntity.m_type].texture.getSize().x;
+        auto yScale = displayEntity.m_size.h/m_entityTextures[displayEntity.m_type].texture.getSize().y;
+
+        m_sprites.back().setScale(xScale,yScale);
 
         if(displayEntity.m_maxHealth == -1)
         {

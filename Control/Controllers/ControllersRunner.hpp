@@ -5,7 +5,7 @@
 #include "PlayerModelController.hpp"
 #include "ProjectileController.hpp"
 #include "ControllerType.hpp"
-#include "Controller.hpp"
+#include "ControllerBase.hpp"
 #include "Scope.hpp"
 #include "Window2d.hpp"
 
@@ -47,9 +47,9 @@ public:
 		m_pWorld.lock()->sync();
 	}
 
-	shared_ptr<Controller> getController(IEntity *pEntity)
+	shared_ptr<ControllerBase> getController(IEntity *pEntity)
 	{
-		shared_ptr<Controller> rVal;
+		shared_ptr<ControllerBase> rVal;
 		auto key = pEntity;
 		
 		updateControllers();
@@ -65,7 +65,7 @@ private:
 	weak_ptr<World> m_pWorld;
 	weak_ptr<Scope> m_pScope;
 	Window2d* m_pWindow;
-	map<IEntity*,shared_ptr<Controller>> m_controllers;
+	map<IEntity*,shared_ptr<ControllerBase>> m_controllers;
 	
 	void updateControllers()
 	{
@@ -73,7 +73,7 @@ private:
 		{
 			IControlEntity controlEntity;
 
-			if(!pEntity.second->getIControl(controlEntity))
+			if(!IEntity::getInterface(pEntity.second, controlEntity))
 			{
 				continue;
 			}
@@ -94,7 +94,7 @@ private:
 			    m_controllers.insert(pair(key,make_shared<ProjectileController>(m_pWorld, pEntity.second)));
                 break;
             default:
-			    m_controllers.insert(pair(key,make_shared<Controller>(m_pWorld, pEntity.second)));
+			    m_controllers.insert(pair(key,make_shared<ControllerBase>(m_pWorld, pEntity.second)));
                 break;
             }
 		}
