@@ -2,6 +2,8 @@
 
 #include "Scope.hpp"
 #include "Window2d.hpp"
+#include "TextureLoader.hpp"
+#include "AnimationDriver.hpp"
 
 #include <map>
 
@@ -41,6 +43,9 @@ private:
     shared_ptr<Scope> m_pScope;
     vector<sf::Sprite> m_sprites;
     vector<HealthBarData> m_healthBarData;
+    TextureLoader m_TextureLoader;
+    std::map<void*, AnimationDriver> m_animations;
+    std::map<void*, bool> m_animationUsed;
 
     static bool loadTexture(Texture &texture);
     static bool loadTextures();

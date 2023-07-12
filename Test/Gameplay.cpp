@@ -16,6 +16,8 @@
 #include "Debug.hpp"
 #include "EntityFactory.hpp"
 
+#include "FrameTick.hpp"
+
 using namespace std;
 
 int main(int argc, char **argv)
@@ -118,11 +120,21 @@ int main(int argc, char **argv)
 	// dog2Model.reset();
 	// dog3Model.reset();
 
+	clock_t checkpoint;
+
 	while (controller->IfAlive())
 	{
+		checkpoint = std::clock();
 		scope->update();
 		window->addSprites(scopeDisplay->getSprites());
 		controllerRunner->Run();
-		Sleep(1000.0 / 120);
+		checkpoint = std::clock() - checkpoint;
+
+		FrameTick::GetIntance()->Update((checkpoint * 1000) / CLOCKS_PER_SEC, 60);
+		auto sleepTime = FrameTick::GetIntance()->GetTimeToSleep_ms();
+
+		Sleep(sleepTime);
 	}
+
+	FrameTick::Terminate();
 }

@@ -1,5 +1,6 @@
 #include "ScopeDisplay.hpp"
 #include "EntityType.hpp"
+#include "FrameTick.hpp"
 
 #include <iostream>
 #include <math.h>
@@ -50,20 +51,13 @@ map<int, ScopeDisplay::Texture> ScopeDisplay::m_landTextures =
     {ISector::TYPE_ROCK,    {sf::Sprite(), sf::Texture(), "GameResources/Sector/Rock.png"   }}
 };
 
-map<int, ScopeDisplay::Texture> ScopeDisplay::m_entityTextures = 
-{
-    {PROJECTILE_TYPE_ORB,       {sf::Sprite(), sf::Texture(), "GameResources/Projectiles/Orb.png"   }},
-    {MODEL_TYPE_DOG,            {sf::Sprite(), sf::Texture(), "GameResources/Models/Dog.png"        }},
-    {MODEL_TYPE_HUMAN,          {sf::Sprite(), sf::Texture(), "GameResources/Models/Human.png"      }},
-    {MODEL_TYPE_CAT,            {sf::Sprite(), sf::Texture(), "GameResources/Models/Cat.png"        }}
-};
-    
-
-//ScopeDisplay::Texture ScopeDisplay::m_void = {sf::Sprite(), sf::Texture(), "GameResources/Sector/Void.png"};
-
 ScopeDisplay::ScopeDisplay(std::shared_ptr<Scope> scope) : m_pScope(scope)
 {
     loadTextures();
+    m_TextureLoader.ReadTexture("GameResources/Models/Human.png", EntityType::MODEL_TYPE_HUMAN);
+    m_TextureLoader.ReadTexture("GameResources/Models/Dog.png", EntityType::MODEL_TYPE_DOG);
+    m_TextureLoader.ReadTexture("GameResources/Models/Cat.png", EntityType::MODEL_TYPE_CAT);
+    m_TextureLoader.ReadTexture("GameResources/Projectiles/Orb.png", EntityType::PROJECTILE_TYPE_ORB);
 }
 
 bool ScopeDisplay::loadTexture(Texture &texture)
@@ -82,16 +76,9 @@ bool ScopeDisplay::loadTexture(Texture &texture)
 
 bool ScopeDisplay::loadTextures()
 {
-    for (size_t i = 0; i < m_entityTextures.size(); i++)
-        if (!loadTexture(m_entityTextures[i]))
-            return false;
-
     for (size_t i = 0; i < m_landTextures.size(); i++)
         if (!loadTexture(m_landTextures[i]))
             return false;
-
-    // if (!loadTexture(m_void))
-    //     return false;
 
     return true;
 }
@@ -141,47 +128,81 @@ bool ScopeDisplay::draw_entities()
 {        
     HealthBarData healthBarData;
     Coordinates position;
+    sf::Sprite *pSprite;
+    IDisplayEntity displayEntity;
+
+    for(auto usedFlag: m_animationUsed)
+    {
+        m_animationUsed[usedFlag.first] = false;
+    }
 
     for(auto pEntity : *m_pScope->getEntities().lock().get())
 	{
-        IDisplayEntity displayEntity;
+        pSprite = nullptr;
+
         if(!IEntity::getInterface(pEntity, displayEntity))
         {
             continue;
         }
-       
-        m_sprites.push_back(m_entityTextures[displayEntity.m_type].sprite);
 
-        //set absolute position;
-        position = displayEntity.m_position;
-        // set relative position
-        position -= m_pScope->getOffset();
-        //align texture
-        position -= Coordinates(displayEntity.m_size.w/2, displayEntity.m_size.h/2);
-        
-		m_sprites.back().setPosition(position.x, position.y);
-        m_sprites.back().setRotation(position.phi);
+        auto animationIter = m_animations.find(displayEntity.m_pEntity);
 
-        auto xScale = displayEntity.m_size.w/m_entityTextures[displayEntity.m_type].texture.getSize().x;
-        auto yScale = displayEntity.m_size.h/m_entityTextures[displayEntity.m_type].texture.getSize().y;
-
-        m_sprites.back().setScale(xScale,yScale);
-
-        if(displayEntity.m_maxHealth == -1)
+        if(animationIter == m_animations.end())
         {
-            //no health bar needed
+            auto *pConfig = m_TextureLoader.GetTextureConfig(displayEntity.m_type);
+
+            if(pConfig)
+            {
+                m_animations.insert(std::pair<void*, AnimationDriver>(displayEntity.m_pEntity, AnimationDriver(pEntity, *pConfig)));
+                m_animationUsed[displayEntity.m_pEntity] = true;
+                animationIter = m_animations.find(displayEntity.m_pEntity);
+                pSprite = animationIter->second.GetFrame(TextureMode::IDLE, 0.4, FrameTick::GetIntance()->GetFps());
+            }
+        }else
+        {
+            m_animationUsed[displayEntity.m_pEntity] = true;
+            pSprite = animationIter->second.GetFrame(TextureMode::IDLE, 0.4, FrameTick::GetIntance()->GetFps());
         }
-        else if(displayEntity.m_maxHealth != displayEntity.m_health)
-        {    
-            healthBarData.position = Coordinates(position.x,position.y);
-            healthBarData.percentage = (displayEntity.m_health * 100) / displayEntity.m_maxHealth;
-            healthBarData.size = Size(displayEntity.m_size.w, displayEntity.m_size.h / 5);
-            
-            m_healthBarData.push_back(healthBarData);
-            m_sprites.push_back(makeHealthBar(&m_healthBarData.back()));
+
+        if(pSprite)
+        {
+            m_sprites.push_back(*pSprite);
+
+            //set absolute position;
+            position = displayEntity.m_position;
+            // set relative position
+            position -= m_pScope->getOffset();
+            //align texture
+            position -= Coordinates(displayEntity.m_size.w/2, displayEntity.m_size.h/2);
+        
+            m_sprites.back().setPosition(position.x, position.y);
+            m_sprites.back().setRotation(position.phi);
+
+            if(displayEntity.m_maxHealth == -1)
+            {
+                //no health bar needed
+            }
+            else if(displayEntity.m_maxHealth != displayEntity.m_health)
+            {    
+                healthBarData.position = Coordinates(position.x,position.y);
+                healthBarData.percentage = (displayEntity.m_health * 100) / displayEntity.m_maxHealth;
+                healthBarData.size = Size(displayEntity.m_size.w, displayEntity.m_size.h / 5);
+                
+                m_healthBarData.push_back(healthBarData);
+                m_sprites.push_back(makeHealthBar(&m_healthBarData.back()));
+            }
         }
     }
     
+    for(auto usedFlag: m_animationUsed)
+    {
+        if(!usedFlag.second)
+        {
+            m_animations.erase(usedFlag.first);
+            m_animationUsed.erase(usedFlag.first);
+        }
+    }
+
     return true;
 }
 

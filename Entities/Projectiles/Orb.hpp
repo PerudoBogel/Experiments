@@ -10,5 +10,7 @@ public:
         m_speed = 5;
         m_type = PROJECTILE_TYPE_ORB;
         m_customData = TRAJECTORY_LINE;
+        m_size.h = 10;
+        m_size.w = 20;
     }
 };

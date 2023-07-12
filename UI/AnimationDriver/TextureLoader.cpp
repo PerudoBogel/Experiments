@@ -6,6 +6,7 @@ bool TextureLoader::ReadTexture(std::string filename, int id)
     bool rVal = false;
 	sf::Image image;
     DEBUG_DUMP_CALL();
+    DEBUG_DUMP_VAR(filename);
 
 	if (image.loadFromFile(filename.c_str()))
 	{

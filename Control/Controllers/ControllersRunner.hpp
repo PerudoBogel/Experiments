@@ -4,7 +4,6 @@
 #include "AIController.hpp"
 #include "PlayerModelController.hpp"
 #include "ProjectileController.hpp"
-#include "ControllerType.hpp"
 #include "ControllerBase.hpp"
 #include "Scope.hpp"
 #include "Window2d.hpp"

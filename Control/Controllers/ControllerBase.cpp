@@ -75,7 +75,7 @@ int ControllerBase::Attack(shared_ptr<IEntity> pTarget)
 	int rVal = CANNOT_ATTACK;
 	IAttackEntity attacker,defender;
 
-	if(!IEntity::getInterface(m_pEntity, attacker) || !IEntity::getInterface(m_pEntity, defender))
+	if(!IEntity::getInterface(m_pEntity, attacker) || !IEntity::getInterface(pTarget, defender))
 	{
 		Die();
 	}
@@ -128,6 +128,10 @@ int ControllerBase::Shoot(Coordinates &direction)
 		orbMoveEntity.m_position.phi = rotationRad / (2 * PI) * 360;
 		orbMoveEntity.m_position += Coordinates(startOffset * cos(rotationRad), startOffset * sin(rotationRad));
 		IEntity::setInterface(orb, orbMoveEntity);
+
+		DEBUG_DUMP_VAR(orbMoveEntity.m_position.x);
+		DEBUG_DUMP_VAR(orbMoveEntity.m_position.y);
+		DEBUG_DUMP_VAR(orbMoveEntity.m_position.phi);
 
 		lockedWorld->setEntity(static_cast<shared_ptr<IEntity>>(orb));
 	}

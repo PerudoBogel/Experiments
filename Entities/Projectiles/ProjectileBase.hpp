@@ -89,7 +89,7 @@ public:
 		return true;
 	}
     
-    virtual void getInterface(const IAttackEntity& entity)
+    virtual void setInterface(const IAttackEntity& entity)
 	{
 		COPY_FROM_ENTITY(m_allyFractions);
 		COPY_FROM_ENTITY(m_attack);
@@ -102,7 +102,7 @@ public:
 		COPY_FROM_ENTITY(m_hitbox);
 		COPY_FROM_ENTITY(m_isAlive);
 	}
-    virtual void getInterface(const IDisplayEntity& entity)
+    virtual void setInterface(const IDisplayEntity& entity)
 	{
 		COPY_FROM_ENTITY(m_health);
 		COPY_FROM_ENTITY(m_maxHealth);
@@ -110,13 +110,13 @@ public:
 		COPY_FROM_ENTITY(m_size);
 		COPY_FROM_ENTITY(m_type);
 	}
-    virtual void getInterface(const IWorldEntity& entity)
+    virtual void setInterface(const IWorldEntity& entity)
 	{
 		COPY_FROM_ENTITY(m_position);
 		COPY_FROM_ENTITY(m_size);
 		COPY_FROM_ENTITY(m_type);
 	}
-    virtual void getInterface(const IMoveEntity& entity)
+    virtual void setInterface(const IMoveEntity& entity)
 	{
 		COPY_FROM_ENTITY(m_isCollidable);
 		COPY_FROM_ENTITY(m_moveStrength);
@@ -125,7 +125,7 @@ public:
 		COPY_FROM_ENTITY(m_speed);
 		COPY_FROM_ENTITY(m_size);
 	}
-    virtual void getInterface(const IControlEntity& entity)
+    virtual void setInterface(const IControlEntity& entity)
 	{
 		COPY_FROM_ENTITY(m_controller);
 		COPY_FROM_ENTITY(m_customData);

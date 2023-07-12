@@ -24,7 +24,7 @@ int main(int argc, char **argv)
 	auto window = make_unique<Window2d>(Size(500,500));
 
 	TextureLoader loader;
-	if(loader.ReadTexture("GameResources/Models/Orb.png", MODEL_TYPE_HUMAN))
+	if(loader.ReadTexture("GameResources/Models/Test.png", MODEL_TYPE_HUMAN))
 	{
 		auto config = loader.GetTextureConfig(MODEL_TYPE_HUMAN);
 		AnimationDriver animation(humanModel, *config);
