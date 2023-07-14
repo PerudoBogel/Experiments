@@ -1,6 +1,6 @@
 #pragma once
 #include "SFML/Graphics.hpp"
-#include "IEntity.hpp"
+#include "Entity.hpp"
 #include "TextureMode.hpp"
 #include "TextureConfig.hpp"
 
@@ -9,7 +9,7 @@
 class AnimationDriver
 {
 public:
-    AnimationDriver(weak_ptr<IEntity> pEntity, TextureConfig &config);
+    AnimationDriver(weak_ptr<Entity> pEntity, TextureConfig &config);
 
     sf::Sprite *GetFrame(TextureMode mode, float animationTime, int animationFps);
     bool isAlive(){return m_pEntity.lock() != nullptr;}
@@ -25,7 +25,7 @@ private:
         unsigned int frameCounter;
     } m_frameInfo;
 
-    weak_ptr<IEntity> m_pEntity;
+    weak_ptr<Entity> m_pEntity;
     TextureConfig &m_config;
     sf::Sprite m_sprite;
 

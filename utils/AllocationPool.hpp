@@ -1,7 +1,4 @@
 #pragma once
-
-#include "IEntity.hpp"
-#include "EntityType.hpp"
 #include "Debug.hpp"
 
 #include "memory"
@@ -9,13 +6,13 @@
 
 using namespace std;
 
-class EntityFactory
+class AllocationPool
 {
 public:
-    EntityFactory() = delete;
+    AllocationPool() = delete;
 
     template<class T>
-    static shared_ptr<T> makeEntity(void)
+    static shared_ptr<T> makeAllocation(void)
     {
         shared_ptr<T> r_ptr;
         T* pRaw;
@@ -35,8 +32,8 @@ public:
                 m_allocationTable.insert(nextIt, pair(startIndex, endIndex));
                 pRaw = reinterpret_cast<T*>(&m_memoryPool[startIndex]);
                 new(pRaw) T();
-                r_ptr = {pRaw,deleteEntity};
-                entity_counter++;
+                r_ptr = {pRaw,deleteAllocation<T>};
+                allocation_counter++;
                 break;
             }
         }
@@ -50,25 +47,26 @@ public:
                 m_allocationTable.push_back(pair(startIndex,endIndex));
                 pRaw = reinterpret_cast<T*>(&m_memoryPool[startIndex]);
                 new(pRaw) T();
-                r_ptr = {pRaw,deleteEntity};
-                entity_counter++;
+                r_ptr = {pRaw,deleteAllocation<T>};
+                allocation_counter++;
             }
         }
-        cout<<"entity count: "<< entity_counter <<" new added with size: "<< entityIndexSize * sizeof(int) << endl;
+        cout<<"allocation count: "<< allocation_counter <<" new added with size: "<< entityIndexSize * sizeof(int) << endl;
         DEBUG_DUMP_VAR(pRaw);
         return r_ptr;
     }
 
-    static void deleteEntity(IEntity *pEntity)
+    template<class T>
+    static void deleteAllocation(T *pAllocation)
     {
-        DEBUG_DUMP_VAR(pEntity);
+        DEBUG_DUMP_VAR(pAllocation);
         for(auto it = m_allocationTable.begin(); it < m_allocationTable.end(); it++)
         {
-            if(pEntity == reinterpret_cast<IEntity*>(&m_memoryPool[it->first]))
+            if(pAllocation == reinterpret_cast<T*>(&m_memoryPool[it->first]))
             {
-                pEntity->~IEntity();
+                std::destroy_at(pAllocation);
                 m_allocationTable.erase(it);
-                entity_counter--;
+                allocation_counter--;
                 break;
             }
         }
@@ -79,5 +77,5 @@ private:
     static const uint64_t MEMORY_POOL_SIZE = 10 * 1024 * 1024 / sizeof(int);
     static vector<pair<int,int>> m_allocationTable; // pair<beginIndex,endIndex(last+1)>
     static int m_memoryPool[];
-    static int entity_counter;
+    static int allocation_counter;
 };

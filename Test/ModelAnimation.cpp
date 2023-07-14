@@ -2,7 +2,6 @@
 #include <windows.h>
 
 #include "Window2d.hpp"
-#include "Human.hpp"
 #include "Debug.hpp"
 #include "EntityFactory.hpp"
 #include "TextureLoader.hpp"
@@ -13,20 +12,20 @@ using namespace std;
 int main(int argc, char **argv)
 {
 	IMoveEntity moveEntity;
-	auto humanModel = EntityFactory::makeEntity<Human>();
+	auto humanModel = EntityFactory::getEntity(2);
 	
-	IEntity::getInterface(humanModel, moveEntity);
+	Entity::getInterface(humanModel, moveEntity);
 	moveEntity.m_position = Coordinates(25,25);
 	moveEntity.m_hitbox.update(moveEntity.m_position);
 	moveEntity.m_size = Size(50, 50);
-	IEntity::setInterface(humanModel, moveEntity);
+	Entity::setInterface(humanModel, moveEntity);
 	
 	auto window = make_unique<Window2d>(Size(500,500));
 
 	TextureLoader loader;
-	if(loader.ReadTexture("GameResources/Models/Test.png", MODEL_TYPE_HUMAN))
+	if(loader.ReadTexture("GameResources/Entities/Test.png", TEXTURE_ID_HUMAN))
 	{
-		auto config = loader.GetTextureConfig(MODEL_TYPE_HUMAN);
+		auto config = loader.GetTextureConfig(TEXTURE_ID_HUMAN);
 		AnimationDriver animation(humanModel, *config);
 
 		for (int i = 0; i < 60 * 4; i++)

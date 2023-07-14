@@ -4,13 +4,13 @@
 
 #include <assert.h>
 
-ProjectileController::ProjectileController(weak_ptr<World> pWorld, shared_ptr<IEntity>pEntity):
+ProjectileController::ProjectileController(weak_ptr<World> pWorld, shared_ptr<Entity>pEntity):
     ControllerBase(pWorld, pEntity)
 {
     IControlEntity ControlEntity;
     IMoveEntity MoveEntity;
 
-    if(IEntity::getInterface(pEntity ,ControlEntity) && IEntity::getInterface(pEntity ,MoveEntity))
+    if(Entity::getInterface(pEntity ,ControlEntity) && Entity::getInterface(pEntity ,MoveEntity))
     {
         switch(ControlEntity.m_customData)
         {
@@ -28,7 +28,7 @@ void ProjectileController::Run()
     if(lockedEntity)
     {
         auto moveStep = m_pTrajectory->makeStep();
-        shared_ptr<IEntity> pCollissionEntity;
+        shared_ptr<Entity> pCollissionEntity;
 
         if(!m_pTrajectory->ifInRange() && m_isAlive)
         {

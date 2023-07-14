@@ -54,10 +54,10 @@ map<int, ScopeDisplay::Texture> ScopeDisplay::m_landTextures =
 ScopeDisplay::ScopeDisplay(std::shared_ptr<Scope> scope) : m_pScope(scope)
 {
     loadTextures();
-    m_TextureLoader.ReadTexture("GameResources/Models/Human.png", EntityType::MODEL_TYPE_HUMAN);
-    m_TextureLoader.ReadTexture("GameResources/Models/Dog.png", EntityType::MODEL_TYPE_DOG);
-    m_TextureLoader.ReadTexture("GameResources/Models/Cat.png", EntityType::MODEL_TYPE_CAT);
-    m_TextureLoader.ReadTexture("GameResources/Projectiles/Orb.png", EntityType::PROJECTILE_TYPE_ORB);
+    m_TextureLoader.ReadTexture("GameResources/Models/Human.png", EntityType::TEXTURE_ID_HUMAN);
+    m_TextureLoader.ReadTexture("GameResources/Models/Dog.png", EntityType::TEXTURE_ID_DOG);
+    m_TextureLoader.ReadTexture("GameResources/Models/Cat.png", EntityType::TEXTURE_ID_CAT);
+    m_TextureLoader.ReadTexture("GameResources/Projectiles/Orb.png", EntityType::TEXTURE_ID_ORB);
 }
 
 bool ScopeDisplay::loadTexture(Texture &texture)
@@ -140,7 +140,7 @@ bool ScopeDisplay::draw_entities()
 	{
         pSprite = nullptr;
 
-        if(!IEntity::getInterface(pEntity, displayEntity))
+        if(!Entity::getInterface(pEntity, displayEntity))
         {
             continue;
         }

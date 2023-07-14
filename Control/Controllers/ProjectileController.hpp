@@ -9,7 +9,7 @@ class ProjectileController: public ControllerBase
 {
 public:
 	ProjectileController() = delete;
-	ProjectileController(weak_ptr<World> pWorld, shared_ptr<IEntity> pEntity);
+	ProjectileController(weak_ptr<World> pWorld, shared_ptr<Entity> pEntity);
     
 	void Run();
 	ControllerType GetType(){return CONTROL_PROJECTILE;}

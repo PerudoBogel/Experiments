@@ -14,7 +14,7 @@
 #include "Scope.hpp"
 #include "ScopeDisplay.hpp"
 #include "Debug.hpp"
-#include "EntityFactory.hpp"
+#include "AllocationPool.hpp"
 
 #include "FrameTick.hpp"
 
@@ -23,19 +23,19 @@ using namespace std;
 int main(int argc, char **argv)
 {
 	IMoveEntity moveEntity;
-	auto humanModel = EntityFactory::makeEntity<Human>();
-	// auto cat0 = EntityFactory::makeEntity<Cat>();
-	// auto cat1 = EntityFactory::makeEntity<Cat>();
-	// auto cat2 = EntityFactory::makeEntity<Cat>();
-	auto dogModel = EntityFactory::makeEntity<Dog>();
-	auto dog1Model = EntityFactory::makeEntity<Dog>();
-	// auto dog2Model = EntityFactory::makeEntity<Dog>();
-	// auto dog3Model = EntityFactory::makeEntity<Dog>();
+	auto humanModel = AllocationPool::makeAllocation<Human>();
+	// auto cat0 = AllocationPool::makeAllocation<Cat>();
+	// auto cat1 = AllocationPool::makeAllocation<Cat>();
+	// auto cat2 = AllocationPool::makeAllocation<Cat>();
+	auto dogModel = AllocationPool::makeAllocation<Dog>();
+	auto dog1Model = AllocationPool::makeAllocation<Dog>();
+	// auto dog2Model = AllocationPool::makeAllocation<Dog>();
+	// auto dog3Model = AllocationPool::makeAllocation<Dog>();
 	
-	IEntity::getInterface(humanModel, moveEntity);
+	Entity::getInterface(humanModel, moveEntity);
 	moveEntity.m_position = Coordinates(50,50);
 	moveEntity.m_hitbox.update(moveEntity.m_position);
-	IEntity::setInterface(humanModel, moveEntity);
+	Entity::setInterface(humanModel, moveEntity);
 
 	// cat0->getIMove(moveEntity);
 	// moveEntity.m_position = Coordinates(143*5, 80*5);
@@ -49,15 +49,15 @@ int main(int argc, char **argv)
 	// moveEntity.m_position = Coordinates(153*5, 75*5);
 	// cat2->setIMove(moveEntity);
 
-	IEntity::getInterface(dogModel, moveEntity);
+	Entity::getInterface(dogModel, moveEntity);
 	moveEntity.m_position = Coordinates(30*5, 30*5);
 	moveEntity.m_hitbox.update(moveEntity.m_position);
-	IEntity::setInterface(dogModel, moveEntity);
+	Entity::setInterface(dogModel, moveEntity);
 
-	IEntity::getInterface(dog1Model, moveEntity);
+	Entity::getInterface(dog1Model, moveEntity);
 	moveEntity.m_position = Coordinates(40, 80);
 	moveEntity.m_hitbox.update(moveEntity.m_position);
-	IEntity::setInterface(dog1Model, moveEntity);
+	Entity::setInterface(dog1Model, moveEntity);
 	
 	// dog2Model->getIMove(moveEntity);
 	// moveEntity.m_position = Coordinates(30*5, 33*5);

@@ -18,10 +18,8 @@
 				"World",
 				"World/Map",
 				"World/Map/Sector",
-				"Entities",
+				"Entities/Entity",
 				"Entities/Interfaces",
-				"Entities/Models",
-				"Entities/Projectiles",
 				"Control",
 				"Control/Controllers",
 				"Control/Actions",
@@ -32,6 +30,8 @@
 				"UI/DisplayDriver",
 				"UI/ControllerDriver",
 				"UI/AnimationDriver",
+                "Inventory",
+                "Inventory/Items",
 				"Menu",
                 "utils"
             ]

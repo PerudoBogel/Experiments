@@ -30,7 +30,7 @@ public:
 	{
 		updateControllers();
 
-		vector<IEntity*> deadKeys;
+		vector<Entity*> deadKeys;
 
 		for(auto pController: m_controllers)
 		{
@@ -46,7 +46,7 @@ public:
 		m_pWorld.lock()->sync();
 	}
 
-	shared_ptr<ControllerBase> getController(IEntity *pEntity)
+	shared_ptr<ControllerBase> getController(Entity *pEntity)
 	{
 		shared_ptr<ControllerBase> rVal;
 		auto key = pEntity;
@@ -64,7 +64,7 @@ private:
 	weak_ptr<World> m_pWorld;
 	weak_ptr<Scope> m_pScope;
 	Window2d* m_pWindow;
-	map<IEntity*,shared_ptr<ControllerBase>> m_controllers;
+	map<Entity*,shared_ptr<ControllerBase>> m_controllers;
 	
 	void updateControllers()
 	{
@@ -72,7 +72,7 @@ private:
 		{
 			IControlEntity controlEntity;
 
-			if(!IEntity::getInterface(pEntity.second, controlEntity))
+			if(!Entity::getInterface(pEntity.second, controlEntity))
 			{
 				continue;
 			}

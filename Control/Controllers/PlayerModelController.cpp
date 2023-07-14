@@ -6,7 +6,7 @@
 
 using namespace std;
 
-PlayerModelController::PlayerModelController(weak_ptr<World> pWorld, shared_ptr<IEntity> pEntity, weak_ptr<Scope> pScope, Window2d* pWindow):
+PlayerModelController::PlayerModelController(weak_ptr<World> pWorld, shared_ptr<Entity> pEntity, weak_ptr<Scope> pScope, Window2d* pWindow):
 	ControllerBase(pWorld, pEntity),
     m_pScope(pScope),
     m_control(pWindow)
@@ -34,7 +34,7 @@ void PlayerModelController::Run()
         m_movement = Coordinates(0,0);
         m_control.Run();
 
-        if (m_movement != Coordinates(0, 0) && IEntity::getInterface(lockedEntity, moveEntity))
+        if (m_movement != Coordinates(0, 0) && Entity::getInterface(lockedEntity, moveEntity))
         {
             m_movement *= moveEntity.m_speed;
             Move(m_movement);
@@ -55,8 +55,8 @@ void PlayerModelController::actionRightClick(void* pObj)
 
     if(pThis->m_isAlive)
     {
-        IWorldEntity worldEntity;
-        if(IEntity::getInterface(lockedEntity, worldEntity))
+        IMoveEntity worldEntity;
+        if(Entity::getInterface(lockedEntity, worldEntity))
         {
             Coordinates direction = pThis->m_control.GetMouseCoordinates();
             direction += lockedScope->getOffset();
@@ -83,14 +83,14 @@ void PlayerModelController::actionLeftClick(void* pObj)
         
         for (auto pEntity : *lockedScope->getEntities().lock().get())
         {
-            IWorldEntity worldTarget;
+            IMoveEntity moveEntity;
 
-            if(!IEntity::getInterface(pEntity, worldTarget))
+            if(!Entity::getInterface(pEntity, moveEntity))
             {
                 continue;
             }
 
-            if (Box(worldTarget.m_size, worldTarget.m_position).Contains(target))
+            if (Box(moveEntity.m_size, moveEntity.m_position).Contains(target))
             {
                 pThis->Attack(pEntity);
                 break;

@@ -2,19 +2,19 @@
 
 #include <algorithm>
 
-shared_ptr<vector<shared_ptr<IEntity>>> World::getEntitiesInBox(Box box)
+shared_ptr<vector<shared_ptr<Entity>>> World::getEntitiesInBox(Box box)
 {
-	auto rVector = make_shared<vector<shared_ptr<IEntity>>>();
+	auto rVector = make_shared<vector<shared_ptr<Entity>>>();
 
 	for (auto pEntity : m_entities)
 	{
-		IWorldEntity worldEntity;
-		if(!IEntity::getInterface(pEntity.second, worldEntity))
+		IMoveEntity moveEntity;
+		if(!Entity::getInterface(pEntity.second, moveEntity))
 		{
 			continue;
 		}
 
-		Box entityBox(worldEntity.m_size, worldEntity.m_position);
+		Box entityBox(moveEntity.m_size, moveEntity.m_position);
 
 		if (box.isCollision(entityBox))
 		{
@@ -24,14 +24,14 @@ shared_ptr<vector<shared_ptr<IEntity>>> World::getEntitiesInBox(Box box)
 	return rVector;
 }
 
-void World::setEntity(shared_ptr<IEntity> pEntity)
+void World::setEntity(shared_ptr<Entity> pEntity)
 {
 	auto key = pEntity.get();
 	if (m_entities.find(key) == m_entities.end() && m_newEntities.find(key) == m_newEntities.end())
 		m_newEntities.insert(pair(key,pEntity));
 }
 
-bool World::deleteEntity(shared_ptr<IEntity> pEntity)
+bool World::deleteEntity(shared_ptr<Entity> pEntity)
 {
 	bool rVal = false;
 	auto key = pEntity.get();

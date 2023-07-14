@@ -3,7 +3,6 @@
 #include "Size.hpp"
 #include "ISector.hpp"
 #include "World.hpp"
-#include "IWorldEntity.hpp"
 
 #include <vector>
 #include <mutex>
@@ -22,7 +21,7 @@ public:
     void move(Coordinates step);
     void setSize(Size size);
 
-    void trace(weak_ptr<IEntity> pTraced);
+    void trace(weak_ptr<Entity> pTraced);
 	void stopTrace(){ m_pTraced.reset();}
 
     mutex &getMutex() {return m_mutex;}
@@ -33,7 +32,7 @@ public:
     const Size &getSize() const {return m_size;}
 
     weak_ptr<vector<ISector*>> getMap() const {return m_map;}
-    weak_ptr<vector<shared_ptr<IEntity>>> getEntities() const {return m_entities;}
+    weak_ptr<vector<shared_ptr<Entity>>> getEntities() const {return m_entities;}
 
 private:
     Coordinates m_position;
@@ -41,9 +40,9 @@ private:
     mutex m_mutex; 
     Size m_size;
     shared_ptr<vector<ISector*>> m_map;
-    shared_ptr<vector<shared_ptr<IEntity>>> m_entities;
+    shared_ptr<vector<shared_ptr<Entity>>> m_entities;
     weak_ptr<World> m_pWorld;
-    weak_ptr<IEntity> m_pTraced;
+    weak_ptr<Entity> m_pTraced;
 
     void UpdateCoordinates();
 };

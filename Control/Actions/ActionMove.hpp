@@ -38,16 +38,16 @@ public:
 		return rVal;
 	}
 
-	static shared_ptr<IEntity> isPlaceTaken(std::shared_ptr<World> pWorld, IMoveEntity& entity)
+	static shared_ptr<Entity> isPlaceTaken(std::shared_ptr<World> pWorld, IMoveEntity& entity)
 	{
-		shared_ptr<IEntity> rVal = nullptr;
+		shared_ptr<Entity> rVal = nullptr;
 
 		auto lockedEntities = pWorld->getEntities();
 
 		for (auto testModel : lockedEntities)
 		{
 			IMoveEntity moveEntity;
-			if(!IEntity::getInterface(testModel.second, moveEntity))
+			if(!Entity::getInterface(testModel.second, moveEntity))
 				continue;
 
 			if (moveEntity == entity)
@@ -66,7 +66,7 @@ public:
 		return rVal;
 	}
 
-	static Status Execute(std::shared_ptr<World> pWorld, IMoveEntity &entity, Coordinates step, shared_ptr<IEntity> &pCollisionEntity)
+	static Status Execute(std::shared_ptr<World> pWorld, IMoveEntity &entity, Coordinates step, shared_ptr<Entity> &pCollisionEntity)
 	{
 		Status rVal = DONE;
 		

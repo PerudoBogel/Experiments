@@ -14,7 +14,7 @@
 #include <array>
 #include <assert.h>
 
-AIController::AIController(weak_ptr<World> pWorld, shared_ptr<IEntity> pEntity):
+AIController::AIController(weak_ptr<World> pWorld, shared_ptr<Entity> pEntity):
 		ControllerBase(pWorld, pEntity),
 		m_nextPost(0)
 {}
@@ -29,7 +29,7 @@ void AIController::Run()
     ControllerBase::Run();
 
 	IMoveEntity moveEntity;
-	if (IEntity::getInterface(m_pEntity, moveEntity))
+	if (Entity::getInterface(m_pEntity, moveEntity))
 	{
 		Coordinates moveStep;
 		if (m_posts.empty())

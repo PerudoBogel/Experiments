@@ -8,7 +8,6 @@
 #ifndef REACTIONS_REACTIONPUSH_HPP_
 #define REACTIONS_REACTIONPUSH_HPP_
 
-#include "IWorldEntity.hpp"
 #include "Coordinates.hpp"
 #include "ActionMove.hpp"
 #include <memory>

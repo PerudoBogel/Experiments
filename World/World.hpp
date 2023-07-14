@@ -6,7 +6,7 @@
 #include "SectorGenerator.hpp"
 #include "Map.hpp"
 #include "ISector.hpp"
-#include "IEntity.hpp"
+#include "Entity.hpp"
 
 #include <vector>
 #include <map>
@@ -25,19 +25,19 @@ public:
     inline weak_ptr<Map> getMap(){return m_map;}
     inline void setMap(shared_ptr<Map> map){m_map = map;}
 
-    const map<IEntity*,shared_ptr<IEntity>>& getEntities(void) const{return m_entities;}
-    shared_ptr<vector<shared_ptr<IEntity>>> getEntitiesInBox(Box box);
-    void setEntity(shared_ptr<IEntity> pEntity);
-    bool deleteEntity(shared_ptr<IEntity> pEntity);
+    const map<Entity*,shared_ptr<Entity>>& getEntities(void) const{return m_entities;}
+    shared_ptr<vector<shared_ptr<Entity>>> getEntitiesInBox(Box box);
+    void setEntity(shared_ptr<Entity> pEntity);
+    bool deleteEntity(shared_ptr<Entity> pEntity);
     void sync();
 
     shared_ptr<vector<ISector*>> getMapInBox(Box box){return m_map->getBox(box);}
 
 private:
     shared_ptr<Map> m_map;
-    map<IEntity*,shared_ptr<IEntity>> m_entities;
-    map<IEntity*,shared_ptr<IEntity>> m_deadEntities;
-    map<IEntity*,shared_ptr<IEntity>> m_newEntities;
+    map<Entity*,shared_ptr<Entity>> m_entities;
+    map<Entity*,shared_ptr<Entity>> m_deadEntities;
+    map<Entity*,shared_ptr<Entity>> m_newEntities;
 
 
     mutex m_mutex;

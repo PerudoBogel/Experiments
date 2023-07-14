@@ -63,7 +63,7 @@ void Scope::setSize(Size size)
     update();
 }
 
-void Scope::trace(weak_ptr<IEntity> pTraced)
+void Scope::trace(weak_ptr<Entity> pTraced)
 {
     m_pTraced = pTraced;
 }
@@ -71,7 +71,7 @@ void Scope::trace(weak_ptr<IEntity> pTraced)
 void Scope::update()
 {
     IMoveEntity moveEntity;
-	if(IEntity::getInterface(m_pTraced.lock(), moveEntity))
+	if(Entity::getInterface(m_pTraced.lock(), moveEntity))
     {
         m_position = moveEntity.m_position;
         UpdateCoordinates();

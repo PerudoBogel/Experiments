@@ -8,7 +8,7 @@
 #ifndef UI_CONTROLLER_CONTROLLER_HPP_
 #define UI_CONTROLLER_CONTROLLER_HPP_
 
-#include "IEntity.hpp"
+#include "Entity.hpp"
 #include "World.hpp"
 #include "Coordinates.hpp"
 
@@ -25,20 +25,20 @@ public:
 	};
 
 	ControllerBase() = delete;
-	ControllerBase(weak_ptr<World> pWorld, shared_ptr<IEntity> pEntity);
+	ControllerBase(weak_ptr<World> pWorld, shared_ptr<Entity> pEntity);
 	virtual ~ControllerBase(){}
 	
 	virtual void Run();
 	virtual ControllerType GetType(){return CONTROL_NONE;}
 
-	int Move(Coordinates step, shared_ptr<IEntity> &pCollisionEntity, bool allowSlide = true);
+	int Move(Coordinates step, shared_ptr<Entity> &pCollisionEntity, bool allowSlide = true);
 	int Move(Coordinates step, bool allowSlide = true);
-	int Attack(shared_ptr<IEntity> pTarget);
+	int Attack(shared_ptr<Entity> pTarget);
 	void Die();
 	int Shoot(Coordinates &direction);
 	bool IfAlive(){return m_isAlive;};
 
-	shared_ptr<IEntity> m_pEntity;
+	shared_ptr<Entity> m_pEntity;
 protected:
 	weak_ptr<World> m_pWorld;
 	bool m_isAlive;

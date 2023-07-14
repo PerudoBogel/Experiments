@@ -9,13 +9,13 @@
 #include "ActionMove.hpp"
 #include "Debug.hpp"
 #include "Orb.hpp"
-#include "EntityFactory.hpp"
+#include "AllocationPool.hpp"
 
 #include <assert.h>
 #include <math.h>
 
 ControllerBase::ControllerBase(weak_ptr<World> pWorld,
-		shared_ptr<IEntity> pEntity) :
+		shared_ptr<Entity> pEntity) :
 		m_pEntity(pEntity), m_pWorld(pWorld),
 		m_isAlive(true)
 {
@@ -23,19 +23,19 @@ ControllerBase::ControllerBase(weak_ptr<World> pWorld,
 
 int ControllerBase::Move(Coordinates step, bool allowSlide)
 {
-	shared_ptr<IEntity> dummy;
+	shared_ptr<Entity> dummy;
 
 	return Move(step, dummy, allowSlide);
 }
 
-int ControllerBase::Move(Coordinates step, shared_ptr<IEntity> &pCollisionEntity, bool allowSlide)
+int ControllerBase::Move(Coordinates step, shared_ptr<Entity> &pCollisionEntity, bool allowSlide)
 {
 	int rVal = CANNOT_MOVE;
 
 	auto lockedWorld = m_pWorld.lock();
 	IMoveEntity moveEntity;
 
-	if(!lockedWorld || !IEntity::getInterface(m_pEntity, moveEntity))
+	if(!lockedWorld || !Entity::getInterface(m_pEntity, moveEntity))
 	{
 		Die();
 	}
@@ -62,7 +62,7 @@ int ControllerBase::Move(Coordinates step, shared_ptr<IEntity> &pCollisionEntity
 				}
 			if(rVal == DONE)
 			{
-				IEntity::setInterface(m_pEntity, moveEntity);
+				Entity::setInterface(m_pEntity, moveEntity);
 			}
 		}
 	}
@@ -70,12 +70,12 @@ int ControllerBase::Move(Coordinates step, shared_ptr<IEntity> &pCollisionEntity
 	return rVal;
 }
 
-int ControllerBase::Attack(shared_ptr<IEntity> pTarget)
+int ControllerBase::Attack(shared_ptr<Entity> pTarget)
 {
 	int rVal = CANNOT_ATTACK;
 	IAttackEntity attacker,defender;
 
-	if(!IEntity::getInterface(m_pEntity, attacker) || !IEntity::getInterface(pTarget, defender))
+	if(!Entity::getInterface(m_pEntity, attacker) || !Entity::getInterface(pTarget, defender))
 	{
 		Die();
 	}
@@ -86,8 +86,8 @@ int ControllerBase::Attack(shared_ptr<IEntity> pTarget)
 		if (ActionAttack::DONE == status)
 		{
 			rVal = DONE;
-			IEntity::setInterface(m_pEntity, attacker);
-			IEntity::setInterface(pTarget, defender);
+			Entity::setInterface(m_pEntity, attacker);
+			Entity::setInterface(pTarget, defender);
 		}
 	}
 	return rVal;
@@ -106,15 +106,15 @@ void ControllerBase::Die()
 int ControllerBase::Shoot(Coordinates &direction)
 {
 	auto lockedWorld = m_pWorld.lock();
-	IWorldEntity worldEntity;
-	if(!lockedWorld || !IEntity::getInterface(m_pEntity, worldEntity))
+	IMoveEntity moveEntity;
+	if(!lockedWorld || !Entity::getInterface(m_pEntity, moveEntity))
 	{
 		Die();
 	}
 
 	if(m_isAlive)
 	{
-		auto startOffset = max(worldEntity.m_size.h,worldEntity.m_size.w);
+		auto startOffset = max(moveEntity.m_size.h,moveEntity.m_size.w);
 
 		auto rotationRad = atan(direction.y/ direction.x) ;
 		if(direction.x < 0)
@@ -122,18 +122,18 @@ int ControllerBase::Shoot(Coordinates &direction)
 
 		// check if eq is available and select projectile based on that
 		IMoveEntity orbMoveEntity;
-		auto orb = EntityFactory::makeEntity<Orb>();
-		IEntity::getInterface(orb, orbMoveEntity);
-		orbMoveEntity.m_position = worldEntity.m_position;
+		auto orb = AllocationPool::makeAllocation<Orb>();
+		Entity::getInterface(orb, orbMoveEntity);
+		orbMoveEntity.m_position = moveEntity.m_position;
 		orbMoveEntity.m_position.phi = rotationRad / (2 * PI) * 360;
 		orbMoveEntity.m_position += Coordinates(startOffset * cos(rotationRad), startOffset * sin(rotationRad));
-		IEntity::setInterface(orb, orbMoveEntity);
+		Entity::setInterface(orb, orbMoveEntity);
 
 		DEBUG_DUMP_VAR(orbMoveEntity.m_position.x);
 		DEBUG_DUMP_VAR(orbMoveEntity.m_position.y);
 		DEBUG_DUMP_VAR(orbMoveEntity.m_position.phi);
 
-		lockedWorld->setEntity(static_cast<shared_ptr<IEntity>>(orb));
+		lockedWorld->setEntity(static_cast<shared_ptr<Entity>>(orb));
 	}
 
 	return 1;
@@ -142,7 +142,7 @@ int ControllerBase::Shoot(Coordinates &direction)
 void ControllerBase::Run()
 {
 	IAttackEntity attackEntity;
-	if(!IEntity::getInterface(m_pEntity, attackEntity))
+	if(!Entity::getInterface(m_pEntity, attackEntity))
 	{
 		Die();
 	}

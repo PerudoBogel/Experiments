@@ -1,14 +1,7 @@
 #pragma once
 
 #include "IBaseEntity.hpp"
-
-enum ControllerType
-{
-	CONTROL_PLAYER,
-	CONTROL_AI,
-    CONTROL_PROJECTILE,
-	CONTROL_NONE
-};
+#include "ControllerType.hpp"
 
 class IControlEntity: public IBaseEntity
 {

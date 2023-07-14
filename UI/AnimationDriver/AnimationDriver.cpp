@@ -1,11 +1,11 @@
 #include "AnimationDriver.hpp"
 #include "Debug.hpp"
 
-AnimationDriver::AnimationDriver(weak_ptr<IEntity> pEntity, TextureConfig &config):
+AnimationDriver::AnimationDriver(weak_ptr<Entity> pEntity, TextureConfig &config):
 m_pEntity(pEntity), m_config(config)
 {
     IDisplayEntity displayEntity;
-    IEntity::getInterface(pEntity.lock(), displayEntity);
+    Entity::getInterface(pEntity.lock(), displayEntity);
 
     m_frameInfo.m_mode = TextureMode::NONE;
     m_frameInfo.m_frameNo = 0;
@@ -29,7 +29,7 @@ sf::Sprite *AnimationDriver::GetFrame(TextureMode mode, float animationTime, int
     auto modeInfoIt = m_config.m_modeInfo.find(mode);
     IDisplayEntity displayEntity;
 
-    if(!IEntity::getInterface(m_pEntity.lock(), displayEntity))
+    if(!Entity::getInterface(m_pEntity.lock(), displayEntity))
     {
         return nullptr;
     }

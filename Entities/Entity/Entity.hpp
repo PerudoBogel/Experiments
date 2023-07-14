@@ -1,43 +1,48 @@
 #pragma once
-
-#include "Size.hpp"
-#include "Coordinates.hpp"
-#include "Fraction.hpp"
-#include "IEntity.hpp"
-#include "EntityType.hpp"
-#include "Hitbox.hpp"
+#include "IAttackEntity.hpp"
+#include "IDisplayEntity.hpp"
+#include "IMoveEntity.hpp"
+#include "IControlEntity.hpp"
+#include "EntityData.hpp"
 
 #include <memory>
 
-using namespace std;
+#define COPY_TO_ENTITY(varName) entity.varName = m_data.varName
+#define COPY_FROM_ENTITY(varName) m_data.varName = entity.varName
+#define SET_ENTITY_PTR() entity.m_pEntity = this
 
-class ModelBase: public IEntity
+class Entity
 {
 public:
-	ModelBase() :
-			m_size(25,25),
-			m_hitbox(m_size)
-	{}
-    virtual ~ModelBase(){};
+    void UpdateData(EntityData &data)
+    {
+        m_data = data;
+    }
+    
+    template<typename T>
+    static inline bool getInterface(std::shared_ptr<Entity> pEntity, T &interfaceEntity)
+    {
+        bool rValue = false;
+        if(pEntity)
+        {
+            if(pEntity->getInterface(interfaceEntity))
+            {
+                rValue = true;
+            }
+        }
+        return rValue;
+    }
+    
+    template<typename T>
+    static inline void setInterface(std::shared_ptr<Entity> pEntity, T &interfaceEntity)
+    {
+        if(pEntity)
+        {
+            pEntity->setInterface(interfaceEntity);
+        }
+    }
 
-    int m_type;
-	int m_customData;
-    int m_health						= 1;
-    int m_maxHealth						= 1;
-	bool m_isAlive						= 1;
-	bool m_isCollidable					= true;
-    int m_damage						= 1;
-    int m_attack						= 1;
-    int m_defence						= 1;
-    int m_range							= 100;
-    int m_moveStrength					= 1;
-	decltype(Coordinates::x) m_speed	= 1;
-	ControllerType m_controller = CONTROL_NONE;
-	Fraction m_memberFractions,	m_allyFractions;
-    Coordinates m_position;
-    Size m_size;
-	Hitbox m_hitbox;
-
+private:
     bool getInterface(IAttackEntity& entity)
 	{
 		COPY_TO_ENTITY(m_allyFractions);
@@ -57,15 +62,6 @@ public:
 	{
 		COPY_TO_ENTITY(m_health);
 		COPY_TO_ENTITY(m_maxHealth);
-		COPY_TO_ENTITY(m_position);
-		COPY_TO_ENTITY(m_size);
-		COPY_TO_ENTITY(m_type);
-		SET_ENTITY_PTR();
-		return true;
-	}
-
-    bool getInterface(IWorldEntity& entity)
-	{
 		COPY_TO_ENTITY(m_position);
 		COPY_TO_ENTITY(m_size);
 		COPY_TO_ENTITY(m_type);
@@ -112,12 +108,6 @@ public:
 		COPY_FROM_ENTITY(m_size);
 		COPY_FROM_ENTITY(m_type);
 	}
-    void setInterface(const IWorldEntity& entity)
-	{
-		COPY_FROM_ENTITY(m_position);
-		COPY_FROM_ENTITY(m_size);
-		COPY_FROM_ENTITY(m_type);
-	}
     void setInterface(const IMoveEntity& entity)
 	{
 		COPY_FROM_ENTITY(m_moveStrength);
@@ -131,4 +121,6 @@ public:
 		COPY_FROM_ENTITY(m_controller);
 		COPY_FROM_ENTITY(m_customData);
 	}
+
+    EntityData m_data;
 };
