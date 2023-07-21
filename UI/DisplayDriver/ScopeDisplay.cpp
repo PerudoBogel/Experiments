@@ -1,5 +1,5 @@
 #include "ScopeDisplay.hpp"
-#include "EntityType.hpp"
+#include "TextureId.hpp"
 #include "FrameTick.hpp"
 
 #include <iostream>
@@ -54,10 +54,10 @@ map<int, ScopeDisplay::Texture> ScopeDisplay::m_landTextures =
 ScopeDisplay::ScopeDisplay(std::shared_ptr<Scope> scope) : m_pScope(scope)
 {
     loadTextures();
-    m_TextureLoader.ReadTexture("GameResources/Models/Human.png", EntityType::TEXTURE_ID_HUMAN);
-    m_TextureLoader.ReadTexture("GameResources/Models/Dog.png", EntityType::TEXTURE_ID_DOG);
-    m_TextureLoader.ReadTexture("GameResources/Models/Cat.png", EntityType::TEXTURE_ID_CAT);
-    m_TextureLoader.ReadTexture("GameResources/Projectiles/Orb.png", EntityType::TEXTURE_ID_ORB);
+    m_TextureLoader.ReadTexture("GameResources/Entities/Human.png", TextureId::TEXTURE_ID_HUMAN);
+    m_TextureLoader.ReadTexture("GameResources/Entities/Dog.png", TextureId::TEXTURE_ID_DOG);
+    m_TextureLoader.ReadTexture("GameResources/Entities/Cat.png", TextureId::TEXTURE_ID_CAT);
+    m_TextureLoader.ReadTexture("GameResources/Entities/Orb.png", TextureId::TEXTURE_ID_ORB);
 }
 
 bool ScopeDisplay::loadTexture(Texture &texture)
@@ -149,7 +149,7 @@ bool ScopeDisplay::draw_entities()
 
         if(animationIter == m_animations.end())
         {
-            auto *pConfig = m_TextureLoader.GetTextureConfig(displayEntity.m_type);
+            auto *pConfig = m_TextureLoader.GetTextureConfig(displayEntity.m_textureId);
 
             if(pConfig)
             {

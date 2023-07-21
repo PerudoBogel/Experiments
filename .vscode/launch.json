@@ -23,6 +23,46 @@
                     "ignoreFailures": true
                 }
             ]
+        },
+        {
+            "name": "(gdb) ModelAnimation",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}\\Test\\ModelAnimation.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "environment": [],
+            "cwd": "${workspaceFolder}",
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "(gdb) UnitTest",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}\\Test\\UnitTest.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "environment": [],
+            "cwd": "${workspaceFolder}",
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
         }
     ]
 }

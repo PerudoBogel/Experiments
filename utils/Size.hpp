@@ -1,4 +1,5 @@
 #pragma once
+#include <ostream>
 
 struct Size
 {
@@ -33,5 +34,11 @@ struct Size
 	inline Size operator-(const Size &pSize)
 	{
 		return Size(w - pSize.w, h - pSize.h);
+	}
+
+	friend std::ostream& operator<< (std::ostream& stream, Size &size)
+	{
+		stream << "( " << size.w << ", " << size.h << " )";
+		return stream;
 	}
 };

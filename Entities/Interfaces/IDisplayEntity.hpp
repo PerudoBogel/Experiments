@@ -8,7 +8,7 @@
 class IDisplayEntity: public IBaseEntity
 {
 public:    
-    TextureId m_type; 
+    TextureId m_textureId; 
     int m_health;
     int m_maxHealth;
     Coordinates m_position;

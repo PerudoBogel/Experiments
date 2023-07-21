@@ -56,6 +56,12 @@ public:
 		return (m_mask != bitMask.m_mask);
 	}
 
+	inline BitMask operator=(int &value)
+	{
+		m_mask = static_cast<bufferType>(value);
+		return *this;
+	}
+
 private:
 	BitMask(const bufferType &mask):m_mask(mask){}
 	bufferType m_mask;

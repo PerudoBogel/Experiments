@@ -12,7 +12,7 @@ using namespace std;
 int main(int argc, char **argv)
 {
 	IMoveEntity moveEntity;
-	auto humanModel = EntityFactory::getEntity(2);
+	auto humanModel = EntityFactory::GetInstance()->getEntity(1);
 	
 	Entity::getInterface(humanModel, moveEntity);
 	moveEntity.m_position = Coordinates(25,25);

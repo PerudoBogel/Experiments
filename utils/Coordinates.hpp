@@ -1,5 +1,6 @@
 #pragma once
 #include <math.h>
+#include <ostream>
 
 const float PI = 3.141592653589793238462643383279502884;
 
@@ -83,5 +84,11 @@ struct Coordinates
 	inline float distance(const Coordinates &coords)
 	{
 		return sqrt(pow(x - coords.x, 2) + pow(y - coords.y, 2));
+	}
+
+	friend std::ostream& operator<< (std::ostream& stream, Coordinates &coordinates)
+	{
+		stream << "( " << coordinates.x << ", " << coordinates.y << " )";
+		return stream;
 	}
 };

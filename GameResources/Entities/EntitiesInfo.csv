@@ -1,0 +1,4 @@
+Name;EntityId;" TextureId";"CustomData";"Health";"IsCollidable";"Damage";"Attack";" Defence";" Range";" MoveStrength";" Speed";" MemberFractions";" AllyFractions";" SizeW";SizeH;
+Player;1;"2";"0";"15";"1";"5";"10";"1";"50";"1";"5";"0x1";"0xf";"25";25;
+Dog;2;"1";"0";"20";"1";"4";"10";"1";"60";"0";"4";"0x2";"0xf";"30";30;
+Orb;3;"0";"0";"1";"0";"1";"10";"1";"50";"0";"10";"0";"0";"20";15;

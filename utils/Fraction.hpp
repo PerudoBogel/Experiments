@@ -62,11 +62,18 @@ public:
 	{
 		return Fraction(m_fractionFlags - fraction.m_fractionFlags);
 	}
+	
+
+	inline Fraction operator=(int &value)
+	{
+		m_fractionFlags = value;
+		return *this;
+	}
 
 private:
 
-	Fraction(const BitMask<uint64_t,Type> &fractionMap):m_fractionFlags(fractionMap){}
-	BitMask<uint64_t,Type> m_fractionFlags;
+	Fraction(const BitMask<uint32_t,Type> &fractionMap):m_fractionFlags(fractionMap){}
+	BitMask<uint32_t,Type> m_fractionFlags;
 
 };
 

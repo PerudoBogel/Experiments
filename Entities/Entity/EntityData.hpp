@@ -8,13 +8,13 @@
 
 struct EntityData
 {
-    TextureId m_type;
+    TextureId m_textureId;
 	int m_customData;
     int m_health;
     int m_maxHealth;
 	bool m_isAlive;
 	bool m_isCollidable;
-    int m_damage;
+    int m_baseDamage;
     int m_attack;
     int m_defence;
     int m_range;

@@ -22,7 +22,6 @@ private:
         float m_frameNo;
         int m_altTextureId;
         int m_frameCount;
-        unsigned int frameCounter;
     } m_frameInfo;
 
     weak_ptr<Entity> m_pEntity;

@@ -8,8 +8,7 @@
 #include "ActionAttack.hpp"
 #include "ActionMove.hpp"
 #include "Debug.hpp"
-#include "Orb.hpp"
-#include "AllocationPool.hpp"
+#include "EntityFactory.hpp"
 
 #include <assert.h>
 #include <math.h>
@@ -122,16 +121,13 @@ int ControllerBase::Shoot(Coordinates &direction)
 
 		// check if eq is available and select projectile based on that
 		IMoveEntity orbMoveEntity;
-		auto orb = AllocationPool::makeAllocation<Orb>();
+		auto orb = EntityFactory::GetInstance()->getEntity(3);
+		orb->UpdateController(CONTROL_PROJECTILE);
 		Entity::getInterface(orb, orbMoveEntity);
 		orbMoveEntity.m_position = moveEntity.m_position;
 		orbMoveEntity.m_position.phi = rotationRad / (2 * PI) * 360;
 		orbMoveEntity.m_position += Coordinates(startOffset * cos(rotationRad), startOffset * sin(rotationRad));
 		Entity::setInterface(orb, orbMoveEntity);
-
-		DEBUG_DUMP_VAR(orbMoveEntity.m_position.x);
-		DEBUG_DUMP_VAR(orbMoveEntity.m_position.y);
-		DEBUG_DUMP_VAR(orbMoveEntity.m_position.phi);
 
 		lockedWorld->setEntity(static_cast<shared_ptr<Entity>>(orb));
 	}

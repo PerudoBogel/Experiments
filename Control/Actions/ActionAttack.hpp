@@ -127,7 +127,7 @@ public:
 		
 		if(retVal == DONE)
 		{
-			target.m_health -= attacker.m_damage;
+			target.m_health -= attacker.m_baseDamage;
 			
 			if(0 >= target.m_health)
 			{

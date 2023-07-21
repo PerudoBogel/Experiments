@@ -1,5 +1,6 @@
 #include "AnimationDriver.hpp"
 #include "Debug.hpp"
+#include "FrameTick.hpp"
 
 AnimationDriver::AnimationDriver(weak_ptr<Entity> pEntity, TextureConfig &config):
 m_pEntity(pEntity), m_config(config)
@@ -73,7 +74,7 @@ sf::Sprite *AnimationDriver::GetFrame(TextureMode mode, float animationTime, int
 void AnimationDriver::ChooseAltTexture(TextureMode mode)
 {
     int altId = 0;
-    std::srand(m_frameInfo.frameCounter++);
+    std::srand(FrameTick::GetIntance()->GetTick());
     int randVal = std::rand() / (RAND_MAX / 100);
     
     auto &modeInfo = m_config.m_modeInfo[mode];

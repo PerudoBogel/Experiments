@@ -29,7 +29,7 @@ public:
         return *this;
     }
 
-    void updateSize(Size &size)
+    void update(Size &size)
     {
         m_size1 = Size(size.w, size.h* 6/10);
         m_size2 = Size(size.w* 6/10, size.h);

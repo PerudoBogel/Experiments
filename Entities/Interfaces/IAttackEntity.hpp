@@ -12,7 +12,7 @@ public:
     int m_range;
     int m_defence;
     int m_attack;
-    int m_damage;
+    int m_baseDamage;
     bool m_isAlive;
     Fraction m_allyFractions; 
     Fraction m_memberFractions;

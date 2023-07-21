@@ -57,6 +57,28 @@
 				"$gcc"
 			],
 			"group": "build"
+		},
+		{
+			"type": "shell",
+			"label": "C/C++ UnitTest",
+			"command": "g++.exe",
+			"args": [
+				"-g3",
+				"Test//UnitTest.cpp", 
+				"Entities/Entity/*.cpp",
+				"utils/*.cpp",
+				"-I", "Entities/Entity","-I", "Entities/Interfaces",
+				"-I","utils",
+				"-pipe", "-std=c++2a",
+				"-o", "Test\\UnitTest.exe"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
 		}
 	]
 }
